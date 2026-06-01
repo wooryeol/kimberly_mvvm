@@ -2,7 +2,7 @@ package kr.co.kimberly.wma.network
 
 import android.content.Context
 import kr.co.kimberly.wma.BuildConfig
-import kr.co.kimberly.wma.common.TokenManager
+import kr.co.kimberly.wma.Manager.TokenManager
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.network.model.BalanceModel
 import kr.co.kimberly.wma.network.model.CollectModel

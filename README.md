@@ -15,6 +15,7 @@
 - [보안 정책](#보안-정책)
 - [네트워크 구조](#네트워크-구조)
 - [하드웨어 연동](#하드웨어-연동)
+- [변경 이력](#변경-이력)
 
 ---
 
@@ -57,7 +58,31 @@ MVVM (Model - View - ViewModel)
 
 - **View**: Activity + XML Layout (ViewBinding)
 - **ViewModel**: AndroidX ViewModel + LiveData
-- **Model**: Retrofit2 기반 REST API + 로컬 SharedPreferences
+- **Model**: Repository 패턴 + Retrofit2 기반 REST API + 로컬 SharedPreferences
+
+### MVVM 적용 현황
+
+| 화면 | View | ViewModel | Repository | 상태 |
+|---|---|---|---|---|
+| 로그인 | `LoginActivity` | `LoginViewModel` | `LoginRepository` | 완료 |
+| 그 외 화면 | Activity | — | — | 미적용 (향후 순차 적용 예정) |
+
+### 로그인 MVVM 흐름
+
+```
+LoginActivity
+    → LoginViewModel.login()
+        → LoginRepository.login()  (Retrofit 콜백)
+            → Result<LoginResponseModel>
+        → LoginState (sealed class)
+            ├── Loading
+            ├── Success(data)
+            └── Error(message)
+    → setupObservers()  LiveData 구독
+```
+
+> `ResultModel<T>.data`는 Gson 역직렬화 시 null이 될 수 있으므로,
+> `LoginRepository`에서 `data != null` 검사 후 `Result.success(data)` 호출합니다.
 
 ```
 SplashActivity
@@ -117,10 +142,13 @@ SplashActivity
 ```
 app/src/main/java/kr/co/kimberly/wma/
 ├── GlobalApplication.kt          Application 클래스
+├── Manager/
+│   └── scanner/
+│       ├── ScannerManager.kt     KDC 스캐너 싱글톤 (SDK 캡슐화)
+│       └── ScannerCallback.kt    스캐너 이벤트 콜백 인터페이스
 ├── adapter/                      RecyclerView 어댑터
 ├── common/
 │   ├── BarcodeViewModel.kt       바코드 스캔 ViewModel
-│   ├── ConnectThread.kt          블루투스 연결 Thread
 │   ├── Define.kt                 앱 전역 상수
 │   ├── SharedData.kt             SharedPreferences 유틸
 │   ├── TokenManager.kt           JWT 토큰 저장/조회/삭제
@@ -136,6 +164,8 @@ app/src/main/java/kr/co/kimberly/wma/
 │   ├── inventory/
 │   ├── ledger/
 │   ├── login/
+│   │   ├── LoginActivity.kt
+│   │   └── LoginViewModel.kt
 │   ├── main/
 │   ├── order/
 │   ├── printer/
@@ -148,7 +178,12 @@ app/src/main/java/kr/co/kimberly/wma/
 └── network/
     ├── ApiClientService.kt       Retrofit 인터페이스 + 클라이언트 팩토리
     ├── AuthInterceptor.kt        Bearer 토큰 자동 주입 Interceptor
+    ├── repository/
+    │   └── LoginRepository.kt    로그인 API 호출 단일 책임
     └── model/                    API 요청/응답 데이터 모델
+        └── login/
+            ├── LoginRequest.kt
+            └── LoginResponseModel.kt
 ```
 
 ---
@@ -241,15 +276,105 @@ keyPassword=...
 ## 하드웨어 연동
 
 ### 블루투스 스캐너
+
 - 지원 기기: KDC 시리즈
 - 연결 방식: Bluetooth Classic (UUID 기반)
 - 라이브러리: `kdcreader-release.aar`
+
+#### ScannerManager / ScannerCallback
+
+KDC SDK(`KDCReader`, `KDCDevice`, `KDCConnectionListenerEx` 등)는 `ScannerManager` 싱글톤 내부에 캡슐화되어 있으며, Activity는 `ScannerCallback` 인터페이스만 구현합니다.
+
+```kotlin
+// Activity에서의 사용 패턴
+class MyActivity : AppCompatActivity(), ScannerCallback {
+
+    override fun onCreate(...) {
+        ScannerManager.initialize(this, this)  // SDK 초기화 + 콜백 등록
+        checkScanner()                          // 저장된 주소로 자동 재연결
+    }
+
+    override fun onPause()   { ScannerManager.disconnect() }
+    override fun onDestroy() { ScannerManager.clearCallback(); ScannerManager.disconnect() }
+
+    // ScannerCallback 구현
+    override fun onConnected(deviceName: String)    { /* UI 갱신 */ }
+    override fun onDisconnected(deviceName: String) { /* UI 갱신 */ }
+    override fun onConnectionFailed(deviceName: String) { /* 오류 안내 */ }
+    override fun onBarcodeScanned(barcode: String)  {
+        sendBroadcast(Intent("kr.co.kimberly.wma.ACTION_BARCODE_SCANNED")
+            .putExtra("data", barcode))
+    }
+}
+```
+
+| 메서드 | 설명 |
+|---|---|
+| `ScannerManager.initialize(context, callback)` | KDCReader 초기화 + 콜백 설정 |
+| `ScannerManager.connect(address)` | Bluetooth 주소로 연결 |
+| `ScannerManager.disconnect()` | 연결 해제 |
+| `ScannerManager.clearCallback()` | 콜백 해제 (onDestroy 시 메모리 누수 방지) |
+| `ScannerManager.isConnected()` | 현재 연결 상태 반환 |
+
+#### 스캐너 적용 화면
+
+| Activity | BroadcastReceiver 소유 |
+|---|---|
+| `OrderRegActivity` | Adapter |
+| `InformationActivity` | Activity |
+| `InventoryActivity` | Activity |
+| `PurchaseRequestActivity` | Adapter |
+| `ReturnRegActivity` | Activity |
+| `SlipInquiryModifyActivity` | Adapter |
 
 ### 블루투스 프린터
 - 지원 기기: TSC Alpha 시리즈
 - 연결 방식: Bluetooth Classic
 - 라이브러리: `bluetooth.jar`
 - 출력 유형: 메뉴별 출력 / 통합 출력
+
+---
+
+## 변경 이력
+
+### 리팩터링 (2026-06)
+
+#### 프로젝트 이름 변경 (`kimberly_aos` → `Kimberly_mvvm`)
+
+| 파일 | 변경 내용 |
+|---|---|
+| `settings.gradle.kts` | `rootProject.name` 변경 |
+| `.idea/.name` | 프로젝트 이름 변경 |
+| `.idea/Kimberly.iml` | 모듈 iml 파일명 변경 |
+| `res/values/themes.xml` | 테마명 `Theme.Kimberly_mvvm` 으로 변경 |
+| `res/values-night/themes.xml` | 테마명 `Base.Theme.Kimberly_mvvm` 으로 변경 |
+| `AndroidManifest.xml` | `android:theme` 참조 수정 |
+| `common/Utils.kt` | 로그 태그 수정 |
+| `.idea/workspace.xml` | 모듈명, APK 키 등 일괄 수정 |
+
+> 키스토어 파일(`kimberly_aos_keysign.jks`)과 키 별칭(`kimberly_aos_keystore`)은 Play Store 서명 연속성 유지를 위해 변경하지 않습니다.
+
+#### 로그인 화면 MVVM 리팩터링
+
+| 파일 | 역할 |
+|---|---|
+| `network/model/login/LoginRequest.kt` | 로그인 요청 모델 |
+| `network/repository/LoginRepository.kt` | Retrofit 호출 단일 책임, 콜백 기반 결과 반환 |
+| `menu/login/LoginViewModel.kt` | `sealed class LoginState`, LiveData, 유효성 검사 |
+| `menu/login/LoginActivity.kt` | `by viewModels()`, `setupObservers()`, `setupListeners()` |
+
+#### NPE 버그 수정 (`LoginRepository.kt`)
+
+Gson은 Kotlin non-null 타입을 무시하고 `null`을 역직렬화할 수 있습니다.
+`ResultModel<T>.data`가 `null`임에도 `LoginState.Success(data)` 생성자에 전달되어 NPE가 발생하던 문제를
+`data != null` 검사 후 `Result.success(data)` 호출하도록 수정했습니다.
+
+#### 스캐너 코드 리팩터링
+
+KDC SDK를 직접 사용하던 6개 Activity를 `ScannerManager` / `ScannerCallback` 패턴으로 통일했습니다.
+각 Activity에서 `KDCConnectionListenerEx`, `KDCErrorListener`, `KDCBarcodeDataReceivedListener` 구현 코드 및
+`KDCReader` 멤버 변수, `connectScanner()` / `disconnectScanner()` 메서드를 모두 제거하고
+`ScannerCallback` 인터페이스 4개 메서드로 대체했습니다.
 
 ---
 

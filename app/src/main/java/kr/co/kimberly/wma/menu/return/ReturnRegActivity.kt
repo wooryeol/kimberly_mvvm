@@ -2,8 +2,6 @@ package kr.co.kimberly.wma.menu.`return`
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -18,13 +16,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import koamtac.kdc.sdk.KDCBarcodeDataReceivedListener
-import koamtac.kdc.sdk.KDCConnectionListenerEx
-import koamtac.kdc.sdk.KDCConstants
-import koamtac.kdc.sdk.KDCData
-import koamtac.kdc.sdk.KDCDevice
-import koamtac.kdc.sdk.KDCErrorListener
-import koamtac.kdc.sdk.KDCReader
+import kr.co.kimberly.wma.Manager.scanner.ScannerCallback
+import kr.co.kimberly.wma.Manager.scanner.ScannerManager
 import kr.co.kimberly.wma.R
 import kr.co.kimberly.wma.adapter.RegAdapter
 import kr.co.kimberly.wma.common.Define
@@ -50,35 +43,29 @@ import retrofit2.Call
 import retrofit2.Response
 
 @SuppressLint("MissingPermission", "SetTextI18n")
-class ReturnRegActivity : AppCompatActivity(), KDCConnectionListenerEx, KDCErrorListener,
-    KDCBarcodeDataReceivedListener {
+class ReturnRegActivity : AppCompatActivity(), ScannerCallback {
     private lateinit var mBinding: ActReturnRegBinding
     private lateinit var mContext: Context
     private lateinit var mActivity: Activity
-    private var mLoginInfo: LoginResponseModel? = null // 로그인 정보
+    private var mLoginInfo: LoginResponseModel? = null
 
     private var accountName = ""
     private var totalAmount: Long = 0
     private var returnAdapter: RegAdapter? = null
-    private var kdcReader: KDCReader? = null
 
-    private val db : DBHelper by lazy {
+    private val db: DBHelper by lazy {
         DBHelper.getInstance(applicationContext)
     }
-    private var isSave = true // 액티비티가 종료 될 때 이 값을 통해 저장 여부 선택
+    private var isSave = true
 
-    var onItemScan: ((String) -> Unit)? = null // 제품 삭제 시
+    var onItemScan: ((String) -> Unit)? = null
 
-    private var barcodeReceiver = object : BroadcastReceiver() { // 스캐너 값 읽어오는 부분
+    private var barcodeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
             when (val barcode = intent?.getStringExtra("data")) {
-                null -> {
-                    // 데이터가 null일 때 아무것도 하지 않음
-                    Utils.popupNotice(context, "바코드를 다시 스캔해주세요")
-                }
+                null -> Utils.popupNotice(context, "바코드를 다시 스캔해주세요")
                 else -> {
                     if (barcode.isNotEmpty()) {
-                        // Utils.log("adapter barcode data ====> $barcode")
                         onItemScan?.invoke(barcode)
                     }
                 }
@@ -99,8 +86,8 @@ class ReturnRegActivity : AppCompatActivity(), KDCConnectionListenerEx, KDCError
         mBinding.bottom.bottomButton.text = getString(R.string.titleReturn)
 
         setAdapter()
+        ScannerManager.initialize(this, this)
 
-        // 소프트키 뒤로가기
         this.onBackPressedDispatcher.addCallback(this, callback)
 
         mBinding.header.backBtn.setOnClickListener(object: OnSingleClickListener() {
@@ -116,9 +103,7 @@ class ReturnRegActivity : AppCompatActivity(), KDCConnectionListenerEx, KDCError
                     Utils.popupNotice(mContext, "제품이 등록되지 않았습니다.")
                 } else {
                     popupDoubleMessage.itemClickListener = object: PopupDoubleMessage.ItemClickListener {
-                        override fun onCancelClick() {
-                            // Utils.log("취소 클릭")
-                        }
+                        override fun onCancelClick() {}
 
                         override fun onOkClick() {
                             returnItem()
@@ -132,36 +117,37 @@ class ReturnRegActivity : AppCompatActivity(), KDCConnectionListenerEx, KDCError
         mBinding.header.scanBtn.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View) {
                 val isScannerConnected = SharedData.getSharedData(mContext, "isScannerConnected", false)
-                // 사용 여부 확인
                 if (!isScannerConnected) {
                     val popupNotice = PopupNotice(mContext, mContext.getString(R.string.msg_scan_connect_error))
-                    popupNotice.itemClickListener = object : PopupNotice.ItemClickListener{
+                    popupNotice.itemClickListener = object : PopupNotice.ItemClickListener {
                         override fun onOkClick() {
-                            val intent = Intent(mContext, SettingActivity::class.java)
-                            startActivity(intent)
+                            startActivity(Intent(mContext, SettingActivity::class.java))
                         }
                     }
                     popupNotice.show()
                     return
                 }
-                if (kdcReader != null && kdcReader!!.IsConnected()) {
-                    disconnectScanner()
+                if (ScannerManager.isConnected()) {
+                    ScannerManager.disconnect()
                 } else {
                     checkScanner()
                 }
             }
         })
+
+        checkScanner()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        disconnectScanner()
+        ScannerManager.clearCallback()
+        ScannerManager.disconnect()
         unregisterReceiver(barcodeReceiver)
     }
 
     override fun onPause() {
         super.onPause()
-        disconnectScanner()
+        ScannerManager.disconnect()
     }
 
     override fun onResume() {
@@ -171,19 +157,18 @@ class ReturnRegActivity : AppCompatActivity(), KDCConnectionListenerEx, KDCError
         mContext.registerReceiver(barcodeReceiver, filter, RECEIVER_EXPORTED)
     }
 
-    private fun checkScanner(){
+    private fun checkScanner() {
         val isScannerConnected = SharedData.getSharedData(mContext, "isScannerConnected", false)
         if (isScannerConnected) {
             val scanner = SharedData.getSharedData(mContext, SharedData.SCANNER_ADDR, "")
-            if (scanner.isNotEmpty()){
-                connectScanner(scanner)
+            if (scanner.isNotEmpty()) {
+                ScannerManager.connect(scanner)
             }
         }
     }
 
-    // 어댑터 세팅
     @SuppressLint("SetTextI18n")
-    private fun setAdapter(){
+    private fun setAdapter() {
         val list = if (db.returnList != emptyArray<SearchItemModel>()) {
             db.returnList as ArrayList<SearchItemModel>
         } else {
@@ -198,9 +183,7 @@ class ReturnRegActivity : AppCompatActivity(), KDCConnectionListenerEx, KDCError
                 totalMoney += stringWithoutComma.toLong()
             }
 
-            accountName = name.ifEmpty {
-                accountName
-            }
+            accountName = name.ifEmpty { accountName }
             totalAmount = totalMoney
 
             val formatTotalMoney = Utils.decimalLong(totalMoney)
@@ -222,7 +205,7 @@ class ReturnRegActivity : AppCompatActivity(), KDCConnectionListenerEx, KDCError
         returnAdapter?.customerCd = intent.getStringExtra("returnCustomerCd") ?: ""
     }
 
-    private fun returnItem(){
+    private fun returnItem() {
         val loading = PopupLoading(mContext)
         loading.show()
         val retrofit = ApiClientService.ApiClient.getLoginRetrofit()
@@ -239,9 +222,7 @@ class ReturnRegActivity : AppCompatActivity(), KDCConnectionListenerEx, KDCError
             addProperty("preSalesType", "N")
             addProperty("totalAmount", totalAmount)
         }
-
         json.add("salesInfo", jsonArray)
-        // Utils.log("final order json ====> ${Gson().toJson(json)}")
 
         val obj = json.toString()
         val body = obj.toRequestBody("application/json".toMediaTypeOrNull())
@@ -256,16 +237,11 @@ class ReturnRegActivity : AppCompatActivity(), KDCConnectionListenerEx, KDCError
                 if (response.isSuccessful) {
                     val item = response.body()
                     if (item?.returnCd == Define.RETURN_CD_00 || item?.returnCd == Define.RETURN_CD_90 || item?.returnCd == Define.RETURN_CD_91) {
-                        val data = returnAdapter?.dataList
                         val slipNo = item.data.slipNo
-                        // Utils.log("return success ====> ${Gson().toJson(item)}")
                         Utils.toast(mContext, "반품주문이 전송되었습니다.")
-
-                        // 주문이 전송되면 데이터 초기화
                         deleteData()
 
                         val intent = Intent(mContext, PrinterOptionActivity::class.java).apply {
-                            //putExtra("data", data)
                             putExtra("slipNo", slipNo)
                             putExtra("title", mContext.getString(R.string.titleReturn))
                         }
@@ -273,17 +249,14 @@ class ReturnRegActivity : AppCompatActivity(), KDCConnectionListenerEx, KDCError
                         finish()
                     }
                 } else {
-                    // Utils.log("${response.code()} ====> ${response.message()}")
                     Utils.popupNotice(mContext, "잠시 후 다시 시도해주세요")
                 }
             }
 
             override fun onFailure(call: Call<ResultModel<DataModel<Unit>>>, t: Throwable) {
                 loading.hideDialog()
-                // Utils.log("return failed ====> ${t.message}")
                 Utils.popupNotice(mContext, "잠시 후 다시 시도해주세요")
             }
-
         })
     }
 
@@ -305,12 +278,11 @@ class ReturnRegActivity : AppCompatActivity(), KDCConnectionListenerEx, KDCError
 
     override fun onStop() {
         super.onStop()
-        if (!returnAdapter?.dataList.isNullOrEmpty() && isSave){
+        if (!returnAdapter?.dataList.isNullOrEmpty() && isSave) {
             saveData()
         }
     }
 
-    // 뒤로가기 버튼
     val callback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             goBack()
@@ -318,7 +290,6 @@ class ReturnRegActivity : AppCompatActivity(), KDCConnectionListenerEx, KDCError
     }
 
     private fun goBack() {
-        // 주문 도중 나갈 경우
         if (!returnAdapter?.dataList.isNullOrEmpty()) {
             PopupNoticeV2(mContext, "기존 반품이 완료되지 않았습니다.\n전표를 저장하시겠습니까?",
                 object : Handler(Looper.getMainLooper()) {
@@ -343,91 +314,29 @@ class ReturnRegActivity : AppCompatActivity(), KDCConnectionListenerEx, KDCError
         }
     }
 
-    private fun connectScanner(address: String) {
-        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        val pairedDevices: Set<BluetoothDevice> = bluetoothAdapter.bondedDevices
-        var targetDevice: BluetoothDevice? = null
-
-        for (device in pairedDevices) {
-            if (device.address == address) {
-                targetDevice = device
-                break
-            }
-        }
-
-        if (targetDevice == null) {
-            return
-        }
-
-        val kdcDevice: KDCDevice<*> = KDCDevice(targetDevice)
-        connectToDevice(kdcDevice)
-    }
-
-    private fun connectToDevice(kdcDevice: KDCDevice<*>) {
-        if (kdcReader == null) {
-            kdcReader = KDCReader()
-            initKdcReader()
-        }
-        kdcReader?.ConnectEx(kdcDevice)
-    }
-
-    private fun initKdcReader() {
-        kdcReader = KDCReader()
-        kdcReader!!.SetContext(this)
-        kdcReader!!.SetKDCConnectionListenerEx(this)
-        kdcReader!!.SetKDCErrorListener(this)
-        kdcReader!!.SetBarcodeDataReceivedListener(this)
-    }
-
-    override fun ConnectionChangedEx(device: KDCDevice<*>, state: Int) {
+    override fun onConnected(deviceName: String) {
         runOnUiThread {
-            when (state) {
-                KDCConstants.CONNECTION_STATE_CONNECTED -> {
-                    mBinding.header.scanBtn.setColorFilter(getColor(R.color.black))
-                    val deviceName = device.GetDeviceName()
-                    var address = ""
-
-                    try {
-                        val btDevice = device.GetDevice() as BluetoothDevice
-                        address = btDevice.address
-                    } catch (e: Exception) {
-                        // Utils.log("주소 추출 실패")
-                    }
-
-                    Utils.toast(mContext, "${deviceName}와 연결되었습니다.")
-                    // Utils.log("연결 성공: $deviceName (${address})")
-                }
-
-                KDCConstants.CONNECTION_STATE_CONNECTING -> Utils.toast(mContext, "${device.GetDeviceName()}와 연결중..")
-
-                KDCConstants.CONNECTION_STATE_LOST -> {
-                    mBinding.header.scanBtn.setColorFilter(R.color.trans)
-                    Utils.toast(mContext, "${device.GetDeviceName()}와 연결이 종료되었습니다.")
-                }
-
-                KDCConstants.CONNECTION_STATE_FAILED -> {
-                    Utils.toast(mContext, "${device.GetDeviceName()}와 연결에 실패하였습니다.")
-                }
-            }
+            mBinding.header.scanBtn.setColorFilter(getColor(R.color.black))
+            Utils.toast(mContext, "${deviceName}와 연결되었습니다.")
         }
     }
 
-    override fun ErrorReceived(p0: KDCDevice<*>?, p1: Int) {
-        // Utils.log("KDC 연결 에러: $p1")
+    override fun onDisconnected(deviceName: String) {
+        runOnUiThread {
+            mBinding.header.scanBtn.setColorFilter(getColor(R.color.trans))
+            Utils.toast(mContext, "${deviceName}와 연결이 종료되었습니다.")
+        }
     }
 
-    override fun BarcodeDataReceived(p0: KDCData) {
-        val barcode: String = p0.GetData()
+    override fun onConnectionFailed(deviceName: String) {
+        runOnUiThread {
+            Utils.toast(mContext, "${deviceName}와 연결에 실패하였습니다.")
+        }
+    }
+
+    override fun onBarcodeScanned(barcode: String) {
         val intent = Intent("kr.co.kimberly.wma.ACTION_BARCODE_SCANNED")
         intent.putExtra("data", barcode)
-        mContext.sendBroadcast(intent)
-        // Utils.log("바코드 스캔 데이터: $barcode")
-    }
-
-    private fun disconnectScanner(){
-        if (kdcReader != null) {
-            kdcReader!!.Disconnect()
-            mBinding.header.scanBtn.setColorFilter(getColor(R.color.trans))
-        }
+        sendBroadcast(intent)
     }
 }

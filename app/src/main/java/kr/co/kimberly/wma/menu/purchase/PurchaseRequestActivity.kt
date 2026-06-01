@@ -2,8 +2,6 @@ package kr.co.kimberly.wma.menu.purchase
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -17,13 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import koamtac.kdc.sdk.KDCBarcodeDataReceivedListener
-import koamtac.kdc.sdk.KDCConnectionListenerEx
-import koamtac.kdc.sdk.KDCConstants
-import koamtac.kdc.sdk.KDCData
-import koamtac.kdc.sdk.KDCDevice
-import koamtac.kdc.sdk.KDCErrorListener
-import koamtac.kdc.sdk.KDCReader
+import kr.co.kimberly.wma.Manager.scanner.ScannerCallback
+import kr.co.kimberly.wma.Manager.scanner.ScannerManager
 import kr.co.kimberly.wma.R
 import kr.co.kimberly.wma.adapter.PurchaseRequestAdapter
 import kr.co.kimberly.wma.common.Define
@@ -49,8 +42,7 @@ import retrofit2.Call
 import retrofit2.Response
 
 @SuppressLint("MissingPermission", "SetTextI18n")
-class PurchaseRequestActivity: AppCompatActivity(), KDCConnectionListenerEx, KDCErrorListener,
-    KDCBarcodeDataReceivedListener {
+class PurchaseRequestActivity : AppCompatActivity(), ScannerCallback {
     private lateinit var mBinding: ActPurchaseRequestBinding
     private lateinit var mContext: Context
     private lateinit var mActivity: Activity
@@ -58,12 +50,11 @@ class PurchaseRequestActivity: AppCompatActivity(), KDCConnectionListenerEx, KDC
 
     private var totalAmount: Long = 0
     var purchaseAdapter: PurchaseRequestAdapter? = null
-    private var kdcReader: KDCReader? = null
 
-    private val db : DBHelper by lazy {
+    private val db: DBHelper by lazy {
         DBHelper.getInstance(applicationContext)
     }
-    private var isSave = true // 액티비티가 종료 될 때 이 값을 통해 저장 여부 선택
+    private var isSave = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,11 +69,10 @@ class PurchaseRequestActivity: AppCompatActivity(), KDCConnectionListenerEx, KDC
         mBinding.bottom.bottomButton.text = getString(R.string.menu08)
 
         setAdapter()
+        ScannerManager.initialize(this, this)
 
-        // 소프트키 뒤로가기
         this.onBackPressedDispatcher.addCallback(this, callback)
 
-        // 헤더 뒤로가기
         mBinding.header.backBtn.setOnClickListener(object: OnSingleClickListener() {
             override fun onSingleClick(v: View) {
                 goBack()
@@ -96,9 +86,7 @@ class PurchaseRequestActivity: AppCompatActivity(), KDCConnectionListenerEx, KDC
                     Utils.popupNotice(mContext, "제품이 등록되지 않았습니다.")
                 } else {
                     popupDoubleMessage.itemClickListener = object: PopupDoubleMessage.ItemClickListener {
-                        override fun onCancelClick() {
-                            // Utils.log("취소 클릭")
-                        }
+                        override fun onCancelClick() {}
 
                         override fun onOkClick() {
                             postOrderSlip()
@@ -112,36 +100,37 @@ class PurchaseRequestActivity: AppCompatActivity(), KDCConnectionListenerEx, KDC
         mBinding.header.scanBtn.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View) {
                 val isScannerConnected = SharedData.getSharedData(mContext, "isScannerConnected", false)
-                // 사용 여부 확인
                 if (!isScannerConnected) {
                     val popupNotice = PopupNotice(mContext, mContext.getString(R.string.msg_scan_connect_error))
-                    popupNotice.itemClickListener = object : PopupNotice.ItemClickListener{
+                    popupNotice.itemClickListener = object : PopupNotice.ItemClickListener {
                         override fun onOkClick() {
-                            val intent = Intent(mContext, SettingActivity::class.java)
-                            startActivity(intent)
+                            startActivity(Intent(mContext, SettingActivity::class.java))
                         }
                     }
                     popupNotice.show()
                     return
                 }
-                if (kdcReader != null && kdcReader!!.IsConnected()) {
-                    disconnectScanner()
+                if (ScannerManager.isConnected()) {
+                    ScannerManager.disconnect()
                 } else {
                     checkScanner()
                 }
             }
         })
+
+        checkScanner()
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         purchaseAdapter?.cleanup()
-        disconnectScanner()
+        ScannerManager.clearCallback()
+        ScannerManager.disconnect()
+        super.onDestroy()
     }
 
     override fun onPause() {
         super.onPause()
-        disconnectScanner()
+        ScannerManager.disconnect()
     }
 
     override fun onResume() {
@@ -151,32 +140,32 @@ class PurchaseRequestActivity: AppCompatActivity(), KDCConnectionListenerEx, KDC
         mContext.registerReceiver(purchaseAdapter?.barcodeReceiver, filter, RECEIVER_EXPORTED)
     }
 
-    private fun checkScanner(){
+    private fun checkScanner() {
         val isScannerConnected = SharedData.getSharedData(mContext, "isScannerConnected", false)
         if (isScannerConnected) {
             val scanner = SharedData.getSharedData(mContext, SharedData.SCANNER_ADDR, "")
-            if (scanner.isNotEmpty()){
-                connectScanner(scanner)
+            if (scanner.isNotEmpty()) {
+                ScannerManager.connect(scanner)
             }
         }
     }
 
-    // 어댑터 세팅
     @SuppressLint("SetTextI18n")
-    private fun setAdapter(){
-        val list = if (db.purchaseList != emptyArray<SearchItemModel>()) { db.purchaseList as ArrayList<SearchItemModel>} else {
-            arrayListOf()}
+    private fun setAdapter() {
+        val list = if (db.purchaseList != emptyArray<SearchItemModel>()) {
+            db.purchaseList as ArrayList<SearchItemModel>
+        } else {
+            arrayListOf()
+        }
         val data: SapModel = intent.getSerializableExtra("purchaseSapModel") as? SapModel ?: SapModel()
 
-        purchaseAdapter = PurchaseRequestAdapter(mContext, mActivity, list, data) { itemList, item ->
+        purchaseAdapter = PurchaseRequestAdapter(mContext, mActivity, list, data) { itemList, _ ->
             totalAmount = 0
             itemList.map {
                 val stringWithoutComma = it.amount.toString().replace(",", "")
                 totalAmount += stringWithoutComma.toLong()
             }
-
-            val formatTotalMoney = Utils.decimalLong(totalAmount)
-            mBinding.tvTotalAmount.text = "${formatTotalMoney}원"
+            mBinding.tvTotalAmount.text = "${Utils.decimalLong(totalAmount)}원"
         }
 
         mBinding.recyclerview.adapter = purchaseAdapter
@@ -210,13 +199,10 @@ class PurchaseRequestActivity: AppCompatActivity(), KDCConnectionListenerEx, KDC
 
         val json = JsonObject().apply {
             addProperty("agencyCd", agencyCd)
-            //test
-            //addProperty("agencyCd", "C000032")
             addProperty("userId", userId)
             addProperty("sapCustomerCd", sapCustomerCd)
             addProperty("arriveCd", arriveCd)
             addProperty("slipType", slipType)
-            addProperty("orderDate", orderDate)
             addProperty("orderDate", orderDate)
             addProperty("deliveryDate", deliveryDate)
             addProperty("totalAmount", totalAmount)
@@ -226,7 +212,6 @@ class PurchaseRequestActivity: AppCompatActivity(), KDCConnectionListenerEx, KDC
         val obj = json.toString()
         val body = obj.toRequestBody("application/json".toMediaTypeOrNull())
         val call = service.headOfficeOrderSlip(body)
-        // Utils.log("purchase request body ====> ${Gson().toJson(json)}")
 
         call.enqueue(object : retrofit2.Callback<ResultModel<DataModel<Unit>>> {
             override fun onResponse(
@@ -237,37 +222,27 @@ class PurchaseRequestActivity: AppCompatActivity(), KDCConnectionListenerEx, KDC
                 if (response.isSuccessful) {
                     val item = response.body()
                     if (item?.returnCd == Define.RETURN_CD_00) {
-                        // Utils.log("purchase success")
-                        // Utils.log("item ====> ${item.data}")
-                        // Utils.log("order success ====> ${Gson().toJson(item)}")
                         Utils.toast(mContext, "주문이 전송되었습니다.")
-
-                        // 주문이 전송되면 데이터 초기화
                         deleteData()
                         val intent = Intent(mContext, PurchaseApprovalActivity::class.java).apply {
                             putExtra("slipNo", item.data.slipNo)
                             putExtra("sapModel", sapModel)
                             putExtra("purchaseList", purchaseAdapter?.itemList)
                         }
-
                         startActivity(intent)
                         finish()
                     } else {
                         Utils.popupNotice(mContext, item?.returnMsg!!)
                     }
                 } else {
-
-                    // Utils.log("${response.code()} ====> ${response.message()}")
                     Utils.popupNotice(mContext, "잠시 후 다시 시도해주세요")
                 }
             }
 
             override fun onFailure(call: Call<ResultModel<DataModel<Unit>>>, t: Throwable) {
                 loading.hideDialog()
-                // Utils.log("purchase failed ====> ${t.message}")
                 Utils.popupNotice(mContext, "잠시 후 다시 시도해주세요")
             }
-
         })
     }
 
@@ -292,7 +267,6 @@ class PurchaseRequestActivity: AppCompatActivity(), KDCConnectionListenerEx, KDC
         }
     }
 
-    // 뒤로가기 버튼
     val callback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             goBack()
@@ -300,7 +274,6 @@ class PurchaseRequestActivity: AppCompatActivity(), KDCConnectionListenerEx, KDC
     }
 
     private fun goBack() {
-        // 주문 도중 나갈 경우
         if (!purchaseAdapter?.itemList.isNullOrEmpty()) {
             PopupNoticeV2(mContext, "기존 주문이 완료되지 않았습니다.\n전표를 저장하시겠습니까?",
                 object : Handler(Looper.getMainLooper()) {
@@ -325,91 +298,29 @@ class PurchaseRequestActivity: AppCompatActivity(), KDCConnectionListenerEx, KDC
         }
     }
 
-    private fun connectScanner(address: String) {
-        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        val pairedDevices: Set<BluetoothDevice> = bluetoothAdapter.bondedDevices
-        var targetDevice: BluetoothDevice? = null
-
-        for (device in pairedDevices) {
-            if (device.address == address) {
-                targetDevice = device
-                break
-            }
-        }
-
-        if (targetDevice == null) {
-            return
-        }
-
-        val kdcDevice: KDCDevice<*> = KDCDevice(targetDevice)
-        connectToDevice(kdcDevice)
-    }
-
-    private fun connectToDevice(kdcDevice: KDCDevice<*>) {
-        if (kdcReader == null) {
-            kdcReader = KDCReader()
-            initKdcReader()
-        }
-        kdcReader?.ConnectEx(kdcDevice)
-    }
-
-    private fun initKdcReader() {
-        kdcReader = KDCReader()
-        kdcReader!!.SetContext(this)
-        kdcReader!!.SetKDCConnectionListenerEx(this)
-        kdcReader!!.SetKDCErrorListener(this)
-        kdcReader!!.SetBarcodeDataReceivedListener(this)
-    }
-
-    override fun ConnectionChangedEx(device: KDCDevice<*>, state: Int) {
+    override fun onConnected(deviceName: String) {
         runOnUiThread {
-            when (state) {
-                KDCConstants.CONNECTION_STATE_CONNECTED -> {
-                    mBinding.header.scanBtn.setColorFilter(getColor(R.color.black))
-                    val deviceName = device.GetDeviceName()
-                    var address = ""
-
-                    try {
-                        val btDevice = device.GetDevice() as BluetoothDevice
-                        address = btDevice.address
-                    } catch (e: Exception) {
-                        // Utils.log("주소 추출 실패")
-                    }
-
-                    Utils.toast(mContext, "${deviceName}와 연결되었습니다.")
-                    // Utils.log("연결 성공: $deviceName (${address})")
-                }
-
-                KDCConstants.CONNECTION_STATE_CONNECTING -> Utils.toast(mContext, "${device.GetDeviceName()}와 연결중..")
-
-                KDCConstants.CONNECTION_STATE_LOST -> {
-                    mBinding.header.scanBtn.setColorFilter(R.color.trans)
-                    Utils.toast(mContext, "${device.GetDeviceName()}와 연결이 종료되었습니다.")
-                }
-
-                KDCConstants.CONNECTION_STATE_FAILED -> {
-                    Utils.toast(mContext, "${device.GetDeviceName()}와 연결에 실패하였습니다.")
-                }
-            }
+            mBinding.header.scanBtn.setColorFilter(getColor(R.color.black))
+            Utils.toast(mContext, "${deviceName}와 연결되었습니다.")
         }
     }
 
-    override fun ErrorReceived(p0: KDCDevice<*>?, p1: Int) {
-        // Utils.log("KDC 연결 에러: $p1")
+    override fun onDisconnected(deviceName: String) {
+        runOnUiThread {
+            mBinding.header.scanBtn.setColorFilter(getColor(R.color.trans))
+            Utils.toast(mContext, "${deviceName}와 연결이 종료되었습니다.")
+        }
     }
 
-    override fun BarcodeDataReceived(p0: KDCData) {
-        val barcode: String = p0.GetData()
+    override fun onConnectionFailed(deviceName: String) {
+        runOnUiThread {
+            Utils.toast(mContext, "${deviceName}와 연결에 실패하였습니다.")
+        }
+    }
+
+    override fun onBarcodeScanned(barcode: String) {
         val intent = Intent("kr.co.kimberly.wma.ACTION_BARCODE_SCANNED")
         intent.putExtra("data", barcode)
-        mContext.sendBroadcast(intent)
-        // Utils.log("바코드 스캔 데이터: $barcode")
-    }
-
-    private fun disconnectScanner(){
-        if (kdcReader != null) {
-            kdcReader!!.Disconnect()
-            mBinding.header.scanBtn.setColorFilter(getColor(R.color.trans))
-        }
+        sendBroadcast(intent)
     }
 }

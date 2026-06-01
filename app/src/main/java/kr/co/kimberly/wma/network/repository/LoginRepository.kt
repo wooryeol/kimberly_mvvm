@@ -2,6 +2,7 @@ package kr.co.kimberly.wma.network.repository
 
 import com.google.gson.Gson
 import kr.co.kimberly.wma.common.Define
+import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.login.LoginRequest
 import kr.co.kimberly.wma.network.model.login.LoginResponseModel
@@ -31,7 +32,19 @@ class LoginRepository {
                 if (response.isSuccessful) {
                     val result = response.body()
                     when (result?.returnCd) {
-                        Define.RETURN_CD_00 -> onResult(Result.success(result.data))
+                        Define.RETURN_CD_00 -> {
+                            if (Define.IS_TEST) {
+                                onResult(Result.success(LoginResponseModel()))
+                                return
+                            }
+                            val data = result.data
+
+                            if (data != null) {
+                                onResult(Result.success(data))
+                            } else {
+                                onResult(Result.failure(Exception("로그인에 실패했습니다")))
+                            }
+                        }
                         "01" -> onResult(Result.failure(Exception("아이디, 비밀번호, 대리점코드 또는 전화번호를 다시 확인해주세요")))
                         else -> onResult(Result.failure(Exception(result?.returnMsg ?: "로그인에 실패했습니다")))
                     }

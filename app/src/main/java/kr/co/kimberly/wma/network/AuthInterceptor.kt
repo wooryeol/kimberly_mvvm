@@ -1,6 +1,6 @@
 package kr.co.kimberly.wma.network
 
-import kr.co.kimberly.wma.common.TokenManager
+import kr.co.kimberly.wma.Manager.TokenManager
 import okhttp3.Interceptor
 import okhttp3.Response
 

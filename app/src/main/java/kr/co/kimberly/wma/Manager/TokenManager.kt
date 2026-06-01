@@ -1,4 +1,4 @@
-package kr.co.kimberly.wma.common
+package kr.co.kimberly.wma.Manager
 
 import android.content.Context
 import android.content.SharedPreferences
