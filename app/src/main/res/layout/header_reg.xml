@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_F6F9FE"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:orientation="horizontal"
+        tools:ignore="UselessParent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/color_7E828B"
+            android:textStyle="normal"
+            android:text="@string/account"
+            android:textSize="15dp"/>
+
+        <RelativeLayout
+            android:id="@+id/accountArea"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_gravity="center_vertical">
+            <TextView
+                android:id="@+id/accountName"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textSize="14dp"
+                android:background="@drawable/et_round_c9cbd0"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="12dp"
+                android:hint="@string/accountHint"
+                android:textColor="@color/color_1A1A1A"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:singleLine="true"
+                tools:ignore="Autofill,SpUsage,TextFields" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="16dp"
+        android:orientation="horizontal"
+        tools:ignore="UselessParent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/color_7E828B"
+            android:textStyle="normal"
+            android:text="@string/productName"
+            android:textSize="15dp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/et_round_c9cbd0"
+            android:layout_gravity="center_vertical">
+
+            <AutoCompleteTextView
+                android:id="@+id/etProductName"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="40dp"
+                android:textSize="14dp"
+                android:background="@color/trans"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="12dp"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
+                android:inputType="text"
+                android:hint="@string/productNameHint"
+                tools:ignore="Autofill,NestedWeights,SpUsage,TextFields" />
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/tvProductName"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:textSize="14dp"
+                android:background="@color/trans"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="12dp"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:singleLine="true"
+                android:textColor="@color/color_1A1A1A"
+                tools:ignore="SpUsage" />
+
+            <ImageButton
+                android:visibility="gone"
+                android:id="@+id/btProductNameEmpty"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@color/trans"
+                android:src="@drawable/ic_empty" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btSearch"
+            android:layout_width="56dp"
+            android:layout_height="40dp"
+            android:text="@string/search"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="14dp"
+            android:background="@drawable/bt_round_103c7e"
+            style="?android:attr/borderlessButtonStyle"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:background="@color/color_DBDCDF"/>
+
+    <TextView
+        android:id="@+id/searchResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/black"
+        android:textStyle="normal"
+        android:text="@string/searchResult"
+        android:textSize="14dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="16dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/box"
+            android:textSize="14dp"
+            android:textColor="@color/color_7E828B"
+            android:layout_marginEnd="15dp"
+            tools:ignore="SpUsage" />
+
+        <kr.co.kimberly.wma.custom.IntCommaBox
+            android:id="@+id/etBox"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="10dp"
+            android:textSize="14dp"
+            android:text="0"
+            android:gravity="end"
+            android:background="@drawable/et_round_c9cbd0"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="12dp"
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            tools:ignore="Autofill,SpUsage,TextFields" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/each"
+            android:textSize="14dp"
+            android:textColor="@color/color_7E828B"
+            android:layout_marginEnd="15dp"
+            tools:ignore="SpUsage" />
+
+        <kr.co.kimberly.wma.custom.IntCommaUnit
+            android:id="@+id/etEach"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:textSize="14dp"
+            android:text="0"
+            android:gravity="end"
+            android:background="@drawable/et_round_c9cbd0"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="12dp"
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            tools:ignore="Autofill,SpUsage,TextFields" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginHorizontal="16dp"
+        android:orientation="horizontal"
+        tools:ignore="UselessParent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/unitPrice"
+            android:textSize="14dp"
+            android:textColor="@color/color_7E828B"
+            android:layout_marginEnd="16dp"
+            tools:ignore="SpUsage" />
+
+        <kr.co.kimberly.wma.custom.IntCommaAmount
+            android:id="@+id/etPrice"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/et_round_c9cbd0"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="10dp"
+            android:text="0"
+            android:textSize="14dp"
+            android:gravity="end"
+            tools:ignore="Autofill,SpUsage,TextFields" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btAddOrder"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/addOrder"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="14dp"
+        android:background="@drawable/bt_round_103c7e"
+        style="?android:attr/borderlessButtonStyle"/>
+
+</LinearLayout>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/ll_round_white"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_1A1A1A"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:text="@string/requestBluetooth"
+            tools:ignore="SpUsage" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/deviceName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_1A1A1A"
+                android:textStyle="bold"
+                android:textSize="13dp"
+                android:layout_marginTop="12dp"
+                tools:ignore="SpUsage" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_1A1A1A"
+                android:textSize="13dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/register"
+                tools:ignore="SpUsage" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_4C4F54"
+                android:textSize="13dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/pin"
+                tools:ignore="SpUsage" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textSize="14dp"
+                android:background="@drawable/et_round_c9cbd0"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="12dp"
+                android:layout_marginTop="8dp"
+                android:imeOptions="actionDone"
+                android:inputType="textPassword"
+                tools:ignore="Autofill,LabelFor,SpUsage,TextFields" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_7E828B"
+                android:textSize="12dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/pinHint"
+                tools:ignore="SpUsage" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="16dp">
+
+                <CheckBox
+                    android:id="@+id/checkBoxPin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/CustomCheckBox"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_1A1A1A"
+                    android:textSize="14dp"
+                    android:text="@string/pinCheckBox"
+                    tools:ignore="SpUsage" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_7E828B"
+                android:textSize="12dp"
+                android:layout_marginVertical="8dp"
+                android:text="@string/pinAdvice"
+                tools:ignore="SpUsage" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancelBtn"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="@string/cancel"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:textColor="@color/color_4C4F54"
+                android:background="@drawable/bt_round_b1b4bb"
+                android:layout_marginEnd="5dp"
+                tools:ignore="ButtonStyle,SpUsage" />
+
+            <Button
+                android:id="@+id/confirmBtn"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="@string/confirm"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bt_round_1d6de5"
+                android:layout_marginStart="5dp"
+                tools:ignore="ButtonStyle,SpUsage" />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

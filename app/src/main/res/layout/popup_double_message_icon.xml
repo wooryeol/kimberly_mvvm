@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:paddingHorizontal="16dp"
+        android:background="@drawable/ll_round_white"
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="40dp"
+            android:layout_gravity="center"
+            android:src="@drawable/check_circle"/>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:text="제품 삭제"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:textColor="@color/color_1A1A1A"
+            tools:ignore="SpUsage" />
+
+        <TextView
+            android:id="@+id/tvMsg01"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"
+            android:lineSpacingExtra="2dp"
+            android:scrollbars="vertical"
+            android:text="거래처 : (000018) 신림마트 [0원]\n총금액: 9,999,999원"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="14dp"/>
+
+        <TextView
+            android:id="@+id/tvMsg02"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="위와 같이 승인을 요청합니다.\n주문전표 전송을 하시겠습니까?"
+            android:textSize="14dp"
+            android:gravity="center"
+            tools:ignore="HardcodedText,SpUsage" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/cancel"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="5dp"
+                android:text="@string/no"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:textColor="@color/color_4C4F54"
+                android:background="@drawable/bt_round_b1b4bb"
+                tools:ignore="SpUsage" />
+
+            <Button
+                android:id="@+id/ok"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginStart="5dp"
+                android:text="@string/yes"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bt_round_1d6de5"
+                tools:ignore="SpUsage" />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

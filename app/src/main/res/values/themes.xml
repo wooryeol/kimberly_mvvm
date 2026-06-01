@@ -1,0 +1,42 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Kimberly_mvvm" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.Kimberly_mvvm" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <!-- 배경색 변경 -->
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
+    </style>
+
+    <style name="CustomRadioButton" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/color_1D6DE5</item>
+    </style>
+
+    <style name="CustomCheckBox" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/color_103C7E</item>
+    </style>
+
+    <!--달력 색 변경-->
+    <style name="MyDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
+        <!-- 원하는 색 설정 -->
+        <item name="android:colorAccent">@color/color_103C7E</item>
+
+        <!-- No need to override 'datePickerStyle' -->
+        <!-- <item name="android:datePickerStyle">@style/MyDatePickerStyle</item> -->
+    </style>
+
+    <style name="CustomDatepicker">
+        <item name="android:textSize" tools:ignore="SpUsage">20dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/color_1A1A1A</item>
+
+    </style>
+
+</resources>

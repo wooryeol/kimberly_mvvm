@@ -1,0 +1,228 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">WMA_Mobile</string>
+
+    <!--환경설정-->
+    <string name="settingTitle01">대리점</string>
+    <string name="settingTitleHint01">대리점코드를 입력해주세요.</string>
+    <string name="settingTitle06">휴대폰</string>
+    <string name="settingTitleHint03">휴대폰 번호를 입력해주세요.</string>
+    <string name="settingTitle02">장비선택</string>
+    <string name="settingScanner">스캐너</string>
+    <string name="settingPrint">프린터</string>
+    <string name="settingIsUsed">사용여부</string>
+    <string name="settingTitle03">이름</string>
+    <string name="settingTitle04">주소</string>
+    <string name="settingTitle05">프린터</string>
+    <string name="settingTitleHint02">페어링된 장치에서 선택하세요.</string>
+    <string name="searchDevices">Search Devices</string>
+    <string name="bluetoothDevices">Bluetooth Devices</string>
+    <string name="printDevices">Print Devices</string>
+    <string name="pairing">pairing</string>
+    <string name="requestBluetooth">블루투스 등록 요청</string>
+    <string name="register">을(를) 등록하려면</string>
+    <string name="pin">해당 디바이스의 PIN을 입력하세요:</string>
+    <string name="pinHint">(0000 또는 1234를 입력해보세요)</string>
+    <string name="pinCheckBox">문자 또는 기호가 포함된 PIN</string>
+    <string name="pinAdvice">다른 디바이스에도 PIN을 입력하세요</string>
+    <string name="notUseChk">사용여부를 체크해 주세요.</string>
+    <string name="notAccountCodeEmpty">대리점코드를 입력해 주세요.</string>
+    <string name="bluetoothSwOn">블루투스를 켜야 사용 가능합니다.</string>
+
+    <!-- 공통 -->
+    <string name="copyright">Copyrightⓒ유한킴벌리 Corp. All Rights Reserved.</string>
+    <string name="account">거래처</string>
+    <string name="accountHint">거래처를 검색해주세요</string>
+    <string name="search">검색</string>
+    <string name="yes">예</string>
+    <string name="no">아니요</string>
+    <string name="notification">[공지사항]</string>
+    <string name="printerOption">인쇄방식</string>
+    <string name="printerMenuOption">메뉴별</string>
+    <string name="printerIntegratedOption">통합</string>
+    <string name="confirmSetting">설정</string>
+    <string name="dateErr">날짜를 확인해주세요</string>
+    <string name="etSearchEmpty">검색어를 입력해 주세요.</string>
+
+    <!-- Login -->
+    <string name="msg01">더 나은 생활을 향한 믿음!</string>
+    <string name="setting">환경설정</string>
+    <string name="etId">아이디</string>
+    <string name="etPw">비밀번호</string>
+    <string name="chkId">아이디 저장</string>
+    <string name="loginBtn">로그인</string>
+    <string name="wma">WMA</string>
+    <string name="mobileVer">Mobile 1.0</string>
+    <string name="appVer">ver 1.1.2</string>
+    <string name="confirm">확인</string>
+    <string name="cancel">취소</string>
+
+    <!-- Main -->
+    <string name="exit">실행종료</string>
+    <string name="notice">공지사항</string>
+    <string name="menu01">주문등록</string>
+    <string name="menu02">수금관리</string>
+    <string name="menu03">반품등록</string>
+    <string name="menu04">전표조회</string>
+    <string name="menu05">원장조회</string>
+    <string name="menu06">재고조회</string>
+    <string name="menu07">매대관리</string>
+    <string name="menu08">구매요청</string>
+    <string name="menu09">기준정보</string>
+
+    <!-- 주문등록 -->
+    <string name="productName">제품명</string>
+    <string name="productNameHint">제품명을 검색해 주세요</string>
+    <string name="searchResult">검색된 제품명</string>
+    <string name="zero">0</string>
+    <string name="box">BOX</string>
+    <string name="each">낱개</string>
+    <string name="unitPrice">단가</string>
+    <string name="addOrder">제품추가</string>
+    <string name="editOrder">제품수정</string>
+    <string name="productPriceHistory">제품단가이력</string>
+    <string name="orderRegSendingSuccess">주문전표가 저장되었습니다.</string>
+
+    <!-- 수금관리 -->
+    <string name="collectRegi">수금등록</string>
+    <string name="searchDate">조회일자</string>
+    <string name="searchDateHint">날짜를 선택해주세요.</string>
+    <string name="searchNothing">조회 결과가 없습니다.</string>
+    <string name="uncollected">미수금</string>
+    <string name="collectedDate">최종수금일</string>
+    <string name="totalAmount">최종수금액</string>
+    <string name="cash">현금</string>
+    <string name="note">어음</string>
+    <string name="both">현금+어음</string>
+    <string name="cashAmount">현금결제금액</string>
+    <string name="type">어음종류</string>
+    <string name="noteHint">결제방법을 선택해주세요.</string>
+    <string name="promissory">약속(일반)어음</string>
+    <string name="listed">약속(상장)어음</string>
+    <string name="householdCheck">가계수표</string>
+    <string name="currentCheck">당좌수표</string>
+    <string name="noteAmount">어음결제금액</string>
+    <string name="noteNumber">어음번호</string>
+    <string name="publishBy">발급기관</string>
+    <string name="publishDate">발행일</string>
+    <string name="expireDate">만기일</string>
+    <string name="accountSending">주문전송 : </string>
+    <string name="paymentType">결제방법 : </string>
+    <string name="payAmount">결제금액 : </string>
+    <string name="sendingComment">위와 같이 수금 등록을 하시겠습니까?</string>
+    <string name="sendingSuccess">수금전표가 저장되었습니다.</string>
+    <string name="SuccessComment">명세서 출력을 원하시면 프린터 전원을 켜신 후\n인쇄 버튼을 누르세요.</string>
+    <string name="printQuantity">인쇄수량</string>
+    <string name="print">인쇄</string>
+    <string name="receiptPrint">거래명세서 출력</string>
+    <string name="printDone">인쇄가 완료되었습니다.</string>
+    <string name="doneComment">메인 메뉴로 이동을 원하시면 \'예\'를,\n재발행을 원하시면 \'아니요\'를 누르세요.</string>
+    <string name="remark">비고</string>
+    <string name="collectHint">필수입력란입니다.</string>
+
+    <!-- 반품등록 -->
+    <string name="radioOption01">주문전표</string>
+    <string name="radioOption02">반품전표</string>
+    <string name="slipNumber">전표번호 :&#160;</string>
+    <string name="slipAccount">거래처 :&#160;</string>
+    <string name="modify">수정</string>
+    <string name="delete">삭제</string>
+    <string name="returnRegSendingSuccess">반품전표가 저장되었습니다.</string>
+
+    <!-- 전표조회 -->
+    <string name="slipPrint">인쇄하기</string>
+    <string name="slipModify">전표수정</string>
+    <string name="productModify">제품수정</string>
+
+    <!-- 재고조회 -->
+    <string name="branchHouse">대리점창고</string>
+    <string name="branchHouseHint">대리점 창고를 선택해주세요.</string>
+    <string name="error">조회내역이 없습니다.</string>
+    <string name="box02">BOX: </string>
+    <string name="each02">낱개: </string>
+    <string name="total">총: </string>
+
+    <!-- 원장조회 -->
+    <string name="month">조회월</string>
+    <string name="monthHint">조회하실 월을 선택해주세요</string>
+    <string name="date">날 짜</string>
+    <string name="sale">매 출 액</string>
+    <string name="collect">수 금 액</string>
+    <string name="lastMonth">전월미수</string>
+    <string name="saleSum">매출합계</string>
+    <string name="performance">수금실적</string>
+    <string name="balance">채권잔액</string>
+    <string name="won">원</string>
+
+    <!-- 기준정보 -->
+    <string name="accountInfo">거래처정보</string>
+    <string name="productInfo">제품정보</string>
+    <string name="accountCode">거래처코드 :</string>
+    <string name="accountName">거래처명 :</string>
+    <string name="represent">대표자명 :</string>
+    <string name="businessNum">사업자번호 :</string>
+    <string name="phone">전화번호 :</string>
+    <string name="fax">팩스번호 :</string>
+    <string name="address">주소 :</string>
+    <string name="customer">청구거래처 :</string>
+    <string name="scale">매장규모 :</string>
+    <string name="inCharge">담당자</string>
+    <string name="inChargeNum">담당연락처 :</string>
+    <string name="manufacturer">제조사 :</string>
+    <string name="productCode">제품코드 :</string>
+    <string name="productName02">상품명 :</string>
+    <string name="barcode">상품바코드 :</string>
+    <string name="incomeQty">입수량 :</string>
+    <string name="Dimension">Dimension :</string>
+    <string name="tax">과세구분</string>
+    <string name="dataHint">데이터가 없습니다.</string>
+    <string name="productHint">제품을 검색해 주세요.</string>
+
+    <!-- 매대관리 -->
+    <string name="storeManaTitle">제목</string>
+    <string name="storeManaTitleHint">제목을 입력해주세요.</string>
+    <string name="storeManaConstructor">생성자</string>
+    <string name="storeManaConstructorHint">생성자를 입력해주세요.</string>
+    <string name="addImage">사진등록</string>
+    <string name="before">변경전</string>
+    <string name="after">변경후</string>
+    <string name="msgHint">내용을 입력해주세요.</string>
+    <string name="popupAddImageTitle">사진등록</string>
+    <string name="popupAddImage">사진 등록 방법을 선택해주세요.</string>
+    <string name="bpPost">BP등록</string>
+    <string name="camera">사진촬영</string>
+    <string name="gallery">앨범에서 선택</string>
+    <string name="storeManagementSend">매대관리전송</string>
+    <string name="storeManagementSendMsg">매대관리 정보를 전송하시겠습니까?</string>
+    <string name="successMsg">[정상등록]</string>
+    <string name="successMsg02">매대관리 자료가 정상등록 되었습니다.</string>
+    <string name="successMsg03">WMA 4.0에서 확인바랍니다.\n확인을 누르시면 메인메뉴로 이동합니다.</string>
+
+    <!-- 구매요청 -->
+    <string name="sapCode">SAPCODE</string>
+    <string name="PurchaseApproval">구매승인</string>
+    <string name="purchaseAccountHint">SAP Code를 검색해주세요.</string>
+    <string name="purchaseAddress">배송처</string>
+    <string name="NoAddress">배송처 정보가 없습니다.</string>
+    <string name="purchaseAddressHint">배송처를 선택해주세요.</string>
+    <string name="purchasePostMsg01">위와 같이 구매를 요청하였습니다.</string>
+    <string name="purchasePostMsg03">구매요청 전송을 하시겠습니까?</string>
+    <string name="purchaseSlip">구매전표 :</string>
+    <string name="distributorCode">대리점코드 :</string>
+    <string name="msg_same_product">동일한 제품이 주문 리스트에 있습니다.</string>
+
+    <!-- 프린트 -->
+    <string name="titleReturn">반품승인</string>
+    <string name="titleOrder">주문승인</string>
+    <string name="titleCollect">수금승인</string>
+    <string name="payMethod">결제방법</string>
+
+    <!-- 스캐너 -->
+    <string name="msg_scan_error">바코드를 다시 스캔해 주세요.</string>
+    <string name="msg_scan_connect_error">환경설정에서 스캐너 사용 여부를 확인해 주세요.</string>
+    <string name="msg_print_connect_error">환경설정에서 프린터 사용 여부를 확인해 주세요.</string>
+
+    <!-- 메제시 -->
+    <string name="msg_permission">권한을 허용해주세요.</string>
+    <string name="msg_permission_sub">[설정] > [앱 및 알림] > [고급] > [앱 권한]</string>
+    <string name="msg_finish">모바일 유한킴벌리를\n종료하시겠습니까?</string>
+</resources>

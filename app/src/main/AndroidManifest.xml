@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" android:maxSdkVersion="29"/>
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS"/>
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"
+        tools:ignore="ScopedStorage" />
+<!--    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />-->
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true"/>
+
+    <!-- 스캐너 퍼미션 -->
+    <!--<permission
+        android:name="device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER"
+        android:protectionLevel="normal" />-->
+    <uses-permission android:name="device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+
+    <!-- 블루투스 -->
+    <uses-permission android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"
+        android:maxSdkVersion="30"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:minSdkVersion="30"/>
+
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="s" />
+
+    <application
+        android:name=".GlobalApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:theme="@style/Theme.Kimberly_mvvm"
+        android:usesCleartextTraffic="true"
+        android:hardwareAccelerated="false"
+        android:requestLegacyExternalStorage="true"
+        android:largeHeap="true"
+        android:debuggable="false"
+        tools:ignore="DataExtractionRules,HardcodedDebugMode"
+        tools:targetApi="31">
+
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
+        <activity
+            android:name=".menu.splash.SplashActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 로그인 화면 -->
+        <activity
+            android:name=".menu.login.LoginActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity" />
+
+        <!-- 메인 화면 -->
+        <activity
+            android:name=".menu.main.MainActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity">
+        </activity>
+
+        <!-- 환경 설정 -->
+        <activity
+            android:name=".menu.setting.SettingActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <!-- 주문등록 -->
+        <activity
+            android:name=".menu.order.OrderRegActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <!-- 반품등록 -->
+        <activity
+            android:name=".menu.return.ReturnRegActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <!-- 전표조회 -->
+        <activity
+            android:name=".menu.slip.SlipInquiryActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <!-- 전표조회 상세 화면 -->
+        <activity
+            android:name=".menu.slip.SlipInquiryDetailActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <!-- 전표조회 수정 -->
+        <activity
+            android:name=".menu.slip.SlipInquiryModifyActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <!-- 전표 조회 -->
+        <activity
+            android:name=".menu.ledger.LedgerActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <!-- 재고 조회 -->
+        <activity
+            android:name=".menu.inventory.InventoryActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <!-- 기준 정보 -->
+        <activity
+            android:name=".menu.information.InformationActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <!-- 수금 관리(승인) -->
+        <activity
+            android:name=".menu.collect.CollectApprovalActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <!-- 수금 관리 -->
+        <activity
+            android:name=".menu.collect.CollectManageActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <!-- 수금 관리(등록) -->
+        <activity
+            android:name=".menu.collect.CollectRegiActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <!-- 인쇄(옵션 선택) 화면 -->
+        <activity
+            android:name=".menu.printer.PrinterOptionActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"/>
+
+        <!-- 매대관리 -->
+        <activity
+            android:name=".menu.store.StoreManagementActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <!-- 이미지 전체 화면-->
+        <activity
+            android:name=".menu.store.ImgFullActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <!-- 구매요청 -->
+        <activity
+            android:name=".menu.purchase.PurchaseRequestActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <!-- 구매승인 -->
+        <activity
+            android:name=".menu.purchase.PurchaseApprovalActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="kr.co.kimberly.wma.fileprovider"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+</manifest>

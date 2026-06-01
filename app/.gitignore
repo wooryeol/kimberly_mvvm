@@ -1,0 +1,10 @@
+# APK / AAB
+*.apk
+*.aab
+
+# Gradle build
+/build
+**/build/
+
+# Android build output metadata
+output-metadata.json

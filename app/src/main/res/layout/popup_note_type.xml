@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ll_round_white"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginStart="16dp"
+                android:lineSpacingExtra="2dp"
+                android:scrollbars="vertical"
+                android:text="@string/payMethod"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="18dp"/>
+
+            <ImageButton
+                android:id="@+id/btnClose"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:paddingHorizontal="16dp"
+                android:background="@color/trans"
+                android:src="@drawable/btn_close" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_C9CBD0"/>
+
+        <TextView
+            android:id="@+id/promissory"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:text="@string/promissory"
+            android:textColor="@color/color_1A1A1A"
+            android:clickable="true"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:id="@+id/divideLine01"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_DBDCDF"
+            android:layout_marginHorizontal="2dp"
+            android:orientation="horizontal" />
+
+        <TextView
+            android:id="@+id/listed"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:text="@string/listed"
+            android:textColor="@color/color_1A1A1A"
+            android:clickable="true"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:id="@+id/divideLine02"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_DBDCDF"
+            android:layout_marginHorizontal="2dp"
+            android:orientation="horizontal" />
+
+        <TextView
+            android:id="@+id/householdCheck"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:text="@string/householdCheck"
+            android:textColor="@color/color_1A1A1A"
+            android:clickable="true"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:id="@+id/divideLine03"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_DBDCDF"
+            android:layout_marginHorizontal="2dp"
+            android:orientation="horizontal" />
+
+        <TextView
+            android:id="@+id/currentCheck"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:text="@string/currentCheck"
+            android:textColor="@color/color_1A1A1A"
+            android:clickable="true"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+</LinearLayout>

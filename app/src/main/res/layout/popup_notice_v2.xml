@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:paddingHorizontal="16dp"
+        android:background="@drawable/ll_round_white"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_popup_notice"/>
+
+        <TextView
+            android:id="@+id/tvMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="32dp"
+            android:layout_weight="1"
+            android:lineSpacingExtra="2dp"
+            android:scrollbars="vertical"
+            android:textColor="@color/black"
+            android:textSize="14dp"
+            tools:ignore="SpUsage" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/cancel"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="@string/no"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:textColor="@color/color_4C4F54"
+                android:background="@drawable/bt_round_b1b4bb"
+                tools:ignore="SpUsage" />
+
+            <Button
+                android:id="@+id/ok"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:text="@string/yes"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bt_round_1d6de5"
+                tools:ignore="SpUsage" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

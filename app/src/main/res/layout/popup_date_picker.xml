@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ll_round_white"
+        android:padding="16dp"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2024년 02월 16일 금요일"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:textColor="@color/color_1A1A1A"
+            android:gravity="center"
+            android:layout_marginVertical="16dp"
+            tools:ignore="SpUsage" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginEnd="10dp"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/btnAddYear"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/trans"
+                    android:paddingVertical="10dp"
+                    android:src="@drawable/add"/>
+
+                <EditText
+                    android:id="@+id/year"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/et_round_c9cbd0"
+                    android:inputType="number"
+                    android:gravity="center"
+                    android:imeOptions="actionNext"
+                    android:theme="@style/CustomDatepicker"/>
+
+                <ImageButton
+                    android:id="@+id/btnMinusYear"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/trans"
+                    android:paddingVertical="10dp"
+                    android:src="@drawable/remove"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginHorizontal="10dp"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/btnAddMonth"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/trans"
+                    android:paddingVertical="10dp"
+                    android:src="@drawable/add"/>
+
+                <EditText
+                    android:id="@+id/month"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/et_round_c9cbd0"
+                    android:inputType="number"
+                    android:gravity="center"
+                    android:imeOptions="actionNext"
+                    android:theme="@style/CustomDatepicker"/>
+
+                <ImageButton
+                    android:id="@+id/btnMinusMonth"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/trans"
+                    android:paddingVertical="10dp"
+                    android:src="@drawable/remove"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginStart="10dp"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/btnAddDate"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/trans"
+                    android:paddingVertical="10dp"
+                    android:src="@drawable/add"/>
+
+                <EditText
+                    android:id="@+id/date"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/et_round_c9cbd0"
+                    android:inputType="date"
+                    android:gravity="center"
+                    android:imeOptions="actionDone"
+                    android:theme="@style/CustomDatepicker"/>
+
+                <ImageButton
+                    android:id="@+id/btnMinusDate"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/trans"
+                    android:paddingVertical="10dp"
+                    android:src="@drawable/remove"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancelBtn"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="@string/cancel"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:textColor="@color/color_4C4F54"
+                android:background="@drawable/bt_round_b1b4bb"
+                android:layout_marginEnd="5dp"
+                tools:ignore="ButtonStyle,SpUsage" />
+
+            <Button
+                android:id="@+id/confirmBtn"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="@string/confirmSetting"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bt_round_1d6de5"
+                android:layout_marginStart="5dp"
+                tools:ignore="ButtonStyle,SpUsage" />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

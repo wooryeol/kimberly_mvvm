@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+    <include
+        android:id="@+id/header"
+        layout="@layout/layout_header"/>
+
+    <LinearLayout
+        android:id="@+id/bodyTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/searchDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:layout_marginHorizontal="16dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25"
+                android:layout_gravity="center"
+                android:text="@string/searchDate"
+                android:textSize="14dp"
+                android:textColor="@color/color_7E828B"
+                tools:ignore="SpUsage" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/startDate"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="14dp"
+                    android:textColor="@color/color_7E828B"
+                    android:background="@drawable/et_round_c9cbd0"
+                    tools:ignore="NestedWeights,SpUsage" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="~"
+                    android:layout_marginHorizontal="12dp" />
+
+                <TextView
+                    android:id="@+id/endDate"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/et_round_c9cbd0"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="10dp"
+                    android:textColor="@color/color_7E828B"
+                    android:textSize="14dp"
+                    tools:ignore="SpUsage" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/color_7E828B"
+                android:textStyle="normal"
+                android:text="@string/account"
+                android:textSize="15dp"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <RelativeLayout
+                    android:id="@+id/accountArea"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@drawable/et_round_c9cbd0"
+                    tools:ignore="NestedWeights">
+
+                    <TextView
+                        android:id="@+id/accountName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="12dp"
+                        android:layout_toStartOf="@id/btEmpty"
+                        android:ellipsize="marquee"
+                        android:focusable="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:singleLine="true"
+                        android:text="@string/accountHint"
+                        android:textSize="14dp"
+                        tools:ignore="Autofill,SpUsage,TextFields" />
+
+                    <ImageButton
+                        android:id="@+id/btEmpty"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
+                        android:background="@color/trans"
+                        android:visibility="invisible"
+                        android:src="@drawable/ic_empty" />
+
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/btSearch"
+                    android:layout_width="56dp"
+                    android:layout_height="40dp"
+                    android:text="@string/search"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="14dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bt_round_103c7e"
+                    style="?android:attr/borderlessButtonStyle"/>
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divideLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/color_DBDCDF"
+        android:layout_marginTop="20dp" />
+
+    <LinearLayout
+        android:id="@+id/noSearch"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/search_off"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/searchNothing"
+            android:textSize="14dp"
+            android:textColor="@color/color_1A1A1A"
+            tools:ignore="SpUsage" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="16dp"
+        android:visibility="gone"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        app:layout_constraintTop_toBottomOf="@+id/divideLine" />
+
+    <include
+        android:id="@+id/bottom"
+        layout="@layout/layout_bottom" />
+
+</LinearLayout>

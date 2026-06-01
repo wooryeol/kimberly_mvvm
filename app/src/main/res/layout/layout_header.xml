@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:background="@color/white">
+    <ImageButton
+        android:id="@+id/backBtn"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/arrow_back_ios"
+        android:background="@color/trans"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/header_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/setting"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        tools:ignore="SpUsage" />
+
+    <ImageButton
+        android:id="@+id/scanBtn"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_scan"
+        android:background="@color/trans"
+        tools:ignore="ContentDescription" />
+
+</RelativeLayout>

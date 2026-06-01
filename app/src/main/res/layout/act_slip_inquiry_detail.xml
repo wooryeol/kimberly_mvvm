@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    tools:ignore="MissingDefaultResource">
+    <include
+        android:id="@+id/header"
+        layout="@layout/layout_header"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginHorizontal="16dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/slipNumber"
+            android:textSize="14dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            tools:ignore="SpUsage" />
+
+        <TextView
+            android:id="@+id/receiptNumber"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="000000000001"
+            android:textSize="14dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            tools:ignore="SpUsage" />
+
+        <Button
+            android:id="@+id/modify"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:text="@string/modify"
+            android:textColor="@color/color_1D6DE5"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            android:background="@drawable/bt_round_border_1d6de5"
+            tools:ignore="SpUsage" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginHorizontal="16dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/slipAccount"
+            android:textSize="14dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            tools:ignore="SpUsage" />
+
+        <TextView
+            android:id="@+id/accountName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="(000041) 주공왕마트"
+            android:textSize="14dp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            tools:ignore="SpUsage" />
+
+        <Button
+            android:id="@+id/delete"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:text="@string/delete"
+            android:textColor="@color/color_4C4F54"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            android:background="@drawable/et_round_c9cbd0"
+            tools:ignore="SpUsage" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/color_DBDCDF" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:overScrollMode="never" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:background="@color/color_F3F4F5">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:text="총금액 :"
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="@color/color_1A1A1A" />
+
+        <TextView
+            android:id="@+id/tvTotalAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="16dp"
+            android:text="0원"
+            android:textSize="14dp"
+            android:textStyle="normal"
+            android:textColor="@color/color_1D6DE5"
+            tools:ignore="HardcodedText,SpUsage" />
+    </LinearLayout>
+
+    <include
+        android:id="@+id/bottom"
+        layout="@layout/layout_bottom"/>
+
+</LinearLayout>
