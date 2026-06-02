@@ -71,6 +71,7 @@ MVVM (Model - View - ViewModel)
 | 수금결재 | `CollectApprovalActivity` | `CollectApprovalViewModel` | — | 완료 |
 | 수금관리 | `CollectManageActivity` | `CollectManageViewModel` | `CollectRepository` | 완료 |
 | 수금등록 | `CollectRegiActivity` | `CollectRegiViewModel` | `CollectRepository` | 완료 |
+| 반품등록 | `ReturnRegActivity` | `ReturnRegViewModel` | `ReturnRepository` | 완료 |
 | 그 외 화면 | Activity | — | — | 미적용 (향후 순차 적용 예정) |
 
 ### 로그인 MVVM 흐름
@@ -183,6 +184,8 @@ app/src/main/java/kr/co/kimberly/wma/
 │   ├── printer/
 │   ├── purchase/
 │   ├── return/
+│   │   ├── ReturnRegActivity.kt
+│   │   └── ReturnRegViewModel.kt
 │   ├── setting/
 │   ├── slip/
 │   ├── splash/
@@ -195,7 +198,8 @@ app/src/main/java/kr/co/kimberly/wma/
     │   ├── InformationRepository.kt  기준정보 API 호출 단일 책임
     │   ├── LedgerRepository.kt       원장 API 호출 단일 책임
     │   ├── InventoryRepository.kt    재고조회 API 호출 단일 책임
-    │   └── CollectRepository.kt      수금 API 호출 단일 책임 (목록/미수금/전표등록)
+    │   ├── CollectRepository.kt      수금 API 호출 단일 책임 (목록/미수금/전표등록)
+    │   └── ReturnRepository.kt       반품 전표 등록 API 호출 단일 책임
     └── model/                    API 요청/응답 데이터 모델
         ├── login/
         │   ├── LoginRequest.kt
@@ -463,6 +467,20 @@ KDC SDK를 직접 사용하던 6개 Activity를 `ScannerManager` / `ScannerCallb
 결제 방법(현금/어음/현금+어음)에 따른 JSON 빌드 로직을 `CollectRegiViewModel.buildSlipJson()`으로 이동하여 Activity는 UI 값만 수집해 ViewModel에 전달합니다.
 `BalanceModel`, `SlipPrintModel`은 `PrinterOptionActivity` 등 다른 화면에서도 사용하므로 `model/collect/`로 이동하지 않았습니다.
 `CollectModel` import 참조 파일(`CollectListAdapter`, `ApiClientService`)도 새 패키지 경로로 일괄 수정했습니다.
+
+#### 반품등록 화면 MVVM 리팩터링
+
+| 파일 | 역할 |
+|---|---|
+| `network/repository/ReturnRepository.kt` | `service.order()` 호출, `slipNo` 반환 |
+| `menu/return/ReturnRegViewModel.kt` | `ReturnPostState` sealed class, Gson 직렬화 포함 JSON 빌드 로직 |
+| `menu/return/ReturnRegActivity.kt` | `setupObservers()`, `setupListeners()`, `handleReturnSuccess()` |
+
+직접 Retrofit 호출(`returnItem()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
+JSON 빌드 및 Gson 직렬화 로직을 ViewModel로 이동하여 Activity는 `customerCd`, `items`, `totalAmount`만 전달합니다.
+`SearchItemModel`·`DataModel`은 `OrderRegActivity`와 공유하므로 폴더 이동 없이 기존 경로를 유지했습니다.
+BroadcastReceiver, ScannerCallback, OnBackPressedCallback 생명주기 로직은 그대로 보존했습니다.
+원본에서 non-success `returnCd` 케이스가 묵시적으로 무시되던 버그를 Repository에서 `returnMsg` 에러로 처리하도록 개선했습니다.
 
 #### 수금결재 화면 MVVM 리팩터링
 
