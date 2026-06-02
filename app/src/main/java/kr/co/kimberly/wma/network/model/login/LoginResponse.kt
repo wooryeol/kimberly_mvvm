@@ -3,7 +3,7 @@ package kr.co.kimberly.wma.network.model.login
 import java.io.Serializable
 
 
-data class LoginResponseModel (
+data class LoginResponse (
     val agencyCd: String? = "", // 대리점 코드
     val agencyNm: String? = "", // 대리점 명
     val empCd: String? = "", // 사원 코드

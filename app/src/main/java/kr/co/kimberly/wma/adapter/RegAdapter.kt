@@ -30,7 +30,7 @@ import kr.co.kimberly.wma.databinding.HeaderRegBinding
 import kr.co.kimberly.wma.db.DBHelper
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ProductPriceHistoryModel
 import kr.co.kimberly.wma.network.model.ResultModel
 import kr.co.kimberly.wma.network.model.SearchItemModel
@@ -70,7 +70,7 @@ class RegAdapter(mContext: Context, list: ArrayList<SearchItemModel>, private va
     }
 
     var accountName : String? = null
-    private lateinit var mLoginInfo: LoginResponseModel // 로그인 정보
+    private lateinit var mLoginInfo: LoginResponse // 로그인 정보
 
     private val db: DBHelper by lazy { // 검색어 저장
         DBHelper.getInstance(mContext.applicationContext)

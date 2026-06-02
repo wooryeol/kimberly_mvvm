@@ -2,10 +2,9 @@ package kr.co.kimberly.wma.network.repository
 
 import com.google.gson.Gson
 import kr.co.kimberly.wma.common.Define
-import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.login.LoginRequest
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ResultModel
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -19,22 +18,22 @@ class LoginRepository {
 
     fun login(
         request: LoginRequest,
-        onResult: (Result<LoginResponseModel>) -> Unit
+        onResult: (Result<LoginResponse>) -> Unit
     ) {
         val body = Gson().toJson(request)
             .toRequestBody("application/json".toMediaTypeOrNull())
 
-        service.postLogin(body).enqueue(object : retrofit2.Callback<ResultModel<LoginResponseModel>> {
+        service.postLogin(body).enqueue(object : retrofit2.Callback<ResultModel<LoginResponse>> {
             override fun onResponse(
-                call: Call<ResultModel<LoginResponseModel>>,
-                response: Response<ResultModel<LoginResponseModel>>
+                call: Call<ResultModel<LoginResponse>>,
+                response: Response<ResultModel<LoginResponse>>
             ) {
                 if (response.isSuccessful) {
                     val result = response.body()
                     when (result?.returnCd) {
                         Define.RETURN_CD_00 -> {
                             if (Define.IS_TEST) {
-                                onResult(Result.success(LoginResponseModel()))
+                                onResult(Result.success(LoginResponse()))
                                 return
                             }
                             val data = result.data
@@ -45,7 +44,7 @@ class LoginRepository {
                                 onResult(Result.failure(Exception("로그인에 실패했습니다")))
                             }
                         }
-                        "01" -> onResult(Result.failure(Exception("아이디, 비밀번호, 대리점코드 또는 전화번호를 다시 확인해주세요")))
+                        Define.RETURN_CD_01 -> onResult(Result.failure(Exception("아이디, 비밀번호, 대리점코드 또는 전화번호를 다시 확인해주세요")))
                         else -> onResult(Result.failure(Exception(result?.returnMsg ?: "로그인에 실패했습니다")))
                     }
                 } else {
@@ -54,7 +53,7 @@ class LoginRepository {
             }
 
             override fun onFailure(
-                call: Call<ResultModel<LoginResponseModel>>,
+                call: Call<ResultModel<LoginResponse>>,
                 t: Throwable
             ) {
                 onResult(Result.failure(Exception("잠시 후 다시 시도해주세요")))

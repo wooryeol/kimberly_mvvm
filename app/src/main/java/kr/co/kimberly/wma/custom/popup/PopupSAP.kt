@@ -14,14 +14,14 @@ import kr.co.kimberly.wma.adapter.SapListAdapter
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.PopupSearchResultBinding
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.SapModel
 
 @SuppressLint("NotifyDataSetChanged")
 class PopupSAP(mContext: Context, val dataList: ArrayList<SapModel>, private val returnCd: String): Dialog(mContext) {
     private lateinit var mBinding: PopupSearchResultBinding
     private var context = mContext
-    private lateinit var mLoginInfo: LoginResponseModel // 로그인 정보
+    private lateinit var mLoginInfo: LoginResponse // 로그인 정보
 
     var onItemSelect: ((SapModel) -> Unit)? = null
     var adapter: SapListAdapter? = null

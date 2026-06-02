@@ -20,7 +20,7 @@ import kr.co.kimberly.wma.custom.popup.PopupNotification
 import kr.co.kimberly.wma.custom.popup.PopupSingleMessage
 import kr.co.kimberly.wma.databinding.ActMainBinding
 import kr.co.kimberly.wma.menu.setting.SettingActivity
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.MainMenuModel
 
 class MainActivity : AppCompatActivity() {
@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mContext: Context
     private lateinit var mActivity: Activity
 
-    private var mLoginInfo: LoginResponseModel? = null // 로그인 정보
+    private var mLoginInfo: LoginResponse? = null // 로그인 정보
     private var isVersionCheck = true // 앱 버전 체크 중복 방지
 
     override fun onCreate(savedInstanceState: Bundle?) {

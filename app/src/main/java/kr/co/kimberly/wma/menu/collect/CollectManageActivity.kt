@@ -23,7 +23,7 @@ import kr.co.kimberly.wma.custom.popup.PopupSingleMessage
 import kr.co.kimberly.wma.databinding.ActCollectManageBinding
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.CollectModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ResultModel
 import retrofit2.Call
 import retrofit2.Response
@@ -33,7 +33,7 @@ class CollectManageActivity : AppCompatActivity() {
     private lateinit var mBinding: ActCollectManageBinding
     private lateinit var mContext: Context
     private lateinit var mActivity: Activity
-    private lateinit var mLoginInfo: LoginResponseModel // 로그인 정보
+    private lateinit var mLoginInfo: LoginResponse // 로그인 정보
 
     private var collectList: ArrayList<CollectModel>? = null
     private var customerCd : String? = null

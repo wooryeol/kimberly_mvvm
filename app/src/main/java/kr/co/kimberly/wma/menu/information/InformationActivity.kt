@@ -14,9 +14,9 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.RadioGroup.OnCheckedChangeListener
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
@@ -33,15 +33,10 @@ import kr.co.kimberly.wma.custom.popup.PopupLoading
 import kr.co.kimberly.wma.custom.popup.PopupNotice
 import kr.co.kimberly.wma.databinding.ActInformationBinding
 import kr.co.kimberly.wma.menu.setting.SettingActivity
-import kr.co.kimberly.wma.network.ApiClientService
-import kr.co.kimberly.wma.network.model.DataModel
 import kr.co.kimberly.wma.network.model.DetailInfoModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
-import kr.co.kimberly.wma.network.model.ResultModel
 import kr.co.kimberly.wma.network.model.SearchItemModel
 import kr.co.kimberly.wma.network.model.SlipOrderListModel
-import retrofit2.Call
-import retrofit2.Response
+import kr.co.kimberly.wma.network.model.information.DetailInfoRequest
 
 class InformationActivity : AppCompatActivity(), ScannerCallback {
     private lateinit var mBinding: ActInformationBinding
@@ -49,12 +44,14 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
     private lateinit var mActivity: Activity
     private lateinit var radioGroupCheckedListener: OnCheckedChangeListener
 
-    private lateinit var mLoginInfo: LoginResponseModel
     private var mSearchType: String? = null
-    private var popupInformation : PopupAccountInformation? = null
+    private var popupInformation: PopupAccountInformation? = null
     private var detailInfoModel: DetailInfoModel? = null
     private var accountName = ""
     private var itemName = ""
+
+    private val viewModel: InformationViewModel by viewModels()
+    private var loadingPopup: PopupLoading? = null
 
     var onItemScan: ((String) -> Unit)? = null
 
@@ -78,13 +75,13 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
 
         mContext = this
         mActivity = this
-        mLoginInfo = Utils.getLoginData()
         mSearchType = Define.TYPE_CUSTOMER
 
         setSetting()
+        setupObservers()
         ScannerManager.initialize(this, this)
 
-        mBinding.header.backBtn.setOnClickListener(object: OnSingleClickListener() {
+        mBinding.header.backBtn.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View) {
                 finish()
             }
@@ -92,24 +89,24 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
 
         mBinding.radioGroup.setOnCheckedChangeListener(radioGroupCheckedListener)
 
-        mBinding.search.setOnClickListener(object: OnSingleClickListener() {
+        mBinding.search.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View) {
-                if(mBinding.etSearch.text.isEmpty()) {
+                if (mBinding.etSearch.text.isEmpty()) {
                     Utils.popupNotice(mContext, getString(R.string.etSearchEmpty))
                 } else {
-                    getInfo(mBinding.etSearch.text.toString())
+                    viewModel.getMasterInfo(mBinding.etSearch.text.toString(), mSearchType!!)
                 }
             }
         })
 
         mBinding.phone.setOnClickListener {
-            if(mBinding.phone.text.isNotEmpty()) {
+            if (mBinding.phone.text.isNotEmpty()) {
                 checkPermission(mBinding.phone.text.toString())
             }
         }
 
         mBinding.inChargeNum.setOnClickListener {
-            if(mBinding.inChargeNum.text.isNotEmpty()) {
+            if (mBinding.inChargeNum.text.isNotEmpty()) {
                 checkPermission(mBinding.inChargeNum.text.toString())
             }
         }
@@ -121,7 +118,7 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
         })
 
         mBinding.etSearch.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE){
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
                 mBinding.search.performClick()
                 true
             } else {
@@ -156,8 +153,118 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
             mBinding.productInfoLayout.visibility = View.VISIBLE
             mBinding.accountInfoLayout.visibility = View.GONE
             mSearchType = Define.BARCODE
-            getInfo(it)
+            viewModel.getMasterInfo(it, mSearchType!!)
         }
+    }
+
+    private fun setupObservers() {
+        viewModel.masterInfoState.observe(this) { state ->
+            when (state) {
+                is InformationViewModel.MasterInfoState.Idle -> {}
+                is InformationViewModel.MasterInfoState.Loading -> {
+                    loadingPopup = PopupLoading(mContext)
+                    loadingPopup?.show()
+                }
+                is InformationViewModel.MasterInfoState.Success -> {
+                    loadingPopup?.hideDialog()
+                    handleMasterInfoSuccess(state.masterInfoData)
+                }
+                is InformationViewModel.MasterInfoState.Error -> {
+                    loadingPopup?.hideDialog()
+                    Utils.popupNotice(mContext, state.masterInfoMessage, mBinding.etSearch)
+                }
+            }
+        }
+
+        viewModel.detailInfoState.observe(this) { state ->
+            when (state) {
+                is InformationViewModel.DetailInfoState.Idle -> {}
+                is InformationViewModel.DetailInfoState.Loading -> {
+                    loadingPopup = PopupLoading(mContext)
+                    loadingPopup?.show()
+                }
+                is InformationViewModel.DetailInfoState.Success -> {
+                    loadingPopup?.hideDialog()
+                    handleDetailInfoSuccess(state.detailInfoData)
+                }
+                is InformationViewModel.DetailInfoState.Error -> {
+                    loadingPopup?.hideDialog()
+                    Utils.popupNotice(mContext, state.detailInfoMessage, mBinding.etSearch)
+                }
+            }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun handleMasterInfoSuccess(data: kr.co.kimberly.wma.network.model.DataModel<Any>) {
+        val gson = viewModel.gson
+        when (mSearchType) {
+            Define.TYPE_CUSTOMER -> {
+                if (data.customerList == null) {
+                    mBinding.tvProductName.text = data.customerNm.toString()
+                    accountName = data.customerNm.toString()
+                    callDetailInfo(data.customerCd.toString())
+                } else {
+                    val jsonString = gson.toJson(gson.toJsonTree(data.customerList))
+                    val customerList: ArrayList<SlipOrderListModel> = gson.fromJson(jsonString, object : TypeToken<ArrayList<SlipOrderListModel>>() {}.type)
+                    popupInformation = PopupAccountInformation(mContext, customerList, null)
+                    popupInformation?.onAccountSelect = {
+                        mBinding.tvProductName.text = it.customerNm
+                        accountName = it.customerNm.toString()
+                        callDetailInfo(it.customerCd.toString())
+                    }
+                    popupInformation?.show()
+                }
+            }
+            Define.TYPE_ITEM -> {
+                val jsonString = gson.toJson(gson.toJsonTree(data.itemList))
+                val itemList: ArrayList<SearchItemModel> = gson.fromJson(jsonString, object : TypeToken<ArrayList<SearchItemModel>>() {}.type)
+                val popup = PopupAccountInformation(mContext, null, itemList)
+                popup.onItemSelect = {
+                    itemName = it.itemNm.toString()
+                    callDetailInfo(it.itemCd.toString(), Define.SEARCH)
+                }
+                popup.show()
+            }
+            Define.BARCODE -> {
+                val jsonString = gson.toJson(gson.toJsonTree(data.itemList))
+                val itemList: ArrayList<SearchItemModel> = gson.fromJson(jsonString, object : TypeToken<ArrayList<SearchItemModel>>() {}.type)
+                if (itemList.size == 1) {
+                    itemName = itemList[0].itemNm.toString()
+                    callDetailInfo(itemList[0].itemCd.toString())
+                } else {
+                    val popup = PopupAccountInformation(mContext, null, itemList)
+                    popup.onItemSelect = {
+                        mSearchType = Define.TYPE_ITEM
+                        itemName = it.itemNm.toString()
+                        callDetailInfo(it.itemCd.toString(), Define.SEARCH)
+                    }
+                    popup.show()
+                }
+            }
+        }
+    }
+
+    private fun callDetailInfo(searchCd: String, subSearchType: String? = null) {
+        viewModel.getDetailInfo(
+            DetailInfoRequest(
+                agencyCd = viewModel.mLoginInfo.agencyCd ?: "",
+                userId = viewModel.mLoginInfo.userId ?: "",
+                searchType = mSearchType!!,
+                subSearchType = subSearchType,
+                searchCd = searchCd
+            )
+        )
+    }
+
+    private fun handleDetailInfoSuccess(data: DetailInfoModel) {
+        detailInfoModel = data
+        when (mSearchType) {
+            Define.TYPE_ITEM, Define.BARCODE -> {
+                mBinding.tvProductName.text = data.itemNm
+            }
+        }
+        setInfo(detailInfoModel!!)
     }
 
     override fun onDestroy() {
@@ -194,9 +301,9 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
 
         radioGroupCheckedListener = OnCheckedChangeListener { _, checkedId ->
             hideKeyboard()
-            when(checkedId) {
+            when (checkedId) {
                 R.id.accountInfo -> {
-                    if (accountName.isNotEmpty()){
+                    if (accountName.isNotEmpty()) {
                         mBinding.tvProductName.text = accountName
                         mBinding.tvProductName.visibility = View.VISIBLE
                         mBinding.btProductNameEmpty.visibility = View.VISIBLE
@@ -207,13 +314,12 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
                         mBinding.tvProductName.visibility = View.GONE
                         mBinding.btProductNameEmpty.visibility = View.GONE
                     }
-
                     mBinding.accountInfoLayout.visibility = View.VISIBLE
                     mBinding.productInfoLayout.visibility = View.GONE
                     mSearchType = Define.TYPE_CUSTOMER
                 }
                 R.id.productInfo -> {
-                    if (itemName.isNotEmpty()){
+                    if (itemName.isNotEmpty()) {
                         mBinding.tvProductName.text = itemName
                         mBinding.tvProductName.visibility = View.VISIBLE
                         mBinding.btProductNameEmpty.visibility = View.VISIBLE
@@ -240,13 +346,9 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
         if (mBinding.tvProductName.text == itemName) {
             itemName = ""
         }
-        when(mSearchType){
-            Define.TYPE_CUSTOMER -> {
-                mBinding.etSearch.hint = mContext.getString(R.string.accountHint)
-            }
-            Define.TYPE_ITEM -> {
-                mBinding.etSearch.hint = mContext.getString(R.string.productNameHint)
-            }
+        when (mSearchType) {
+            Define.TYPE_CUSTOMER -> mBinding.etSearch.hint = mContext.getString(R.string.accountHint)
+            Define.TYPE_ITEM -> mBinding.etSearch.hint = mContext.getString(R.string.productNameHint)
         }
         mBinding.etSearch.visibility = View.VISIBLE
         mBinding.tvProductName.text = null
@@ -255,178 +357,9 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
         GlobalApplication.showKeyboard(mContext, mBinding.etSearch)
     }
 
-    private fun getInfo(searchCondition: String) {
-        val loading = PopupLoading(mContext)
-        loading.show()
-        val retrofit = ApiClientService.ApiClient.getLoginRetrofit()
-        val service = retrofit.create(ApiClientService::class.java)
-        val call = service.masterInfo(mLoginInfo.agencyCd!!, mLoginInfo.userId!!, mSearchType!!, searchCondition)
-
-        call.enqueue(object : retrofit2.Callback<ResultModel<DataModel<Any>>> {
-            @SuppressLint("SetTextI18n")
-            override fun onResponse(
-                call: Call<ResultModel<DataModel<Any>>>,
-                response: Response<ResultModel<DataModel<Any>>>
-            ) {
-                loading.hideDialog()
-                if (response.isSuccessful) {
-                    val item = response.body()
-                    if (item != null) {
-                        if (item.returnCd == Define.RETURN_CD_90 || item.returnCd == Define.RETURN_CD_91 || item.returnCd == Define.RETURN_CD_00) {
-                            val gson = Gson()
-                            when(mSearchType) {
-                                Define.TYPE_CUSTOMER -> {
-                                    if (item.data.customerList == null) {
-                                        mBinding.tvProductName.text = item.data.customerNm.toString()
-                                        accountName = item.data.customerNm.toString()
-                                        getDetailInfo(item.data.customerCd.toString())
-                                    } else {
-                                        val jsonElement = gson.toJsonTree(item.data.customerList)
-                                        val jsonString = gson.toJson(jsonElement)
-                                        val customerListType = object : TypeToken<ArrayList<SlipOrderListModel>>() {}.type
-                                        val customerList: ArrayList<SlipOrderListModel> = gson.fromJson(jsonString, customerListType)
-
-                                        popupInformation = PopupAccountInformation(mContext, customerList, null)
-                                        popupInformation?.onAccountSelect = {
-                                            mBinding.tvProductName.text = it.customerNm
-                                            accountName = it.customerNm.toString()
-                                            getDetailInfo(it.customerCd.toString())
-                                        }
-                                        popupInformation?.show()
-                                    }
-                                }
-
-                                Define.TYPE_ITEM -> {
-                                    val jsonElement = gson.toJsonTree(item.data.itemList)
-                                    val jsonString = gson.toJson(jsonElement)
-                                    val itemListType = object : TypeToken<ArrayList<SearchItemModel>>() {}.type
-                                    val itemList: ArrayList<SearchItemModel> = gson.fromJson(jsonString, itemListType)
-
-                                    val popupAccountInformation = PopupAccountInformation(mContext, null, itemList)
-                                    popupAccountInformation.onItemSelect = {
-                                        itemName = it.itemNm.toString()
-                                        getDetailInfo(it.itemCd.toString(), Define.SEARCH)
-                                    }
-                                    popupAccountInformation.show()
-                                }
-
-                                Define.BARCODE -> {
-                                    val jsonElement = gson.toJsonTree(item.data.itemList)
-                                    val jsonString = gson.toJson(jsonElement)
-                                    val itemListType = object : TypeToken<ArrayList<SearchItemModel>>() {}.type
-                                    val itemList: ArrayList<SearchItemModel> = gson.fromJson(jsonString, itemListType)
-
-                                    if (itemList.size == 1) {
-                                        itemName = itemList[0].itemNm.toString()
-                                        getDetailInfo(itemList[0].itemCd.toString())
-                                    } else {
-                                        val popupAccountInformation = PopupAccountInformation(mContext, null, itemList)
-                                        popupAccountInformation.onItemSelect = {
-                                            mSearchType = Define.TYPE_ITEM
-                                            itemName = it.itemNm.toString()
-                                            getDetailInfo(it.itemCd.toString(), Define.SEARCH)
-                                        }
-                                        popupAccountInformation.show()
-                                    }
-                                }
-
-                                else -> {
-                                    Utils.popupNotice(mContext, item.returnMsg, mBinding.etSearch)
-                                }
-                            }
-                        } else {
-                            Utils.popupNotice(mContext, item.returnMsg, mBinding.etSearch)
-                        }
-                    }
-                } else {
-                    Utils.popupNotice(mContext, "잠시 후 다시 시도해주세요")
-                }
-            }
-
-            override fun onFailure(call: Call<ResultModel<DataModel<Any>>>, t: Throwable) {
-                loading.hideDialog()
-                Utils.popupNotice(mContext, "잠시 후 다시 시도해주세요")
-            }
-        })
-    }
-
-    private fun getDetailInfo(searchCd: String, subSearchType: String? = null) {
-        val loading = PopupLoading(mContext)
-        loading.show()
-        val retrofit = ApiClientService.ApiClient.getLoginRetrofit()
-        val service = retrofit.create(ApiClientService::class.java)
-        val call = service.masterInfoDetail(mLoginInfo.agencyCd!!, mLoginInfo.userId!!, mSearchType!!, subSearchType, searchCd)
-
-        call.enqueue(object : retrofit2.Callback<ResultModel<DetailInfoModel>> {
-            override fun onResponse(
-                call: Call<ResultModel<DetailInfoModel>>,
-                response: Response<ResultModel<DetailInfoModel>>
-            ) {
-                loading.hideDialog()
-                if (response.isSuccessful) {
-                    val item = response.body()
-                    if (item != null) {
-                        if (item.returnCd == Define.RETURN_CD_90 || item.returnCd == Define.RETURN_CD_91 || item.returnCd == Define.RETURN_CD_00) {
-                            val data = item.data
-                            when(mSearchType) {
-                                Define.TYPE_CUSTOMER -> {
-                                    detailInfoModel = item.data.copy(
-                                        searchType = data.searchType!!,
-                                        customerCd = data.customerCd!!,
-                                        customerNm = data.customerNm!!,
-                                        representNm = data.representNm!!,
-                                        bizNo = data.bizNo!!,
-                                        telNo = data.telNo!!,
-                                        faxNo = data.faxNo!!,
-                                        address = data.address!!,
-                                        billingVendor = data.billingVendor!!,
-                                        storeSize = data.storeSize!!,
-                                        buyEmpNm = data.buyEmpNm!!,
-                                        buyEmpMobileNo = data.buyEmpMobileNo!!
-                                    )
-                                    setInfo(detailInfoModel!!)
-                                }
-
-                                Define.TYPE_ITEM -> {
-                                    detailInfoModel = item.data.copy(
-                                        representNm = data.resultType!!,
-                                        makerNm = data.makerNm!!,
-                                        itemCd = data.itemCd!!,
-                                        itemNm = data.itemNm!!,
-                                        kanCode = data.kanCode!!,
-                                        dimension = data.dimension!!,
-                                        getBoxQty = data.getBoxQty!!,
-                                        vatType = data.vatType!!,
-                                        registerImgYn = data.registerImgYn!!,
-                                        imgUrl = data.imgUrl!!,
-                                    )
-                                    mBinding.tvProductName.text = detailInfoModel?.itemNm
-                                    setInfo(detailInfoModel!!)
-                                }
-
-                                else -> {
-                                    Utils.popupNotice(mContext, item.returnMsg, mBinding.etSearch)
-                                }
-                            }
-                        } else {
-                            Utils.popupNotice(mContext, item.returnMsg, mBinding.etSearch)
-                        }
-                    }
-                } else {
-                    Utils.popupNotice(mContext, "잠시 후 다시 시도해주세요")
-                }
-            }
-
-            override fun onFailure(call: Call<ResultModel<DetailInfoModel>>, t: Throwable) {
-                loading.hideDialog()
-                Utils.popupNotice(mContext, "잠시 후 다시 시도해주세요")
-            }
-        })
-    }
-
     @SuppressLint("UseCompatLoadingForDrawables")
-    private fun setInfo(detailInfoModel: DetailInfoModel){
-        when(mSearchType) {
+    private fun setInfo(detailInfoModel: DetailInfoModel) {
+        when (mSearchType) {
             Define.TYPE_CUSTOMER -> {
                 if (accountName.isNotEmpty()) {
                     mBinding.tvProductName.text = accountName
@@ -443,7 +376,7 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
                 mBinding.represent.text = detailInfoModel.representNm
                 mBinding.businessNum.text = detailInfoModel.bizNo
                 mBinding.phone.text = detailInfoModel.telNo
-                if (detailInfoModel.telNo != "-"){
+                if (detailInfoModel.telNo != "-") {
                     mBinding.phone.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                 }
                 mBinding.fax.text = detailInfoModel.faxNo
@@ -452,11 +385,11 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
                 mBinding.scale.text = detailInfoModel.storeSize
                 mBinding.inCharge.text = detailInfoModel.buyEmpNm
                 mBinding.inChargeNum.text = detailInfoModel.buyEmpMobileNo
-                if (detailInfoModel.buyEmpMobileNo != "-"){
+                if (detailInfoModel.buyEmpMobileNo != "-") {
                     mBinding.inChargeNum.paintFlags = Paint.UNDERLINE_TEXT_FLAG
                 }
             }
-            Define.TYPE_ITEM -> {
+            Define.TYPE_ITEM, Define.BARCODE -> {
                 if (itemName.isNotEmpty()) {
                     mBinding.tvProductName.text = itemName
                     mBinding.etSearch.visibility = View.GONE
@@ -492,20 +425,18 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
     private fun hideKeyboard() {
         mBinding.etSearch.setText("")
         mBinding.etSearch.clearFocus()
-
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(mBinding.etSearch.windowToken, InputMethodManager.HIDE_IMPLICIT_ONLY)
     }
 
-    private fun checkPermission(number: String){
+    private fun checkPermission(number: String) {
         TedPermission.create()
             .setPermissionListener(object : PermissionListener {
                 override fun onPermissionGranted() {
                     call(number)
                 }
 
-                override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
-                }
+                override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {}
             })
             .setDeniedMessage("${mContext.getString(R.string.msg_permission)}\n${mContext.getString(R.string.msg_permission_sub)}")
             .setPermissions(Manifest.permission.CALL_PHONE)

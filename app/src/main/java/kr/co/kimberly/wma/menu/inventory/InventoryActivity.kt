@@ -27,7 +27,7 @@ import kr.co.kimberly.wma.custom.popup.PopupWarehouseList
 import kr.co.kimberly.wma.databinding.ActInventoryBinding
 import kr.co.kimberly.wma.menu.setting.SettingActivity
 import kr.co.kimberly.wma.network.ApiClientService
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ResultModel
 import kr.co.kimberly.wma.network.model.WarehouseListModel
 import kr.co.kimberly.wma.network.model.WarehouseStockModel
@@ -39,7 +39,7 @@ class InventoryActivity : AppCompatActivity(), ScannerCallback {
     private lateinit var mBinding: ActInventoryBinding
     private lateinit var mContext: Context
     private lateinit var mActivity: Activity
-    private lateinit var mLoginInfo: LoginResponseModel
+    private lateinit var mLoginInfo: LoginResponse
     private lateinit var agencyCd: String
     private lateinit var userId: String
     private var warehouseCd: String? = null

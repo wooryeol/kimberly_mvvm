@@ -14,14 +14,14 @@ import kr.co.kimberly.wma.adapter.InformationAdapter
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.PopupSearchResultBinding
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.SearchItemModel
 import kr.co.kimberly.wma.network.model.SlipOrderListModel
 
 @SuppressLint("NotifyDataSetChanged")
 class PopupAccountInformation(mContext: Context, private val accountList: ArrayList<SlipOrderListModel>? = null, private val itemList: ArrayList<SearchItemModel>? = null): Dialog(mContext) {
     private lateinit var mBinding: PopupSearchResultBinding
-    private lateinit var mLoginInfo: LoginResponseModel // 로그인 정보
+    private lateinit var mLoginInfo: LoginResponse // 로그인 정보
     private var context = mContext
 
     var onAccountSelect: ((SlipOrderListModel) -> Unit)? = null

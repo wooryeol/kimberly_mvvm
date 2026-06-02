@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import kr.co.kimberly.wma.common.SharedData
 import kr.co.kimberly.wma.network.model.login.LoginRequest
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.repository.LoginRepository
 
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
@@ -15,7 +15,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     sealed class LoginState {
         object Idle : LoginState()
         object Loading : LoginState()
-        data class Success(val data: LoginResponseModel) : LoginState()
+        data class Success(val data: LoginResponse) : LoginState()
         data class Error(val message: String) : LoginState()
     }
 

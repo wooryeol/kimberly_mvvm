@@ -34,7 +34,7 @@ import kr.co.kimberly.wma.menu.setting.SettingActivity
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.DataModel
 import kr.co.kimberly.wma.network.model.DetailInfoModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ResultModel
 import kr.co.kimberly.wma.network.model.SlipPrintModel
 import retrofit2.Call
@@ -46,7 +46,7 @@ class PrinterOptionActivity : AppCompatActivity() {
     private lateinit var mBinding: ActPrinterOptionBinding
     private lateinit var mContext: Context
     private lateinit var mActivity: Activity
-    private lateinit var mLoginInfo: LoginResponseModel
+    private lateinit var mLoginInfo: LoginResponse
     private lateinit var radioGroupCheckedListener: OnCheckedChangeListener
 
     private lateinit var slipNo: String

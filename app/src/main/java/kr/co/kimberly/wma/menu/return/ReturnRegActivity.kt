@@ -34,7 +34,7 @@ import kr.co.kimberly.wma.menu.printer.PrinterOptionActivity
 import kr.co.kimberly.wma.menu.setting.SettingActivity
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ResultModel
 import kr.co.kimberly.wma.network.model.SearchItemModel
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -47,7 +47,7 @@ class ReturnRegActivity : AppCompatActivity(), ScannerCallback {
     private lateinit var mBinding: ActReturnRegBinding
     private lateinit var mContext: Context
     private lateinit var mActivity: Activity
-    private var mLoginInfo: LoginResponseModel? = null
+    private var mLoginInfo: LoginResponse? = null
 
     private var accountName = ""
     private var totalAmount: Long = 0

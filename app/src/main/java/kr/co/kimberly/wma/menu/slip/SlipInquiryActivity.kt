@@ -22,7 +22,7 @@ import kr.co.kimberly.wma.custom.popup.PopupLoading
 import kr.co.kimberly.wma.databinding.ActSlipInquiryBinding
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.CustomerModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ResultModel
 import kr.co.kimberly.wma.network.model.SlipOrderListModel
 import retrofit2.Call
@@ -35,7 +35,7 @@ class SlipInquiryActivity : AppCompatActivity() {
     private lateinit var mContext: Context
     private lateinit var mActivity: Activity
     private var customerCd: String? = ""
-    private var mLoginInfo: LoginResponseModel? = null // 로그인 정보
+    private var mLoginInfo: LoginResponse? = null // 로그인 정보
     private var orderSlipList = arrayListOf<SlipOrderListModel>() // 주문&반품 전표 조회 리스트
     private var returnSlipList = arrayListOf<SlipOrderListModel>() // 주문&반품 전표 조회 리스트
     private var popupSearchResult : PopupAccountSlipSearch ? = null

@@ -32,7 +32,7 @@ import kr.co.kimberly.wma.databinding.HeaderPurchaseRequesetBinding
 import kr.co.kimberly.wma.db.DBHelper
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ProductPriceHistoryModel
 import kr.co.kimberly.wma.network.model.ResultModel
 import kr.co.kimberly.wma.network.model.SapModel
@@ -76,7 +76,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
         }
     }
 
-    private var mLoginInfo: LoginResponseModel? = null // 로그인 정보
+    private var mLoginInfo: LoginResponse? = null // 로그인 정보
 
     private val db: DBHelper by lazy { // 검색어 저장
         DBHelper.getInstance(mContext.applicationContext)

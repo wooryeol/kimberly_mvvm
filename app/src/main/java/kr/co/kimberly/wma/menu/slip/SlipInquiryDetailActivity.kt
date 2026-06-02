@@ -25,7 +25,7 @@ import kr.co.kimberly.wma.db.DBHelper
 import kr.co.kimberly.wma.menu.printer.PrinterOptionActivity
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ResultModel
 import kr.co.kimberly.wma.network.model.SearchItemModel
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -37,7 +37,7 @@ class SlipInquiryDetailActivity : AppCompatActivity() {
     private lateinit var mBinding: ActSlipInquiryDetailBinding
     private lateinit var mContext: Context
     private lateinit var mActivity: Activity
-    private lateinit var mLoginInfo: LoginResponseModel
+    private lateinit var mLoginInfo: LoginResponse
 
     private lateinit var orderSlipList: ArrayList<SearchItemModel>
     private lateinit var customerCd: String

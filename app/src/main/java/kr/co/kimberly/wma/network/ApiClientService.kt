@@ -10,7 +10,7 @@ import kr.co.kimberly.wma.network.model.CustomerModel
 import kr.co.kimberly.wma.network.model.DataModel
 import kr.co.kimberly.wma.network.model.DetailInfoModel
 import kr.co.kimberly.wma.network.model.LedgerModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ProductPriceHistoryModel
 import kr.co.kimberly.wma.network.model.ResultModel
 import kr.co.kimberly.wma.network.model.SapModel
@@ -35,7 +35,7 @@ interface ApiClientService {
     @POST("wma/login")
     fun postLogin(
         @Body requestBody: RequestBody
-    ): Call<ResultModel<LoginResponseModel>>
+    ): Call<ResultModel<LoginResponse>>
 
     // 주문&반품 전표 등록
     @POST("wma/orderSlip/add")

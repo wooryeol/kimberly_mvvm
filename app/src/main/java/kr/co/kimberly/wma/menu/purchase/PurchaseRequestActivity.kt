@@ -32,7 +32,7 @@ import kr.co.kimberly.wma.db.DBHelper
 import kr.co.kimberly.wma.menu.setting.SettingActivity
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ResultModel
 import kr.co.kimberly.wma.network.model.SapModel
 import kr.co.kimberly.wma.network.model.SearchItemModel
@@ -46,7 +46,7 @@ class PurchaseRequestActivity : AppCompatActivity(), ScannerCallback {
     private lateinit var mBinding: ActPurchaseRequestBinding
     private lateinit var mContext: Context
     private lateinit var mActivity: Activity
-    private lateinit var mLoginInfo: LoginResponseModel
+    private lateinit var mLoginInfo: LoginResponse
 
     private var totalAmount: Long = 0
     var purchaseAdapter: PurchaseRequestAdapter? = null

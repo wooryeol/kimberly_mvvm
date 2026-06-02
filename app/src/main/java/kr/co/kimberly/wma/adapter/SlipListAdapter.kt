@@ -16,7 +16,7 @@ import kr.co.kimberly.wma.databinding.CellCollectBinding
 import kr.co.kimberly.wma.menu.slip.SlipInquiryDetailActivity
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ResultModel
 import kr.co.kimberly.wma.network.model.SearchItemModel
 import kr.co.kimberly.wma.network.model.SlipOrderListModel
@@ -27,7 +27,7 @@ class SlipListAdapter(context: Context, activity: Activity): RecyclerView.Adapte
     lateinit var dataList: ArrayList<SlipOrderListModel>
     var mContext = context
     var mActivity = activity
-    private var mLoginInfo: LoginResponseModel? = null // 로그인 정보
+    private var mLoginInfo: LoginResponse? = null // 로그인 정보
 
     inner class ViewHolder(private val binding: CellCollectBinding): RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")

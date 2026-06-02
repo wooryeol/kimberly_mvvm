@@ -34,7 +34,7 @@ import kr.co.kimberly.wma.menu.printer.PrinterOptionActivity
 import kr.co.kimberly.wma.menu.setting.SettingActivity
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ResultModel
 import kr.co.kimberly.wma.network.model.SearchItemModel
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -49,7 +49,7 @@ class SlipInquiryModifyActivity : AppCompatActivity(), ScannerCallback {
     private lateinit var mBinding: ActOrderRegBinding
     private lateinit var mContext: Context
     private lateinit var mActivity: Activity
-    private lateinit var mLoginInfo: LoginResponseModel
+    private lateinit var mLoginInfo: LoginResponse
     private lateinit var originSlipList: ArrayList<SearchItemModel>
 
     private lateinit var orderSlipList: ArrayList<SearchItemModel>

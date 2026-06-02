@@ -24,7 +24,7 @@ import kr.co.kimberly.wma.databinding.HeaderRegBinding
 import kr.co.kimberly.wma.db.DBHelper
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ProductPriceHistoryModel
 import kr.co.kimberly.wma.network.model.ResultModel
 import kr.co.kimberly.wma.network.model.SearchItemModel
@@ -34,7 +34,7 @@ import kotlin.math.ceil
 
 class SlipInquiryModifyAdapter(private var mContext :Context,val slipList: ArrayList<SearchItemModel>, val customerCd: String, val customerNm: String, private val updateData: (ArrayList<SearchItemModel>) -> Unit): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var headerViewHolder: HeaderViewHolder? = null
-    private var mLoginInfo: LoginResponseModel? = null // 로그인 정보
+    private var mLoginInfo: LoginResponse? = null // 로그인 정보
     //var slipList: ArrayList<SearchItemModel>? = null // 받아온 아이템 리스트
 
     var selectedItem: SearchItemModel? = null // 선택된 제품

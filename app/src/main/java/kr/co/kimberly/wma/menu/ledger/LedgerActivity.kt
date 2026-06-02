@@ -22,7 +22,7 @@ import kr.co.kimberly.wma.databinding.ActLedgerBinding
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.DataModel
 import kr.co.kimberly.wma.network.model.LedgerModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ResultModel
 import retrofit2.Call
 import retrofit2.Response
@@ -34,7 +34,7 @@ class LedgerActivity : AppCompatActivity() {
     private lateinit var mBinding: ActLedgerBinding
     private lateinit var mContext: Context
     private lateinit var mActivity: Activity
-    private lateinit var mLoginInfo: LoginResponseModel
+    private lateinit var mLoginInfo: LoginResponse
 
     private var searchMonth : String? = null
     private var custCd: String? = null

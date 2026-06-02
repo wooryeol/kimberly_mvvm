@@ -65,6 +65,7 @@ MVVM (Model - View - ViewModel)
 | 화면 | View | ViewModel | Repository | 상태 |
 |---|---|---|---|---|
 | 로그인 | `LoginActivity` | `LoginViewModel` | `LoginRepository` | 완료 |
+| 기준정보 | `InformationActivity` | `InformationViewModel` | `InformationRepository` | 완료 |
 | 그 외 화면 | Activity | — | — | 미적용 (향후 순차 적용 예정) |
 
 ### 로그인 MVVM 흐름
@@ -375,6 +376,18 @@ KDC SDK를 직접 사용하던 6개 Activity를 `ScannerManager` / `ScannerCallb
 각 Activity에서 `KDCConnectionListenerEx`, `KDCErrorListener`, `KDCBarcodeDataReceivedListener` 구현 코드 및
 `KDCReader` 멤버 변수, `connectScanner()` / `disconnectScanner()` 메서드를 모두 제거하고
 `ScannerCallback` 인터페이스 4개 메서드로 대체했습니다.
+
+#### 기준정보 화면 MVVM 리팩터링
+
+| 파일 | 역할 |
+|---|---|
+| `network/model/information/MasterInfoRequest.kt` | 기준정보 목록 조회 요청 모델 |
+| `network/model/information/DetailInfoRequest.kt` | 기준정보 상세 조회 요청 모델 |
+| `network/repository/InformationRepository.kt` | `getMasterInfo()` / `getDetailInfo()` Retrofit 호출 단일 책임 |
+| `menu/information/InformationViewModel.kt` | `MasterInfoState` / `DetailInfoState` sealed class, LiveData |
+| `menu/information/InformationActivity.kt` | `setupObservers()`, `handleMasterInfoSuccess()`, `handleDetailInfoSuccess()` |
+
+직접 Retrofit 호출(`getInfo()`, `getDetailInfo()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
 
 ---
 

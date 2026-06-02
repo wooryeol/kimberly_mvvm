@@ -25,7 +25,7 @@ import com.google.gson.reflect.TypeToken
 import com.scottyab.rootbeer.RootBeer
 import kr.co.kimberly.wma.GlobalApplication
 import kr.co.kimberly.wma.custom.popup.PopupNotice
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -189,7 +189,7 @@ object Utils {
 
 
     // 로그인 정보 가져오기
-    fun getLoginData(): LoginResponseModel {
+    fun getLoginData(): LoginResponse {
 
         // SharedPreferences 에서 JSON 문자열 조회
         val json = SharedData.getSharedData(
@@ -200,20 +200,20 @@ object Utils {
 
         // JSON 값이 비어있으면 기본 객체 반환
         if (json.isBlank()) {
-            return LoginResponseModel()
+            return LoginResponse()
         }
 
         return try {
 
             // Gson 파싱 타입 정의
-            val listType = object : TypeToken<LoginResponseModel>() {}.type
+            val listType = object : TypeToken<LoginResponse>() {}.type
 
             // nullable 로 안전하게 받기
-            val data: LoginResponseModel? =
+            val data: LoginResponse? =
                 Gson().fromJson(json, listType)
 
             // null 이면 기본 객체 반환
-            data ?: LoginResponseModel()
+            data ?: LoginResponse()
 
         } catch (e: Exception) {
 
@@ -221,7 +221,7 @@ object Utils {
             e.printStackTrace()
 
             // 파싱 실패 시 기본 객체 반환
-            LoginResponseModel()
+            LoginResponse()
         }
     }
 

@@ -36,7 +36,7 @@ import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.DataModel
 import kr.co.kimberly.wma.network.model.ResultModel
 import kr.co.kimberly.wma.network.model.SearchItemModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
@@ -49,7 +49,7 @@ class OrderRegActivity : AppCompatActivity(), ScannerCallback {
     private lateinit var mContext: Context
     private lateinit var mActivity: Activity
 
-    private var mLoginInfo: LoginResponseModel? = null // 로그인 정보
+    private var mLoginInfo: LoginResponse? = null // 로그인 정보
     private var accountName = ""
     private var totalAmount: Long = 0
     private var orderAdapter: RegAdapter? = null

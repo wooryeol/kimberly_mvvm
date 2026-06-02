@@ -42,6 +42,7 @@
     <string name="confirmSetting">설정</string>
     <string name="dateErr">날짜를 확인해주세요</string>
     <string name="etSearchEmpty">검색어를 입력해 주세요.</string>
+    <string name="retry">잠시 후 다시 시도해주세요.</string>
 
     <!-- Login -->
     <string name="msg01">더 나은 생활을 향한 믿음!</string>

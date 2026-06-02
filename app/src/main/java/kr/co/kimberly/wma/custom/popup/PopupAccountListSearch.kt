@@ -18,7 +18,7 @@ import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.PopupSearchResultBinding
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.CustomerModel
-import kr.co.kimberly.wma.network.model.login.LoginResponseModel
+import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ResultModel
 import retrofit2.Call
 import retrofit2.Response
@@ -26,7 +26,7 @@ import retrofit2.Response
 @SuppressLint("NotifyDataSetChanged")
 class PopupAccountListSearch(mContext: Context, private val searchCondition: String, private val editText: EditText): Dialog(mContext) {
     private lateinit var mBinding: PopupSearchResultBinding
-    private var mLoginInfo: LoginResponseModel? = null // 로그인 정보
+    private var mLoginInfo: LoginResponse? = null // 로그인 정보
     private var context = mContext
     var onItemSelect: ((CustomerModel) -> Unit)? = null
     var adapter: AccountSearchAdapter? = null
