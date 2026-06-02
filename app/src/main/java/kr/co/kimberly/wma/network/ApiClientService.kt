@@ -9,7 +9,7 @@ import kr.co.kimberly.wma.network.model.CollectModel
 import kr.co.kimberly.wma.network.model.CustomerModel
 import kr.co.kimberly.wma.network.model.DataModel
 import kr.co.kimberly.wma.network.model.DetailInfoModel
-import kr.co.kimberly.wma.network.model.LedgerModel
+import kr.co.kimberly.wma.network.model.ledger.LedgerModel
 import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.model.ProductPriceHistoryModel
 import kr.co.kimberly.wma.network.model.ResultModel

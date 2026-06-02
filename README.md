@@ -66,6 +66,7 @@ MVVM (Model - View - ViewModel)
 |---|---|---|---|---|
 | 로그인 | `LoginActivity` | `LoginViewModel` | `LoginRepository` | 완료 |
 | 기준정보 | `InformationActivity` | `InformationViewModel` | `InformationRepository` | 완료 |
+| 원장조회 | `LedgerActivity` | `LedgerViewModel` | `LedgerRepository` | 완료 |
 | 그 외 화면 | Activity | — | — | 미적용 (향후 순차 적용 예정) |
 
 ### 로그인 MVVM 흐름
@@ -180,11 +181,19 @@ app/src/main/java/kr/co/kimberly/wma/
     ├── ApiClientService.kt       Retrofit 인터페이스 + 클라이언트 팩토리
     ├── AuthInterceptor.kt        Bearer 토큰 자동 주입 Interceptor
     ├── repository/
-    │   └── LoginRepository.kt    로그인 API 호출 단일 책임
+    │   ├── LoginRepository.kt        로그인 API 호출 단일 책임
+    │   ├── InformationRepository.kt  기준정보 API 호출 단일 책임
+    │   └── LedgerRepository.kt       원장 API 호출 단일 책임
     └── model/                    API 요청/응답 데이터 모델
-        └── login/
-            ├── LoginRequest.kt
-            └── LoginResponseModel.kt
+        ├── login/
+        │   ├── LoginRequest.kt
+        │   └── LoginResponse.kt
+        ├── information/
+        │   ├── MasterInfoRequest.kt
+        │   └── DetailInfoRequest.kt
+        └── ledger/
+            ├── LedgerModel.kt
+            └── LedgerRequest.kt
 ```
 
 ---
@@ -388,6 +397,19 @@ KDC SDK를 직접 사용하던 6개 Activity를 `ScannerManager` / `ScannerCallb
 | `menu/information/InformationActivity.kt` | `setupObservers()`, `handleMasterInfoSuccess()`, `handleDetailInfoSuccess()` |
 
 직접 Retrofit 호출(`getInfo()`, `getDetailInfo()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
+
+#### 원장조회 화면 MVVM 리팩터링
+
+| 파일 | 역할 |
+|---|---|
+| `network/model/ledger/LedgerModel.kt` | 원장 항목 모델 (`network/model/` → `network/model/ledger/` 폴더 이동) |
+| `network/model/ledger/LedgerRequest.kt` | 원장 조회 요청 모델 |
+| `network/repository/LedgerRepository.kt` | `getLedgerList()` Retrofit 호출 단일 책임 |
+| `menu/ledger/LedgerViewModel.kt` | `LedgerState` sealed class, LiveData |
+| `menu/ledger/LedgerActivity.kt` | `setupObservers()`, `handleLedgerSuccess()`, `setupListeners()` |
+
+직접 Retrofit 호출(`getLedgerList()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
+`setDate()` 내 `custCd` 대신 날짜 문자열을 customerCd로 전달하던 버그도 함께 수정했습니다.
 
 ---
 

@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.databinding.CellLedgerBinding
-import kr.co.kimberly.wma.network.model.LedgerModel
+import kr.co.kimberly.wma.network.model.ledger.LedgerModel
 import java.text.DecimalFormat
 import java.util.ArrayList
 
