@@ -13,7 +13,7 @@ import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.CellCollectBinding
 import kr.co.kimberly.wma.menu.slip.SlipInquiryDetailActivity
-import kr.co.kimberly.wma.network.model.CollectModel
+import kr.co.kimberly.wma.network.model.collect.CollectModel
 import kr.co.kimberly.wma.network.model.CustomerModel
 import kr.co.kimberly.wma.network.model.SearchItemModel
 import kr.co.kimberly.wma.network.model.SlipOrderListModel

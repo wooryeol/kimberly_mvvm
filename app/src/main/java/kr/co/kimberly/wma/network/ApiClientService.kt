@@ -5,7 +5,7 @@ import kr.co.kimberly.wma.BuildConfig
 import kr.co.kimberly.wma.Manager.TokenManager
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.network.model.BalanceModel
-import kr.co.kimberly.wma.network.model.CollectModel
+import kr.co.kimberly.wma.network.model.collect.CollectModel
 import kr.co.kimberly.wma.network.model.CustomerModel
 import kr.co.kimberly.wma.network.model.DataModel
 import kr.co.kimberly.wma.network.model.DetailInfoModel
