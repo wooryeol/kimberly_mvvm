@@ -67,6 +67,7 @@ MVVM (Model - View - ViewModel)
 | 로그인 | `LoginActivity` | `LoginViewModel` | `LoginRepository` | 완료 |
 | 기준정보 | `InformationActivity` | `InformationViewModel` | `InformationRepository` | 완료 |
 | 원장조회 | `LedgerActivity` | `LedgerViewModel` | `LedgerRepository` | 완료 |
+| 재고조회 | `InventoryActivity` | `InventoryViewModel` | `InventoryRepository` | 완료 |
 | 그 외 화면 | Activity | — | — | 미적용 (향후 순차 적용 예정) |
 
 ### 로그인 MVVM 흐름
@@ -183,7 +184,8 @@ app/src/main/java/kr/co/kimberly/wma/
     ├── repository/
     │   ├── LoginRepository.kt        로그인 API 호출 단일 책임
     │   ├── InformationRepository.kt  기준정보 API 호출 단일 책임
-    │   └── LedgerRepository.kt       원장 API 호출 단일 책임
+    │   ├── LedgerRepository.kt       원장 API 호출 단일 책임
+    │   └── InventoryRepository.kt    재고조회 API 호출 단일 책임
     └── model/                    API 요청/응답 데이터 모델
         ├── login/
         │   ├── LoginRequest.kt
@@ -191,9 +193,14 @@ app/src/main/java/kr/co/kimberly/wma/
         ├── information/
         │   ├── MasterInfoRequest.kt
         │   └── DetailInfoRequest.kt
-        └── ledger/
-            ├── LedgerModel.kt
-            └── LedgerRequest.kt
+        ├── ledger/
+        │   ├── LedgerModel.kt
+        │   └── LedgerRequest.kt
+        └── inventory/
+            ├── WarehouseListModel.kt
+            ├── WarehouseListRequest.kt
+            ├── WarehouseStockModel.kt
+            └── WarehouseStockRequest.kt
 ```
 
 ---
@@ -410,6 +417,22 @@ KDC SDK를 직접 사용하던 6개 Activity를 `ScannerManager` / `ScannerCallb
 
 직접 Retrofit 호출(`getLedgerList()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
 `setDate()` 내 `custCd` 대신 날짜 문자열을 customerCd로 전달하던 버그도 함께 수정했습니다.
+
+#### 재고조회 화면 MVVM 리팩터링
+
+| 파일 | 역할 |
+|---|---|
+| `network/model/inventory/WarehouseListModel.kt` | 창고 목록 모델 (`network/model/` → `network/model/inventory/` 폴더 이동) |
+| `network/model/inventory/WarehouseStockModel.kt` | 재고 항목 모델 (`network/model/` → `network/model/inventory/` 폴더 이동, 파일명 정규화) |
+| `network/model/inventory/WarehouseListRequest.kt` | 창고 목록 조회 요청 모델 |
+| `network/model/inventory/WarehouseStockRequest.kt` | 재고 조회 요청 모델 |
+| `network/repository/InventoryRepository.kt` | `getWarehouseList()` / `getWarehouseStock()` Retrofit 호출 단일 책임 |
+| `menu/inventory/InventoryViewModel.kt` | `WarehouseListState` / `WarehouseStockState` sealed class, LiveData |
+| `menu/inventory/InventoryActivity.kt` | `setupObservers()`, `handleWarehouseListSuccess()`, `handleWarehouseStockSuccess()`, `setupListeners()` |
+
+직접 Retrofit 호출(`warehouseList()`, `warehouseStock()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
+`WarehouseListModel` import 참조 파일(`SapListAdapter`, `WarehouseListAdapter`, `PopupWarehouseList`) 및
+`WarehouseStockModel` import 참조 파일(`InventoryListAdapter`)도 새 패키지 경로로 일괄 수정했습니다.
 
 ---
 
