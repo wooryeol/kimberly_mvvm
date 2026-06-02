@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.databinding.CellAccountSearchBinding
 import kr.co.kimberly.wma.network.model.CustomerModel
-import kr.co.kimberly.wma.network.model.WarehouseListModel
+import kr.co.kimberly.wma.network.model.inventory.WarehouseListModel
 import java.util.ArrayList
 
 class WarehouseListAdapter(context: Context): RecyclerView.Adapter<WarehouseListAdapter.ViewHolder>() {

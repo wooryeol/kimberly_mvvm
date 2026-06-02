@@ -11,7 +11,7 @@ import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.databinding.CellAccountSearchBinding
 import kr.co.kimberly.wma.network.model.CustomerModel
 import kr.co.kimberly.wma.network.model.SapModel
-import kr.co.kimberly.wma.network.model.WarehouseListModel
+import kr.co.kimberly.wma.network.model.inventory.WarehouseListModel
 import java.util.ArrayList
 
 class SapListAdapter(context: Context, val returnCd: String): RecyclerView.Adapter<SapListAdapter.ViewHolder>() {

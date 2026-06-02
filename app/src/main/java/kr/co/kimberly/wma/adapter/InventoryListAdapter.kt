@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.databinding.CellInventoryBinding
-import kr.co.kimberly.wma.network.model.WarehouseStockModel
+import kr.co.kimberly.wma.network.model.inventory.WarehouseStockModel
 
 class InventoryListAdapter(context: Context, activity: Activity): RecyclerView.Adapter<InventoryListAdapter.ViewHolder>() {
 

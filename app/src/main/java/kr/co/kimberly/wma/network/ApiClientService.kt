@@ -17,8 +17,8 @@ import kr.co.kimberly.wma.network.model.SapModel
 import kr.co.kimberly.wma.network.model.SearchItemModel
 import kr.co.kimberly.wma.network.model.SlipOrderListModel
 import kr.co.kimberly.wma.network.model.SlipPrintModel
-import kr.co.kimberly.wma.network.model.WarehouseListModel
-import kr.co.kimberly.wma.network.model.WarehouseStockModel
+import kr.co.kimberly.wma.network.model.inventory.WarehouseListModel
+import kr.co.kimberly.wma.network.model.inventory.WarehouseStockModel
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.logging.HttpLoggingInterceptor

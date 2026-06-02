@@ -13,7 +13,7 @@ import kr.co.kimberly.wma.adapter.WarehouseListAdapter
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.PopupSearchResultBinding
-import kr.co.kimberly.wma.network.model.WarehouseListModel
+import kr.co.kimberly.wma.network.model.inventory.WarehouseListModel
 
 class PopupWarehouseList(mContext: Context, val list: ArrayList<WarehouseListModel>): Dialog(mContext) {
     private lateinit var mBinding: PopupSearchResultBinding
