@@ -68,6 +68,7 @@ MVVM (Model - View - ViewModel)
 | 기준정보 | `InformationActivity` | `InformationViewModel` | `InformationRepository` | 완료 |
 | 원장조회 | `LedgerActivity` | `LedgerViewModel` | `LedgerRepository` | 완료 |
 | 재고조회 | `InventoryActivity` | `InventoryViewModel` | `InventoryRepository` | 완료 |
+| 수금결재 | `CollectApprovalActivity` | `CollectApprovalViewModel` | — | 완료 |
 | 그 외 화면 | Activity | — | — | 미적용 (향후 순차 적용 예정) |
 
 ### 로그인 MVVM 흐름
@@ -163,6 +164,8 @@ app/src/main/java/kr/co/kimberly/wma/
 │   └── DBHelper.kt               SQLite 로컬 DB
 ├── menu/                         화면별 Activity
 │   ├── collect/
+│   │   ├── CollectApprovalActivity.kt
+│   │   └── CollectApprovalViewModel.kt
 │   ├── information/
 │   ├── inventory/
 │   ├── ledger/
@@ -433,6 +436,17 @@ KDC SDK를 직접 사용하던 6개 Activity를 `ScannerManager` / `ScannerCallb
 직접 Retrofit 호출(`warehouseList()`, `warehouseStock()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
 `WarehouseListModel` import 참조 파일(`SapListAdapter`, `WarehouseListAdapter`, `PopupWarehouseList`) 및
 `WarehouseStockModel` import 참조 파일(`InventoryListAdapter`)도 새 패키지 경로로 일괄 수정했습니다.
+
+#### 수금결재 화면 MVVM 리팩터링
+
+| 파일 | 역할 |
+|---|---|
+| `menu/collect/CollectApprovalViewModel.kt` | `PrintState` sealed class (Idle / PrintRequested / Error), `slipNo` 보관, 출력 수량 검증 로직 |
+| `menu/collect/CollectApprovalActivity.kt` | `by viewModels()`, `setupObservers()`, `setupListeners()` |
+
+네트워크 호출 없이 출력 수량 검증 로직만 ViewModel로 이동했습니다.
+`slipNo`를 ViewModel이 보관하여 구성 변경(화면 회전 등) 시에도 데이터가 유지되도록 개선했습니다.
+미사용 import(`Toast`) 및 `mActivity` 필드를 제거했습니다.
 
 ---
 
