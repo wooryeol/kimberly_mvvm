@@ -69,6 +69,8 @@ MVVM (Model - View - ViewModel)
 | 원장조회 | `LedgerActivity` | `LedgerViewModel` | `LedgerRepository` | 완료 |
 | 재고조회 | `InventoryActivity` | `InventoryViewModel` | `InventoryRepository` | 완료 |
 | 수금결재 | `CollectApprovalActivity` | `CollectApprovalViewModel` | — | 완료 |
+| 수금관리 | `CollectManageActivity` | `CollectManageViewModel` | `CollectRepository` | 완료 |
+| 수금등록 | `CollectRegiActivity` | `CollectRegiViewModel` | `CollectRepository` | 완료 |
 | 그 외 화면 | Activity | — | — | 미적용 (향후 순차 적용 예정) |
 
 ### 로그인 MVVM 흐름
@@ -165,7 +167,11 @@ app/src/main/java/kr/co/kimberly/wma/
 ├── menu/                         화면별 Activity
 │   ├── collect/
 │   │   ├── CollectApprovalActivity.kt
-│   │   └── CollectApprovalViewModel.kt
+│   │   ├── CollectApprovalViewModel.kt
+│   │   ├── CollectManageActivity.kt
+│   │   ├── CollectManageViewModel.kt
+│   │   ├── CollectRegiActivity.kt
+│   │   └── CollectRegiViewModel.kt
 │   ├── information/
 │   ├── inventory/
 │   ├── ledger/
@@ -188,7 +194,8 @@ app/src/main/java/kr/co/kimberly/wma/
     │   ├── LoginRepository.kt        로그인 API 호출 단일 책임
     │   ├── InformationRepository.kt  기준정보 API 호출 단일 책임
     │   ├── LedgerRepository.kt       원장 API 호출 단일 책임
-    │   └── InventoryRepository.kt    재고조회 API 호출 단일 책임
+    │   ├── InventoryRepository.kt    재고조회 API 호출 단일 책임
+    │   └── CollectRepository.kt      수금 API 호출 단일 책임 (목록/미수금/전표등록)
     └── model/                    API 요청/응답 데이터 모델
         ├── login/
         │   ├── LoginRequest.kt
@@ -199,11 +206,14 @@ app/src/main/java/kr/co/kimberly/wma/
         ├── ledger/
         │   ├── LedgerModel.kt
         │   └── LedgerRequest.kt
-        └── inventory/
-            ├── WarehouseListModel.kt
-            ├── WarehouseListRequest.kt
-            ├── WarehouseStockModel.kt
-            └── WarehouseStockRequest.kt
+        ├── inventory/
+        │   ├── WarehouseListModel.kt
+        │   ├── WarehouseListRequest.kt
+        │   ├── WarehouseStockModel.kt
+        │   └── WarehouseStockRequest.kt
+        └── collect/
+            ├── CollectModel.kt
+            └── CollectRequest.kt
 ```
 
 ---
@@ -436,6 +446,23 @@ KDC SDK를 직접 사용하던 6개 Activity를 `ScannerManager` / `ScannerCallb
 직접 Retrofit 호출(`warehouseList()`, `warehouseStock()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
 `WarehouseListModel` import 참조 파일(`SapListAdapter`, `WarehouseListAdapter`, `PopupWarehouseList`) 및
 `WarehouseStockModel` import 참조 파일(`InventoryListAdapter`)도 새 패키지 경로로 일괄 수정했습니다.
+
+#### 수금관리 / 수금등록 화면 MVVM 리팩터링
+
+| 파일 | 역할 |
+|---|---|
+| `network/model/collect/CollectModel.kt` | 수금 목록 항목 모델 (`network/model/` → `network/model/collect/` 폴더 이동) |
+| `network/model/collect/CollectRequest.kt` | 수금 목록 조회 요청 모델 |
+| `network/repository/CollectRepository.kt` | `getCollectList()` / `getCustomerBond()` / `postSlip()` Retrofit 호출 단일 책임 |
+| `menu/collect/CollectManageViewModel.kt` | `CollectListState` sealed class, LiveData |
+| `menu/collect/CollectManageActivity.kt` | `setupObservers()`, `showCollectList()`, `setupListeners()` |
+| `menu/collect/CollectRegiViewModel.kt` | `CustomerBondState` / `SlipPostState` sealed class, `buildSlipJson()` (CC/BB/CB 결제 분기) |
+| `menu/collect/CollectRegiActivity.kt` | `setupObservers()`, `handleCustomerBondSuccess()`, `handleSlipPostSuccess()`, `clearAccountInput()` |
+
+직접 Retrofit 호출(`searchCollectList()`, `getCustomerBond()`, `postSlip()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
+결제 방법(현금/어음/현금+어음)에 따른 JSON 빌드 로직을 `CollectRegiViewModel.buildSlipJson()`으로 이동하여 Activity는 UI 값만 수집해 ViewModel에 전달합니다.
+`BalanceModel`, `SlipPrintModel`은 `PrinterOptionActivity` 등 다른 화면에서도 사용하므로 `model/collect/`로 이동하지 않았습니다.
+`CollectModel` import 참조 파일(`CollectListAdapter`, `ApiClientService`)도 새 패키지 경로로 일괄 수정했습니다.
 
 #### 수금결재 화면 MVVM 리팩터링
 
