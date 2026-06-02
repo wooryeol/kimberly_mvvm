@@ -9,7 +9,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.view.View
-import android.widget.Toast
+import androidx.activity.viewModels
 import kr.co.kimberly.wma.R
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.common.Utils
@@ -25,7 +25,7 @@ class CollectApprovalActivity : AppCompatActivity() {
     private lateinit var mContext: Context
     private lateinit var mActivity: Activity
 
-    private lateinit var slipNo: String
+    private val viewModel: CollectApprovalViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,40 +35,51 @@ class CollectApprovalActivity : AppCompatActivity() {
         mContext = this
         mActivity = this
 
-        slipNo = intent.getStringExtra("slipNo") ?: ""
+        viewModel.slipNo = intent.getStringExtra("slipNo") ?: ""
 
-        // Utils.log("slipNo ====> $slipNo")
-        // 헤더 및 바텀 설정
         mBinding.header.headerTitle.text = getString(R.string.titleOrder)
         mBinding.header.scanBtn.visibility = View.GONE
-        mBinding.header.backBtn.setOnClickListener(object: OnSingleClickListener() {
+
+        setupObservers()
+        setupListeners()
+    }
+
+    private fun setupObservers() {
+        viewModel.printState.observe(this) { state ->
+            when (state) {
+                is CollectApprovalViewModel.PrintState.PrintRequested -> {
+                    PopupPrintDone(this).show()
+                    viewModel.resetState()
+                }
+                is CollectApprovalViewModel.PrintState.Error -> {
+                    Utils.popupNotice(mContext, state.message)
+                    viewModel.resetState()
+                }
+                is CollectApprovalViewModel.PrintState.Idle -> Unit
+            }
+        }
+    }
+
+    private fun setupListeners() {
+        mBinding.header.backBtn.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View) {
-                val popupNoticeV2 = PopupNoticeV2(mContext, "인쇄를 종료하고\n처음 화면으로 돌아가시겠습니까?", object : Handler(
-                    Looper.getMainLooper()) {
+                PopupNoticeV2(mContext, "인쇄를 종료하고\n처음 화면으로 돌아가시겠습니까?", object : Handler(Looper.getMainLooper()) {
                     override fun handleMessage(msg: Message) {
-                        when(msg.what) {
+                        when (msg.what) {
                             Define.EVENT_OK -> {
-                                val intent = Intent(mContext, MainActivity::class.java).apply {
+                                startActivity(Intent(mContext, MainActivity::class.java).apply {
                                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                                }
-                                startActivity(intent)
+                                })
                                 finish()
                             }
                         }
                     }
-                })
-                popupNoticeV2.show()
+                }).show()
             }
         })
 
-        // 인쇄
         mBinding.printBtn.setOnClickListener {
-            if (mBinding.printQuantity.text.isNotEmpty()) {
-                val dlg = PopupPrintDone(this)
-                dlg.show()
-            } else {
-                Utils.popupNotice(mContext, "인쇄 수량을 적어주세요.")
-            }
+            viewModel.requestPrint(mBinding.printQuantity.text.toString())
         }
     }
 }
