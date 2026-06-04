@@ -302,7 +302,7 @@ keyPassword=...
 | 앱 위변조 감지 | 서명 해시 검증, 불일치 시 앱 종료 |
 | 컴포넌트 보호 | 주요 Activity 전체 `exported="false"` 설정 |
 | API 호스트 보호 | Base64 인코딩 후 BuildConfig에 주입 |
-| 토큰 인증 | JWT Bearer 토큰, `AuthInterceptor`로 모든 API 요청에 자동 포함 |
+| 토큰 인증 | JWT Bearer 토큰, `AuthInterceptor`로 자동 포함 / 401 수신 시 토큰 삭제 후 `LoginActivity` 이동 |
 
 > Debug 빌드에서는 루팅/위변조 보안 체크를 건너뜁니다.
 
@@ -401,6 +401,33 @@ class MyActivity : AppCompatActivity(), ScannerCallback {
 ## 변경 이력
 
 ### 리팩터링 (2026-06)
+
+#### 토큰 갱신 MVVM 적용
+
+| 파일 | 변경 내용 |
+|---|---|
+| `Manager/token/TokenManager.kt` | `companion object` 추가 — `tokenExpiredEvent: MutableLiveData<Unit>`, `notifyTokenExpired()` |
+| `network/AuthInterceptor.kt` | 401 응답 감지 시 `clearToken()` + `TokenManager.notifyTokenExpired()` 호출 |
+| `menu/login/LoginViewModel.kt` | 로그인 성공 시 `data.token`을 `TokenManager.saveAccessToken()`으로 저장 |
+| `GlobalApplication.kt` | `setupTokenExpiryHandler()` — `tokenExpiredEvent.observeForever`로 앱 전역 만료 이벤트 수신 후 `LoginActivity`로 이동 |
+
+**토큰 흐름:**
+```
+로그인 성공
+  → LoginViewModel: TokenManager.saveAccessToken(token)
+
+API 호출
+  → AuthInterceptor: Authorization: Bearer {token} 헤더 자동 추가
+
+401 수신 (토큰 만료)
+  → AuthInterceptor: tokenManager.clearToken()
+                   + TokenManager.notifyTokenExpired()   ← OkHttp 백그라운드 스레드
+  → TokenManager.tokenExpiredEvent.postValue(Unit)
+  → GlobalApplication.observeForever { }                ← 메인 스레드 전달
+  → LoginActivity (FLAG_ACTIVITY_CLEAR_TASK)
+```
+
+`isNavigatingToLogin` 플래그로 동시 다발적 401 응답에 의한 중복 이동을 방지합니다.
 
 #### 프로젝트 이름 변경 (`kimberly_aos` → `Kimberly_mvvm`)
 

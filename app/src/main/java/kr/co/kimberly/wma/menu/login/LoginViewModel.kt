@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import kr.co.kimberly.wma.Manager.token.TokenManager
 import kr.co.kimberly.wma.common.SharedData
 import kr.co.kimberly.wma.network.model.login.LoginRequest
 import kr.co.kimberly.wma.network.model.login.LoginResponse
@@ -50,6 +51,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         ) { result ->
             result.onSuccess { data ->
                 SharedData.setSharedData(context, SharedData.LOGIN_DATA, Gson().toJson(data))
+                data.token?.let { TokenManager(context).saveAccessToken(it) }
                 _loginState.postValue(LoginState.Success(data))
             }
             result.onFailure { error ->
