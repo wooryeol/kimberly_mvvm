@@ -74,6 +74,8 @@ MVVM (Model - View - ViewModel)
 | 반품등록 | `ReturnRegActivity` | `ReturnRegViewModel` | `ReturnRepository` | 완료 |
 | 주문등록 | `OrderRegActivity` | `OrderRegViewModel` | `OrderRepository` | 완료 |
 | 전표조회 | `SlipInquiryActivity` | `SlipInquiryViewModel` | `SlipRepository` | 완료 |
+| 전표상세 | `SlipInquiryDetailActivity` | `SlipInquiryDetailViewModel` | `SlipRepository` | 완료 |
+| 전표수정 | `SlipInquiryModifyActivity` | `SlipInquiryModifyViewModel` | `SlipRepository` | 완료 |
 | 그 외 화면 | Activity | — | — | 미적용 (향후 순차 적용 예정) |
 
 ### 로그인 MVVM 흐름
@@ -195,7 +197,9 @@ app/src/main/java/kr/co/kimberly/wma/
 │   │   ├── SlipInquiryActivity.kt
 │   │   ├── SlipInquiryViewModel.kt
 │   │   ├── SlipInquiryDetailActivity.kt
-│   │   └── SlipInquiryModifyActivity.kt
+│   │   ├── SlipInquiryDetailViewModel.kt
+│   │   ├── SlipInquiryModifyActivity.kt
+│   │   └── SlipInquiryModifyViewModel.kt
 │   ├── splash/
 │   └── store/
 └── network/
@@ -209,7 +213,7 @@ app/src/main/java/kr/co/kimberly/wma/
     │   ├── CollectRepository.kt      수금 API 호출 단일 책임 (목록/미수금/전표등록)
     │   ├── ReturnRepository.kt       반품 전표 등록 API 호출 단일 책임
     │   ├── OrderRepository.kt        주문 전표 등록 API 호출 단일 책임
-    │   └── SlipRepository.kt         전표 조회 API 호출 단일 책임 (고객 검색 / 전표 목록)
+    │   └── SlipRepository.kt         전표 API 호출 단일 책임 (고객 검색 / 전표 목록 / 전표 삭제 / 전표 수정)
     └── model/                    API 요청/응답 데이터 모델
         ├── login/
         │   ├── LoginRequest.kt
@@ -333,7 +337,7 @@ KDC SDK(`KDCReader`, `KDCDevice`, `KDCConnectionListenerEx` 등)는 `ScannerMana
 // Activity에서의 사용 패턴
 class MyActivity : AppCompatActivity(), ScannerCallback {
 
-    override fun onCreate(...) {
+    override fun onCreate() {
         ScannerManager.initialize(this, this)  // SDK 초기화 + 콜백 등록
         checkScanner()                          // 저장된 주소로 자동 재연결
     }
@@ -518,6 +522,21 @@ BroadcastReceiver는 `RegAdapter` 내부에 유지되며(`orderAdapter?.barcodeR
 `slipType`(ORDER/RETURN)을 `SlipListState.Success`에 포함하여 Activity가 단일 observer에서 주문·반품 목록을 구분 처리합니다.
 `fromDate()` / `toDate()` 헬퍼 메서드로 날짜 문자열 변환(`/` → `-`) 중복을 제거했습니다.
 원본의 `customerCd?.isNotEmpty()!!`에서 `customerCd`가 null일 경우 NPE가 발생할 수 있던 버그를 `!customerCd.isNullOrEmpty()`으로 수정했습니다.
+
+#### 전표상세 / 전표수정 화면 MVVM 리팩터링
+
+| 파일 | 역할 |
+|---|---|
+| `network/repository/SlipRepository.kt` | `deleteSlip()` 전표 삭제 (RETURN_CD_00/90/91 성공), `updateSlip()` 전표 수정 (RETURN_CD_00만 성공, newSlipNo 반환) 추가 |
+| `menu/slip/SlipInquiryDetailViewModel.kt` | `DeleteState` sealed class, JSON 빌드 후 삭제 API 위임 |
+| `menu/slip/SlipInquiryDetailActivity.kt` | `confirmDelete()` → `viewModel.deleteSlip()`, `handleDeleteSuccess()` — RESULT_OK + deletedSlipNo 반환 후 finish |
+| `menu/slip/SlipInquiryModifyViewModel.kt` | `UpdateState` sealed class, Gson 직렬화 포함 JSON 빌드 후 수정 API 위임 |
+| `menu/slip/SlipInquiryModifyActivity.kt` | `checkOrderPopup()` onOkClick → `viewModel.updateSlip()`, `handleUpdateSuccess()` — PrinterOptionActivity 이동 |
+
+직접 Retrofit 호출(`delete()`, `update()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
+전표 수정 성공 시 서버에서 반환하는 `newSlipNo`를 `UpdateState.Success`에 담아 PrinterOptionActivity로 전달합니다.
+원본 `goBack()`에서 `SlipInquiryDetailActivity()` 인스턴스를 직접 생성하던 코드(`SlipInquiryDetailActivity().dataList.clear()`)를 `deleteData()`로 교체했습니다. Activity를 직접 인스턴스화해도 시스템 관리 인스턴스가 아니므로 실제 화면의 상태를 변경할 수 없는 패턴이었습니다.
+BroadcastReceiver(`modifyAdapter?.barcodeReceiver`), ScannerCallback, OnBackPressedCallback 생명주기 로직은 그대로 보존했습니다.
 
 #### 수금결재 화면 MVVM 리팩터링
 
