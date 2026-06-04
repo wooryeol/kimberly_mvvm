@@ -76,6 +76,7 @@ MVVM (Model - View - ViewModel)
 | 전표조회 | `SlipInquiryActivity` | `SlipInquiryViewModel` | `SlipRepository` | 완료 |
 | 전표상세 | `SlipInquiryDetailActivity` | `SlipInquiryDetailViewModel` | `SlipRepository` | 완료 |
 | 전표수정 | `SlipInquiryModifyActivity` | `SlipInquiryModifyViewModel` | `SlipRepository` | 완료 |
+| 구매요청 | `PurchaseRequestActivity` | `PurchaseRequestViewModel` | `PurchaseRepository` | 완료 |
 | 그 외 화면 | Activity | — | — | 미적용 (향후 순차 적용 예정) |
 
 ### 로그인 MVVM 흐름
@@ -189,6 +190,8 @@ app/src/main/java/kr/co/kimberly/wma/
 │   │   └── OrderRegViewModel.kt
 │   ├── printer/
 │   ├── purchase/
+│   │   ├── PurchaseRequestActivity.kt
+│   │   └── PurchaseRequestViewModel.kt
 │   ├── return/
 │   │   ├── ReturnRegActivity.kt
 │   │   └── ReturnRegViewModel.kt
@@ -213,6 +216,7 @@ app/src/main/java/kr/co/kimberly/wma/
     │   ├── CollectRepository.kt      수금 API 호출 단일 책임 (목록/미수금/전표등록)
     │   ├── ReturnRepository.kt       반품 전표 등록 API 호출 단일 책임
     │   ├── OrderRepository.kt        주문 전표 등록 API 호출 단일 책임
+    │   ├── PurchaseRepository.kt     본사 구매 전표 등록 API 호출 단일 책임
     │   └── SlipRepository.kt         전표 API 호출 단일 책임 (고객 검색 / 전표 목록 / 전표 삭제 / 전표 수정)
     └── model/                    API 요청/응답 데이터 모델
         ├── login/
@@ -537,6 +541,20 @@ BroadcastReceiver는 `RegAdapter` 내부에 유지되며(`orderAdapter?.barcodeR
 전표 수정 성공 시 서버에서 반환하는 `newSlipNo`를 `UpdateState.Success`에 담아 PrinterOptionActivity로 전달합니다.
 원본 `goBack()`에서 `SlipInquiryDetailActivity()` 인스턴스를 직접 생성하던 코드(`SlipInquiryDetailActivity().dataList.clear()`)를 `deleteData()`로 교체했습니다. Activity를 직접 인스턴스화해도 시스템 관리 인스턴스가 아니므로 실제 화면의 상태를 변경할 수 없는 패턴이었습니다.
 BroadcastReceiver(`modifyAdapter?.barcodeReceiver`), ScannerCallback, OnBackPressedCallback 생명주기 로직은 그대로 보존했습니다.
+
+#### 구매요청 화면 MVVM 리팩터링
+
+| 파일 | 역할 |
+|---|---|
+| `network/repository/PurchaseRepository.kt` | `postOrderSlip()` 본사 구매 전표 등록 API 호출 단일 책임 (`RETURN_CD_00`만 성공 처리) |
+| `menu/purchase/PurchaseRequestViewModel.kt` | `PostState` sealed class, Gson 직렬화 포함 JSON 빌드 로직, `Success`에 `slipNo` + `sapModel` + `itemList` 포함 |
+| `menu/purchase/PurchaseRequestActivity.kt` | `setupObservers()`, `setupListeners()`, `handlePostSuccess()` |
+
+직접 Retrofit 호출(`postOrderSlip()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
+JSON 빌드 및 Gson 직렬화 로직을 ViewModel로 이동하여 Activity는 `sapModel`, `items`, `totalAmount`만 전달합니다.
+`PurchaseApprovalActivity`로 이동에 필요한 `sapModel`과 `itemList`를 `PostState.Success`에 담아 전달합니다.
+원본의 `item?.returnMsg!!` 강제 언래핑을 `?: "잠시 후 다시 시도해주세요"` 로, `purchaseAdapter?.itemList!!.isEmpty()` 강제 언래핑을 `isNullOrEmpty()`로 교체하여 NPE 위험을 제거했습니다.
+BroadcastReceiver(`purchaseAdapter?.barcodeReceiver`), ScannerCallback, OnBackPressedCallback 생명주기 로직은 그대로 보존했습니다.
 
 #### 수금결재 화면 MVVM 리팩터링
 
