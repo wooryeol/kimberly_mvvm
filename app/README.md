@@ -25,7 +25,7 @@
 |---|---|
 | 앱 이름 | WMA_Mobile |
 | 패키지명 | `kr.co.kimberly.wma` |
-| 버전 | 1.0.17 (versionCode: 26052704) |
+| 버전 | 1.0.17 (versionCode: 26060401) |
 | Min SDK | 28 (Android 9.0 Pie) |
 | Target SDK | 35 (Android 15) |
 | 언어 | Kotlin |
@@ -168,7 +168,6 @@ app/src/main/java/kr/co/kimberly/wma/
 │       └── TokenManager.kt       JWT 토큰 저장/조회/삭제/만료 이벤트
 ├── adapter/                      RecyclerView 어댑터
 ├── common/
-│   ├── BarcodeViewModel.kt       바코드 스캔 ViewModel
 │   ├── Define.kt                 앱 전역 상수
 │   ├── SharedData.kt             SharedPreferences 유틸
 │   └── Utils.kt                  공통 유틸 (로그, 팝업, 루팅 감지 등)
@@ -246,18 +245,31 @@ app/src/main/java/kr/co/kimberly/wma/
         │   └── LoginResponse.kt
         ├── information/
         │   ├── MasterInfoRequest.kt
-        │   └── DetailInfoRequest.kt
+        │   ├── DetailInfoRequest.kt
+        │   └── DetailInfoResponse.kt
         ├── ledger/
-        │   ├── LedgerModel.kt
+        │   ├── LedgerResponse.kt
         │   └── LedgerRequest.kt
         ├── inventory/
-        │   ├── WarehouseListModel.kt
+        │   ├── WarehouseListResponse.kt
         │   ├── WarehouseListRequest.kt
-        │   ├── WarehouseStockModel.kt
+        │   ├── WarehouseStockResponse.kt
         │   └── WarehouseStockRequest.kt
-        └── collect/
-            ├── CollectModel.kt
-            └── CollectRequest.kt
+        ├── collect/
+        │   ├── CollectResponse.kt
+        │   └── CollectRequest.kt
+        ├── main/
+        │   └── MainMenuModel.kt
+        └── common/
+            ├── ResultResponse.kt         (ResultResponse<T> + DataResponse<T> 포함)
+            ├── SearchItemResponse.kt
+            ├── CustomerResponse.kt
+            ├── SlipOrderResponse.kt
+            ├── ProductPriceHistoryResponse.kt
+            ├── BalanceResponse.kt
+            ├── SapResponse.kt
+            ├── SlipPrintResponse.kt
+            └── DeviceResponse.kt
 ```
 
 ---
@@ -493,7 +505,7 @@ KDC SDK를 직접 사용하던 6개 Activity를 `ScannerManager` / `ScannerCallb
 
 | 파일 | 역할 |
 |---|---|
-| `network/model/ledger/LedgerModel.kt` | 원장 항목 모델 (`network/model/` → `network/model/ledger/` 폴더 이동) |
+| `network/model/ledger/LedgerResponse.kt` | 원장 항목 모델 (`network/model/` → `network/model/ledger/` 폴더 이동, `LedgerModel` → `LedgerResponse` 이름 변경) |
 | `network/model/ledger/LedgerRequest.kt` | 원장 조회 요청 모델 |
 | `network/repository/LedgerRepository.kt` | `getLedgerList()` Retrofit 호출 단일 책임 |
 | `menu/ledger/LedgerViewModel.kt` | `LedgerState` sealed class, LiveData |
@@ -506,8 +518,8 @@ KDC SDK를 직접 사용하던 6개 Activity를 `ScannerManager` / `ScannerCallb
 
 | 파일 | 역할 |
 |---|---|
-| `network/model/inventory/WarehouseListModel.kt` | 창고 목록 모델 (`network/model/` → `network/model/inventory/` 폴더 이동) |
-| `network/model/inventory/WarehouseStockModel.kt` | 재고 항목 모델 (`network/model/` → `network/model/inventory/` 폴더 이동, 파일명 정규화) |
+| `network/model/inventory/WarehouseListResponse.kt` | 창고 목록 모델 (`network/model/` → `network/model/inventory/` 폴더 이동, `WarehouseListModel` → `WarehouseListResponse` 이름 변경) |
+| `network/model/inventory/WarehouseStockResponse.kt` | 재고 항목 모델 (`network/model/` → `network/model/inventory/` 폴더 이동, `WarehouseStockModel` → `WarehouseStockResponse` 이름 변경) |
 | `network/model/inventory/WarehouseListRequest.kt` | 창고 목록 조회 요청 모델 |
 | `network/model/inventory/WarehouseStockRequest.kt` | 재고 조회 요청 모델 |
 | `network/repository/InventoryRepository.kt` | `getWarehouseList()` / `getWarehouseStock()` Retrofit 호출 단일 책임 |
@@ -515,14 +527,14 @@ KDC SDK를 직접 사용하던 6개 Activity를 `ScannerManager` / `ScannerCallb
 | `menu/inventory/InventoryActivity.kt` | `setupObservers()`, `handleWarehouseListSuccess()`, `handleWarehouseStockSuccess()`, `setupListeners()` |
 
 직접 Retrofit 호출(`warehouseList()`, `warehouseStock()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
-`WarehouseListModel` import 참조 파일(`SapListAdapter`, `WarehouseListAdapter`, `PopupWarehouseList`) 및
-`WarehouseStockModel` import 참조 파일(`InventoryListAdapter`)도 새 패키지 경로로 일괄 수정했습니다.
+`WarehouseListResponse` import 참조 파일(`SapListAdapter`, `WarehouseListAdapter`, `PopupWarehouseList`) 및
+`WarehouseStockResponse` import 참조 파일(`InventoryListAdapter`)도 새 패키지 경로로 일괄 수정했습니다.
 
 #### 수금관리 / 수금등록 화면 MVVM 리팩터링
 
 | 파일 | 역할 |
 |---|---|
-| `network/model/collect/CollectModel.kt` | 수금 목록 항목 모델 (`network/model/` → `network/model/collect/` 폴더 이동) |
+| `network/model/collect/CollectResponse.kt` | 수금 목록 항목 모델 (`network/model/` → `network/model/collect/` 폴더 이동, `CollectModel` → `CollectResponse` 이름 변경) |
 | `network/model/collect/CollectRequest.kt` | 수금 목록 조회 요청 모델 |
 | `network/repository/CollectRepository.kt` | `getCollectList()` / `getCustomerBond()` / `postSlip()` Retrofit 호출 단일 책임 |
 | `menu/collect/CollectManageViewModel.kt` | `CollectListState` sealed class, LiveData |
@@ -532,8 +544,8 @@ KDC SDK를 직접 사용하던 6개 Activity를 `ScannerManager` / `ScannerCallb
 
 직접 Retrofit 호출(`searchCollectList()`, `getCustomerBond()`, `postSlip()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
 결제 방법(현금/어음/현금+어음)에 따른 JSON 빌드 로직을 `CollectRegiViewModel.buildSlipJson()`으로 이동하여 Activity는 UI 값만 수집해 ViewModel에 전달합니다.
-`BalanceModel`, `SlipPrintModel`은 `PrinterOptionActivity` 등 다른 화면에서도 사용하므로 `model/collect/`로 이동하지 않았습니다.
-`CollectModel` import 참조 파일(`CollectListAdapter`, `ApiClientService`)도 새 패키지 경로로 일괄 수정했습니다.
+`BalanceResponse`, `SlipPrintResponse`는 `PrinterOptionActivity` 등 다른 화면에서도 사용하므로 `model/collect/`가 아닌 `model/common/`으로 이동했습니다.
+`CollectResponse` import 참조 파일(`CollectListAdapter`, `ApiClientService`)도 새 패키지 경로로 일괄 수정했습니다.
 
 #### 반품등록 화면 MVVM 리팩터링
 
@@ -545,7 +557,7 @@ KDC SDK를 직접 사용하던 6개 Activity를 `ScannerManager` / `ScannerCallb
 
 직접 Retrofit 호출(`returnItem()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
 JSON 빌드 및 Gson 직렬화 로직을 ViewModel로 이동하여 Activity는 `customerCd`, `items`, `totalAmount`만 전달합니다.
-`SearchItemModel`·`DataModel`은 `OrderRegActivity`와 공유하므로 폴더 이동 없이 기존 경로를 유지했습니다.
+`SearchItemResponse`·`DataResponse`는 `OrderRegActivity`와 공유하므로 이후 `model/common/` 패키지로 통합 이동했습니다.
 BroadcastReceiver, ScannerCallback, OnBackPressedCallback 생명주기 로직은 그대로 보존했습니다.
 원본에서 non-success `returnCd` 케이스가 묵시적으로 무시되던 버그를 Repository에서 `returnMsg` 에러로 처리하도록 개선했습니다.
 
@@ -683,6 +695,55 @@ SplashActivity의 보안 체크(`isRooted`, `isTampered`)를 ViewModel `lazy`로
 네트워크 호출 없이 출력 수량 검증 로직만 ViewModel로 이동했습니다.
 `slipNo`를 ViewModel이 보관하여 구성 변경(화면 회전 등) 시에도 데이터가 유지되도록 개선했습니다.
 미사용 import(`Toast`) 및 `mActivity` 필드를 제거했습니다.
+
+#### 미사용 코드 삭제
+
+- `common/BarcodeViewModel.kt` 삭제 — 사용처 0개 확인 후 제거 (바코드 LiveData를 보관하던 ViewModel이었으나 어느 화면에서도 참조하지 않음)
+
+#### network/model 패키지 구조 리팩터링
+
+모든 API 모델 파일명·클래스명을 `-Request` / `-Response` 접미사로 통일하고, 공통 모델과 기능별 모델을 서브 패키지로 분리했습니다.
+
+**신규 패키지**
+
+| 패키지 | 내용 |
+|---|---|
+| `model/common/` | 3개 이상 화면에서 공유하는 모델 9개 (`ResultResponse`, `DataResponse`, `SearchItemResponse` 등) |
+| `model/main/` | 메인 화면 전용 UI 데이터 클래스 (`MainMenuModel`) |
+
+**이름 변경**
+
+| 이전 | 이후 |
+|---|---|
+| `collect/CollectModel.kt` | `collect/CollectResponse.kt` |
+| `inventory/WarehouseListModel.kt` | `inventory/WarehouseListResponse.kt` |
+| `inventory/WarehouseStockModel.kt` | `inventory/WarehouseStockResponse.kt` |
+| `ledger/LedgerModel.kt` | `ledger/LedgerResponse.kt` |
+| `ResultModel.kt` + `DataModel.kt` | `common/ResultResponse.kt` (두 클래스 통합) |
+| `SearchItemModel.kt` | `common/SearchItemResponse.kt` |
+| `CustomerModel.kt` | `common/CustomerResponse.kt` |
+| `SlipOrderListModel.kt` | `common/SlipOrderResponse.kt` |
+| `ProductPriceHistoryModel.kt` | `common/ProductPriceHistoryResponse.kt` |
+| `BalanceModel.kt` | `common/BalanceResponse.kt` |
+| `SapModel.kt` | `common/SapResponse.kt` |
+| `SlipPrintModel.kt` | `common/SlipPrintResponse.kt` |
+| `DevicesModel.kt` (`DeviceModel` 클래스) | `common/DeviceResponse.kt` |
+| `MainMenuModel.kt` (루트) | `main/MainMenuModel.kt` |
+
+**삭제 (사용처 0개 확인)**
+
+`AccountDetailModel`, `AccountInfoModel`, `AccountModel`, `InventoryModel`, `OrderRegModel`, `OrderTempListModel`, `ProductInfoModel`, `ReceiptModel`, `ResultValuesModel`, `SearchResultModel` 등 미사용 모델 10개 삭제.
+루트 레벨 `CollectModel.kt`(서브패키지 버전의 중복), `DetailInfoModel.kt`(`DetailInfoResponse`와 병합) 추가 삭제.
+
+~90개 파일의 import 경로 및 클래스 참조 일괄 수정.
+
+#### 빌드 오류 수정 (network/model 리팩터링 후속)
+
+| 파일 | 수정 내용 |
+|---|---|
+| `menu/information/InformationActivity.kt` | `DataResponse` import 누락 추가, `handleMasterInfoSuccess()` 파라미터 타입의 구 경로(`network.model.DataResponse`) → `network.model.common.DataResponse` 수정 |
+| `adapter/PairedDevicesAdapter.kt` | `onItemSelect` 람다 타입 `DeviceModel` → `DeviceResponse` |
+| `menu/purchase/PurchaseRequestActivity.kt` | `as? SapModel` 캐스트 → `as? SapResponse` |
 
 ---
 

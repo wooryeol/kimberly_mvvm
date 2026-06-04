@@ -157,7 +157,7 @@ class PurchaseRequestActivity : AppCompatActivity(), ScannerCallback {
         } else {
             arrayListOf()
         }
-        val data: SapResponse = intent.getSerializableExtra("purchaseSapModel") as? SapModel ?: SapResponse()
+        val data: SapResponse = intent.getSerializableExtra("purchaseSapModel") as? SapResponse ?: SapResponse()
 
         purchaseAdapter = PurchaseRequestAdapter(mContext, mActivity, list, data) { itemList, _ ->
             totalAmount = 0

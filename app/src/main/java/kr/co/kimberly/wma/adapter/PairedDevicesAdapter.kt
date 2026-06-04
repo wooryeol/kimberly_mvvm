@@ -29,7 +29,7 @@ class PairedDevicesAdapter(context: Context, private val isConnected: ((Boolean,
     var mContext = context
     var printerClickListener: ItemClickListener? = null
     var scannerClickListener: ItemClickListener? = null
-    var onItemSelect: ((DeviceModel) -> Unit)? = null // 기기 선택 시
+    var onItemSelect: ((DeviceResponse) -> Unit)? = null // 기기 선택 시
 
     // 연결 됐는지
     private var isPrinter = false

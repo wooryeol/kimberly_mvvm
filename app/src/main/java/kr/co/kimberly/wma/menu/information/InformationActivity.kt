@@ -33,6 +33,7 @@ import kr.co.kimberly.wma.custom.popup.PopupLoading
 import kr.co.kimberly.wma.custom.popup.PopupNotice
 import kr.co.kimberly.wma.databinding.ActInformationBinding
 import kr.co.kimberly.wma.menu.setting.SettingActivity
+import kr.co.kimberly.wma.network.model.common.DataResponse
 import kr.co.kimberly.wma.network.model.information.DetailInfoResponse
 import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 import kr.co.kimberly.wma.network.model.common.SlipOrderResponse
@@ -196,7 +197,7 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun handleMasterInfoSuccess(data: kr.co.kimberly.wma.network.model.DataResponse<Any>) {
+    private fun handleMasterInfoSuccess(data: DataResponse<Any>) {
         val gson = viewModel.gson
         when (mSearchType) {
             Define.TYPE_CUSTOMER -> {
