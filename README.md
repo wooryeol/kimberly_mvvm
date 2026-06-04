@@ -72,6 +72,7 @@ MVVM (Model - View - ViewModel)
 | 수금관리 | `CollectManageActivity` | `CollectManageViewModel` | `CollectRepository` | 완료 |
 | 수금등록 | `CollectRegiActivity` | `CollectRegiViewModel` | `CollectRepository` | 완료 |
 | 반품등록 | `ReturnRegActivity` | `ReturnRegViewModel` | `ReturnRepository` | 완료 |
+| 주문등록 | `OrderRegActivity` | `OrderRegViewModel` | `OrderRepository` | 완료 |
 | 그 외 화면 | Activity | — | — | 미적용 (향후 순차 적용 예정) |
 
 ### 로그인 MVVM 흐름
@@ -181,6 +182,8 @@ app/src/main/java/kr/co/kimberly/wma/
 │   │   └── LoginViewModel.kt
 │   ├── main/
 │   ├── order/
+│   │   ├── OrderRegActivity.kt
+│   │   └── OrderRegViewModel.kt
 │   ├── printer/
 │   ├── purchase/
 │   ├── return/
@@ -199,7 +202,8 @@ app/src/main/java/kr/co/kimberly/wma/
     │   ├── LedgerRepository.kt       원장 API 호출 단일 책임
     │   ├── InventoryRepository.kt    재고조회 API 호출 단일 책임
     │   ├── CollectRepository.kt      수금 API 호출 단일 책임 (목록/미수금/전표등록)
-    │   └── ReturnRepository.kt       반품 전표 등록 API 호출 단일 책임
+    │   ├── ReturnRepository.kt       반품 전표 등록 API 호출 단일 책임
+    │   └── OrderRepository.kt        주문 전표 등록 API 호출 단일 책임
     └── model/                    API 요청/응답 데이터 모델
         ├── login/
         │   ├── LoginRequest.kt
@@ -481,6 +485,20 @@ JSON 빌드 및 Gson 직렬화 로직을 ViewModel로 이동하여 Activity는 `
 `SearchItemModel`·`DataModel`은 `OrderRegActivity`와 공유하므로 폴더 이동 없이 기존 경로를 유지했습니다.
 BroadcastReceiver, ScannerCallback, OnBackPressedCallback 생명주기 로직은 그대로 보존했습니다.
 원본에서 non-success `returnCd` 케이스가 묵시적으로 무시되던 버그를 Repository에서 `returnMsg` 에러로 처리하도록 개선했습니다.
+
+#### 주문등록 화면 MVVM 리팩터링
+
+| 파일 | 역할 |
+|---|---|
+| `network/repository/OrderRepository.kt` | `service.order()` 호출, `slipNo` 반환 (`RETURN_CD_00`만 성공 처리) |
+| `menu/order/OrderRegViewModel.kt` | `OrderPostState` sealed class, JSON 빌드 로직, `Success`에 `slipNo` + `requestJson` 포함 |
+| `menu/order/OrderRegActivity.kt` | `setupObservers()`, `setupListeners()`, `handleOrderSuccess()` |
+
+직접 Retrofit 호출(`order()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
+JSON 빌드 및 Gson 직렬화 로직을 ViewModel로 이동하여 Activity는 `customerCd`, `items`, `totalAmount`, `deliveryDate`만 전달합니다.
+`PrinterOptionActivity`에 필요한 `requestJson`은 `OrderPostState.Success`에 함께 담아 전달합니다.
+BroadcastReceiver는 `RegAdapter` 내부에 유지되며(`orderAdapter?.barcodeReceiver`), ScannerCallback·OnBackPressedCallback 생명주기 로직은 그대로 보존했습니다.
+반품등록과 달리 `RETURN_CD_00`만 성공으로 처리합니다(90/91 미포함).
 
 #### 수금결재 화면 MVVM 리팩터링
 
