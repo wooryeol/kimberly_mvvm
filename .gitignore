@@ -3,10 +3,6 @@
 # (프로젝트 루트 파일 전용 — 모듈 규칙은 app/.gitignore 참고)
 # ============================================================
 
-# Gradle wrapper scripts
-gradlew
-gradlew.bat
-
 # Local SDK configuration
 local.properties
 
