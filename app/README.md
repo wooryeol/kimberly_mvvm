@@ -80,7 +80,10 @@ MVVM (Model - View - ViewModel)
 | 인쇄 옵션 | `PrinterOptionActivity` | `PrinterOptionViewModel` | `PrinterRepository` | 완료 |
 | 구매승인 | `PurchaseApprovalActivity` | `PurchaseApprovalViewModel` | — | 완료 |
 | 매장관리 | `StoreManagementActivity` | `StoreManagementViewModel` | — | 완료 |
-| 그 외 화면 | Activity | — | — | 미적용 (향후 순차 적용 예정) |
+| 메인 메뉴 | `MainActivity` | — | — | 미적용 |
+| 설정 | `SettingActivity` | — | — | 미적용 |
+| 스플래시 | `SplashActivity` | — | — | 미적용 |
+| 이미지 전체보기 | `ImgFullActivity` | — | — | 미적용 |
 
 ### 로그인 MVVM 흐름
 
@@ -158,15 +161,16 @@ SplashActivity
 app/src/main/java/kr/co/kimberly/wma/
 ├── GlobalApplication.kt          Application 클래스
 ├── Manager/
-│   └── scanner/
-│       ├── ScannerManager.kt     KDC 스캐너 싱글톤 (SDK 캡슐화)
-│       └── ScannerCallback.kt    스캐너 이벤트 콜백 인터페이스
+│   ├── scanner/
+│   │   ├── ScannerManager.kt     KDC 스캐너 싱글톤 (SDK 캡슐화)
+│   │   └── ScannerCallback.kt    스캐너 이벤트 콜백 인터페이스
+│   └── token/
+│       └── TokenManager.kt       JWT 토큰 저장/조회/삭제/만료 이벤트
 ├── adapter/                      RecyclerView 어댑터
 ├── common/
 │   ├── BarcodeViewModel.kt       바코드 스캔 ViewModel
 │   ├── Define.kt                 앱 전역 상수
 │   ├── SharedData.kt             SharedPreferences 유틸
-│   ├── TokenManager.kt           JWT 토큰 저장/조회/삭제
 │   └── Utils.kt                  공통 유틸 (로그, 팝업, 루팅 감지 등)
 ├── custom/
 │   ├── popup/                    커스텀 다이얼로그 / 팝업 모음
