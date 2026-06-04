@@ -73,6 +73,7 @@ MVVM (Model - View - ViewModel)
 | 수금등록 | `CollectRegiActivity` | `CollectRegiViewModel` | `CollectRepository` | 완료 |
 | 반품등록 | `ReturnRegActivity` | `ReturnRegViewModel` | `ReturnRepository` | 완료 |
 | 주문등록 | `OrderRegActivity` | `OrderRegViewModel` | `OrderRepository` | 완료 |
+| 전표조회 | `SlipInquiryActivity` | `SlipInquiryViewModel` | `SlipRepository` | 완료 |
 | 그 외 화면 | Activity | — | — | 미적용 (향후 순차 적용 예정) |
 
 ### 로그인 MVVM 흐름
@@ -191,6 +192,10 @@ app/src/main/java/kr/co/kimberly/wma/
 │   │   └── ReturnRegViewModel.kt
 │   ├── setting/
 │   ├── slip/
+│   │   ├── SlipInquiryActivity.kt
+│   │   ├── SlipInquiryViewModel.kt
+│   │   ├── SlipInquiryDetailActivity.kt
+│   │   └── SlipInquiryModifyActivity.kt
 │   ├── splash/
 │   └── store/
 └── network/
@@ -203,7 +208,8 @@ app/src/main/java/kr/co/kimberly/wma/
     │   ├── InventoryRepository.kt    재고조회 API 호출 단일 책임
     │   ├── CollectRepository.kt      수금 API 호출 단일 책임 (목록/미수금/전표등록)
     │   ├── ReturnRepository.kt       반품 전표 등록 API 호출 단일 책임
-    │   └── OrderRepository.kt        주문 전표 등록 API 호출 단일 책임
+    │   ├── OrderRepository.kt        주문 전표 등록 API 호출 단일 책임
+    │   └── SlipRepository.kt         전표 조회 API 호출 단일 책임 (고객 검색 / 전표 목록)
     └── model/                    API 요청/응답 데이터 모델
         ├── login/
         │   ├── LoginRequest.kt
@@ -499,6 +505,19 @@ JSON 빌드 및 Gson 직렬화 로직을 ViewModel로 이동하여 Activity는 `
 `PrinterOptionActivity`에 필요한 `requestJson`은 `OrderPostState.Success`에 함께 담아 전달합니다.
 BroadcastReceiver는 `RegAdapter` 내부에 유지되며(`orderAdapter?.barcodeReceiver`), ScannerCallback·OnBackPressedCallback 생명주기 로직은 그대로 보존했습니다.
 반품등록과 달리 `RETURN_CD_00`만 성공으로 처리합니다(90/91 미포함).
+
+#### 전표조회 화면 MVVM 리팩터링
+
+| 파일 | 역할 |
+|---|---|
+| `network/repository/SlipRepository.kt` | `searchCustomer()` 고객 검색, `getSlipList()` 주문·반품 전표 목록 조회 (RETURN_CD_00/90/91 성공 처리) |
+| `menu/slip/SlipInquiryViewModel.kt` | `CustomerSearchState` / `SlipListState` sealed class, `slipType`을 `Success`에 포함 |
+| `menu/slip/SlipInquiryActivity.kt` | `setupObservers()`, `setupListeners()`, `handleCustomerSearchSuccess()`, `handleSlipListSuccess()` |
+
+직접 Retrofit 호출(`searchCustomer()`, `searchSlipList()`)을 제거하고 ViewModel + LiveData Observer 패턴으로 교체했습니다.
+`slipType`(ORDER/RETURN)을 `SlipListState.Success`에 포함하여 Activity가 단일 observer에서 주문·반품 목록을 구분 처리합니다.
+`fromDate()` / `toDate()` 헬퍼 메서드로 날짜 문자열 변환(`/` → `-`) 중복을 제거했습니다.
+원본의 `customerCd?.isNotEmpty()!!`에서 `customerCd`가 null일 경우 NPE가 발생할 수 있던 버그를 `!customerCd.isNullOrEmpty()`으로 수정했습니다.
 
 #### 수금결재 화면 MVVM 리팩터링
 
