@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kr.co.kimberly.wma.common.Utils
-import kr.co.kimberly.wma.network.model.collect.CollectModel
+import kr.co.kimberly.wma.network.model.collect.CollectResponse
 import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.repository.CollectRepository
 
@@ -14,7 +14,7 @@ class CollectManageViewModel(application: Application) : AndroidViewModel(applic
     sealed class CollectListState {
         object Idle : CollectListState()
         object Loading : CollectListState()
-        data class Success(val list: List<CollectModel>) : CollectListState()
+        data class Success(val list: List<CollectResponse>) : CollectListState()
         data class Error(val message: String) : CollectListState()
     }
 

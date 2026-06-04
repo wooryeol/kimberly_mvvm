@@ -31,7 +31,7 @@ import kr.co.kimberly.wma.databinding.ActOrderRegBinding
 import kr.co.kimberly.wma.db.DBHelper
 import kr.co.kimberly.wma.menu.printer.PrinterOptionActivity
 import kr.co.kimberly.wma.menu.setting.SettingActivity
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 
 @SuppressLint("SetTextI18n", "UnspecifiedRegisterReceiverFlag", "HardwareIds", "MissingPermission", "UseCompatLoadingForDrawables")
 class OrderRegActivity : AppCompatActivity(), ScannerCallback {
@@ -178,7 +178,7 @@ class OrderRegActivity : AppCompatActivity(), ScannerCallback {
 
     @SuppressLint("SetTextI18n")
     private fun setAdapter() {
-        val list = if (db.orderList != emptyArray<SearchItemModel>()) {
+        val list = if (db.orderList != emptyArray<SearchItemResponse>()) {
             db.orderList
         } else {
             arrayListOf()

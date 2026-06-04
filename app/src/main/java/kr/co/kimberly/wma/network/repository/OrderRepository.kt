@@ -2,8 +2,8 @@ package kr.co.kimberly.wma.network.repository
 
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.network.ApiClientService
-import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.ResultModel
+import kr.co.kimberly.wma.network.model.common.DataResponse
+import kr.co.kimberly.wma.network.model.common.ResultResponse
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Response
@@ -17,10 +17,10 @@ class OrderRepository {
         onResult: (Result<String>) -> Unit
     ) {
         service.order(body)
-            .enqueue(object : retrofit2.Callback<ResultModel<DataModel<Unit>>> {
+            .enqueue(object : retrofit2.Callback<ResultResponse<DataResponse<Unit>>> {
                 override fun onResponse(
-                    call: Call<ResultModel<DataModel<Unit>>>,
-                    response: Response<ResultModel<DataModel<Unit>>>
+                    call: Call<ResultResponse<DataResponse<Unit>>>,
+                    response: Response<ResultResponse<DataResponse<Unit>>>
                 ) {
                     if (response.isSuccessful) {
                         val result = response.body()
@@ -34,7 +34,7 @@ class OrderRepository {
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<DataModel<Unit>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<DataResponse<Unit>>>, t: Throwable) {
                     onResult(Result.failure(t))
                 }
             })

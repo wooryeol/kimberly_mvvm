@@ -13,18 +13,18 @@ import kr.co.kimberly.wma.adapter.AccountSearchAdapter
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.PopupSearchResultBinding
-import kr.co.kimberly.wma.network.model.CustomerModel
+import kr.co.kimberly.wma.network.model.common.CustomerResponse
 import kr.co.kimberly.wma.network.model.login.LoginResponse
-import kr.co.kimberly.wma.network.model.SlipOrderListModel
+import kr.co.kimberly.wma.network.model.common.SlipOrderResponse
 
 @SuppressLint("NotifyDataSetChanged")
-class PopupAccountSlipSearch(mContext: Context, val dataList: ArrayList<CustomerModel>): Dialog(mContext) {
+class PopupAccountSlipSearch(mContext: Context, val dataList: ArrayList<CustomerResponse>): Dialog(mContext) {
     private lateinit var mBinding: PopupSearchResultBinding
     private var mLoginInfo: LoginResponse? = null // 로그인 정보
     private var context = mContext
-    var onOrderItemSelect: ((ArrayList<SlipOrderListModel>) -> Unit)? = null
-    var onReturnItemSelect: ((ArrayList<SlipOrderListModel>) -> Unit)? = null
-    var onTitleSelect: ((CustomerModel) -> Unit)? = null
+    var onOrderItemSelect: ((ArrayList<SlipOrderResponse>) -> Unit)? = null
+    var onReturnItemSelect: ((ArrayList<SlipOrderResponse>) -> Unit)? = null
+    var onTitleSelect: ((CustomerResponse) -> Unit)? = null
     var adapter: AccountSearchAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +55,7 @@ class PopupAccountSlipSearch(mContext: Context, val dataList: ArrayList<Customer
         mBinding.recyclerview.layoutManager = LinearLayoutManager(context)
 
         adapter?.itemClickListener = object: AccountSearchAdapter.ItemClickListener {
-            override fun onItemClick(item: CustomerModel) {
+            override fun onItemClick(item: CustomerResponse) {
                 onTitleSelect?.invoke(item)
                 hideDialog()
             }

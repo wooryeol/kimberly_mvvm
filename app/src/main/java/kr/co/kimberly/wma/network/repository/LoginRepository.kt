@@ -5,7 +5,7 @@ import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.network.ApiClientService
 import kr.co.kimberly.wma.network.model.login.LoginRequest
 import kr.co.kimberly.wma.network.model.login.LoginResponse
-import kr.co.kimberly.wma.network.model.ResultModel
+import kr.co.kimberly.wma.network.model.common.ResultResponse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
@@ -23,10 +23,10 @@ class LoginRepository {
         val body = Gson().toJson(request)
             .toRequestBody("application/json".toMediaTypeOrNull())
 
-        service.postLogin(body).enqueue(object : retrofit2.Callback<ResultModel<LoginResponse>> {
+        service.postLogin(body).enqueue(object : retrofit2.Callback<ResultResponse<LoginResponse>> {
             override fun onResponse(
-                call: Call<ResultModel<LoginResponse>>,
-                response: Response<ResultModel<LoginResponse>>
+                call: Call<ResultResponse<LoginResponse>>,
+                response: Response<ResultResponse<LoginResponse>>
             ) {
                 if (response.isSuccessful) {
                     val result = response.body()
@@ -53,7 +53,7 @@ class LoginRepository {
             }
 
             override fun onFailure(
-                call: Call<ResultModel<LoginResponse>>,
+                call: Call<ResultResponse<LoginResponse>>,
                 t: Throwable
             ) {
                 onResult(Result.failure(Exception("잠시 후 다시 시도해주세요")))

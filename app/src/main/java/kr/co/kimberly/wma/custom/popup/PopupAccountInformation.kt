@@ -15,17 +15,17 @@ import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.PopupSearchResultBinding
 import kr.co.kimberly.wma.network.model.login.LoginResponse
-import kr.co.kimberly.wma.network.model.SearchItemModel
-import kr.co.kimberly.wma.network.model.SlipOrderListModel
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
+import kr.co.kimberly.wma.network.model.common.SlipOrderResponse
 
 @SuppressLint("NotifyDataSetChanged")
-class PopupAccountInformation(mContext: Context, private val accountList: ArrayList<SlipOrderListModel>? = null, private val itemList: ArrayList<SearchItemModel>? = null): Dialog(mContext) {
+class PopupAccountInformation(mContext: Context, private val accountList: ArrayList<SlipOrderResponse>? = null, private val itemList: ArrayList<SearchItemResponse>? = null): Dialog(mContext) {
     private lateinit var mBinding: PopupSearchResultBinding
     private lateinit var mLoginInfo: LoginResponse // 로그인 정보
     private var context = mContext
 
-    var onAccountSelect: ((SlipOrderListModel) -> Unit)? = null
-    var onItemSelect: ((SearchItemModel) -> Unit)? = null
+    var onAccountSelect: ((SlipOrderResponse) -> Unit)? = null
+    var onItemSelect: ((SearchItemResponse) -> Unit)? = null
     var adapter: InformationAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,12 +69,12 @@ class PopupAccountInformation(mContext: Context, private val accountList: ArrayL
         mBinding.recyclerview.layoutManager = LinearLayoutManager(context)
 
         adapter?.itemClickListener = object: InformationAdapter.ItemClickListener {
-            override fun onAccountClick(item: SlipOrderListModel) {
+            override fun onAccountClick(item: SlipOrderResponse) {
                 onAccountSelect?.invoke(item)
                 hideDialog()
             }
 
-            override fun onItemClick(item: SearchItemModel) {
+            override fun onItemClick(item: SearchItemResponse) {
                 onItemSelect?.invoke(item)
                 hideDialog()
             }

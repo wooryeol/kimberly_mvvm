@@ -29,26 +29,26 @@ import kr.co.kimberly.wma.databinding.CellOrderRegBinding
 import kr.co.kimberly.wma.databinding.HeaderRegBinding
 import kr.co.kimberly.wma.db.DBHelper
 import kr.co.kimberly.wma.network.ApiClientService
-import kr.co.kimberly.wma.network.model.DataModel
+import kr.co.kimberly.wma.network.model.common.DataResponse
 import kr.co.kimberly.wma.network.model.login.LoginResponse
-import kr.co.kimberly.wma.network.model.ProductPriceHistoryModel
-import kr.co.kimberly.wma.network.model.ResultModel
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.ProductPriceHistoryResponse
+import kr.co.kimberly.wma.network.model.common.ResultResponse
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 import retrofit2.Call
 import retrofit2.Response
 import kotlin.Int.Companion.MAX_VALUE
 import kotlin.math.ceil
 
-class RegAdapter(mContext: Context, list: ArrayList<SearchItemModel>, private val updateData: ((ArrayList<SearchItemModel>, String) -> Unit)): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RegAdapter(mContext: Context, list: ArrayList<SearchItemResponse>, private val updateData: ((ArrayList<SearchItemResponse>, String) -> Unit)): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var context = mContext
     var dataList = list
-    var selectedItem: SearchItemModel? = null // 선택된 제품
-    var historyList: List<ProductPriceHistoryModel>? = null // 제품 단가 이력 리스트
+    var selectedItem: SearchItemResponse? = null // 선택된 제품
+    var historyList: List<ProductPriceHistoryResponse>? = null // 제품 단가 이력 리스트
     var popupSearchResult : PopupSearchResult? = null // 아이템 리스트
     var popupProductPriceHistory : PopupProductPriceHistory? = null // 단가 이력 팝업
     var popupResultNothing : PopupNotice? = null // 조회 내역 없을 때
-    var onItemSelect: ((SearchItemModel) -> Unit)? = null // 제품 수정 시
-    var onItemDelete: ((SearchItemModel) -> Unit)? = null // 제품 삭제 시
+    var onItemSelect: ((SearchItemResponse) -> Unit)? = null // 제품 수정 시
+    var onItemDelete: ((SearchItemResponse) -> Unit)? = null // 제품 삭제 시
     var onItemScan: ((String) -> Unit)? = null // 제품 스캔 시
     var customerCd: String ? = null
 
@@ -143,7 +143,7 @@ class RegAdapter(mContext: Context, list: ArrayList<SearchItemModel>, private va
 
     inner class ViewHolder(val binding: CellOrderRegBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n", "SimpleDateFormat")
-        fun bind(item: SearchItemModel) {
+        fun bind(item: SearchItemResponse) {
             // 데이터 바인딩
             // 예: binding.textView.text = data.someText
             itemView.setOnClickListener {
@@ -281,7 +281,7 @@ class RegAdapter(mContext: Context, list: ArrayList<SearchItemModel>, private va
                     binding.etBox.setText(it.boxQty.toString())
                     binding.etEach.setText(it.unitQty.toString())
                     binding.etPrice.setText(it.netPrice.toString())
-                    selectedItem = SearchItemModel(
+                    selectedItem = SearchItemResponse(
                         amount = it.amount,
                         boxQty = it.boxQty,
                         getBox = it.getBox,
@@ -363,7 +363,7 @@ class RegAdapter(mContext: Context, list: ArrayList<SearchItemModel>, private va
                                 return
                             }*/
 
-                            val model = SearchItemModel(
+                            val model = SearchItemResponse(
                                 itemNm = itemName,
                                 itemCd = itemCd!!,
                                 netPrice = netPrice,
@@ -449,17 +449,17 @@ class RegAdapter(mContext: Context, list: ArrayList<SearchItemModel>, private va
         val service = retrofit.create(ApiClientService::class.java)
             val call = service.history(mLoginInfo.agencyCd!!, mLoginInfo.userId!!, customerCd!!, selectedItem!!.itemCd!!)
 
-            call.enqueue(object : retrofit2.Callback<ResultModel<List<ProductPriceHistoryModel>>> {
+            call.enqueue(object : retrofit2.Callback<ResultResponse<List<ProductPriceHistoryResponse>>> {
                 override fun onResponse(
-                    call: Call<ResultModel<List<ProductPriceHistoryModel>>>,
-                    response: Response<ResultModel<List<ProductPriceHistoryModel>>>
+                    call: Call<ResultResponse<List<ProductPriceHistoryResponse>>>,
+                    response: Response<ResultResponse<List<ProductPriceHistoryResponse>>>
                 ) {
                     loading.hideDialog()
                 if (response.isSuccessful) {
                         val item = response.body()
                         if (item?.returnCd == Define.RETURN_CD_00 || item?.returnCd == Define.RETURN_CD_90 || item?.returnCd == Define.RETURN_CD_91) {
                             // Utils.log("price history search success ====> ${Gson().toJson(item)}")
-                            historyList = item.data as ArrayList<ProductPriceHistoryModel>
+                            historyList = item.data as ArrayList<ProductPriceHistoryResponse>
                             popupProductPriceHistory = PopupProductPriceHistory(context, historyList!!, selectedItem!!.itemNm!!)
                             popupProductPriceHistory?.show()
                         } else {
@@ -471,7 +471,7 @@ class RegAdapter(mContext: Context, list: ArrayList<SearchItemModel>, private va
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<List<ProductPriceHistoryModel>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<List<ProductPriceHistoryResponse>>>, t: Throwable) {
                     loading.hideDialog()
                     // Utils.log("item search failed ====> ${t.message}")
                     Utils.popupNotice(context, "잠시 후 다시 시도해주세요")
@@ -480,7 +480,7 @@ class RegAdapter(mContext: Context, list: ArrayList<SearchItemModel>, private va
             })
         }
 
-        fun setSearchedItem(it:SearchItemModel) {
+        fun setSearchedItem(it:SearchItemResponse) {
             // 검색어 DB 저장
             if (!db.searchList.contains(it.itemNm)) {
                 db.insertSearchData(it.itemNm ?: "")
@@ -495,7 +495,7 @@ class RegAdapter(mContext: Context, list: ArrayList<SearchItemModel>, private va
                 binding.etProductName.setText(it.itemNm)
                 binding.tvProductName.text = "(${it.itemCd}) ${it.itemNm}"
                 binding.etPrice.setText(it.netPrice!!.toString())
-                selectedItem = SearchItemModel(
+                selectedItem = SearchItemResponse(
                     it.itemCd,
                     it.itemNm,
                     it.whStock,
@@ -534,7 +534,7 @@ class RegAdapter(mContext: Context, list: ArrayList<SearchItemModel>, private va
                         binding.tvProductName.isSelected = true
                         binding.tvProductName.text = "(${it.itemCd}) ${it.itemNm}"
                         binding.etPrice.setText(it.netPrice!!.toString())
-                        selectedItem = SearchItemModel(
+                        selectedItem = SearchItemResponse(
                             it.itemCd,
                             it.itemNm,
                             it.whStock,
@@ -559,11 +559,11 @@ class RegAdapter(mContext: Context, list: ArrayList<SearchItemModel>, private va
 
             val call = service.item(mLoginInfo.agencyCd!!, mLoginInfo.userId!!, customerCd!!, searchType, orderYn, searchCondition)
 
-            call.enqueue(object : retrofit2.Callback<ResultModel<DataModel<SearchItemModel>>> {
+            call.enqueue(object : retrofit2.Callback<ResultResponse<DataResponse<SearchItemResponse>>> {
                 @SuppressLint("SetTextI18n")
                 override fun onResponse(
-                    call: Call<ResultModel<DataModel<SearchItemModel>>>,
-                    response: Response<ResultModel<DataModel<SearchItemModel>>>
+                    call: Call<ResultResponse<DataResponse<SearchItemResponse>>>,
+                    response: Response<ResultResponse<DataResponse<SearchItemResponse>>>
                 ) {
                     loading.hideDialog()
                 if (response.isSuccessful) {
@@ -601,7 +601,7 @@ class RegAdapter(mContext: Context, list: ArrayList<SearchItemModel>, private va
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<DataModel<SearchItemModel>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<DataResponse<SearchItemResponse>>>, t: Throwable) {
                     loading.hideDialog()
                     // Utils.log("item search failed ====> ${t.message}")
                     Utils.popupNotice(context, "잠시 후 다시 시도해주세요")
@@ -611,7 +611,7 @@ class RegAdapter(mContext: Context, list: ArrayList<SearchItemModel>, private va
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addItem(item: SearchItemModel, accountName: String) {
+    fun addItem(item: SearchItemResponse, accountName: String) {
         dataList.removeAll{ it.itemCd == item.itemCd}
         dataList.add(0,item)
         // Utils.log("updateData dataList ====> ${Gson().toJson(dataList)}")
@@ -620,7 +620,7 @@ class RegAdapter(mContext: Context, list: ArrayList<SearchItemModel>, private va
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun removeItem(item: SearchItemModel) {
+    fun removeItem(item: SearchItemResponse) {
         dataList.remove(item)
         notifyDataSetChanged()
         updateData(dataList, "")

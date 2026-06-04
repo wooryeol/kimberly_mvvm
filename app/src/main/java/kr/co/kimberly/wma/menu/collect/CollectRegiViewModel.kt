@@ -7,8 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonObject
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.common.Utils
-import kr.co.kimberly.wma.network.model.BalanceModel
-import kr.co.kimberly.wma.network.model.SlipPrintModel
+import kr.co.kimberly.wma.network.model.common.BalanceResponse
+import kr.co.kimberly.wma.network.model.common.SlipPrintResponse
 import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.repository.CollectRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -19,7 +19,7 @@ class CollectRegiViewModel(application: Application) : AndroidViewModel(applicat
     sealed class CustomerBondState {
         object Idle : CustomerBondState()
         object Loading : CustomerBondState()
-        data class Success(val balance: BalanceModel) : CustomerBondState()
+        data class Success(val balance: BalanceResponse) : CustomerBondState()
         data class Error(val message: String) : CustomerBondState()
     }
 
@@ -33,7 +33,7 @@ class CollectRegiViewModel(application: Application) : AndroidViewModel(applicat
     val mLoginInfo: LoginResponse = Utils.getLoginData()
     private val repository = CollectRepository()
 
-    var balanceData: BalanceModel? = null
+    var balanceData: BalanceResponse? = null
 
     private val _customerBondState = MutableLiveData<CustomerBondState>(CustomerBondState.Idle)
     val customerBondState: LiveData<CustomerBondState> = _customerBondState

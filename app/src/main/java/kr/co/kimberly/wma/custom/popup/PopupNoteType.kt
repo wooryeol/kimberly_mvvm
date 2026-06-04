@@ -17,7 +17,7 @@ import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.PopupNoteTypeBinding
 import kr.co.kimberly.wma.databinding.PopupSearchResultBinding
-import kr.co.kimberly.wma.network.model.CustomerModel
+import kr.co.kimberly.wma.network.model.common.CustomerResponse
 
 class PopupNoteType(mContext: Context, handler: Handler): Dialog(mContext) {
 

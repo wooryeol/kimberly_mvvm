@@ -27,8 +27,8 @@ import kr.co.kimberly.wma.custom.popup.PopupNotice
 import kr.co.kimberly.wma.custom.popup.PopupWarehouseList
 import kr.co.kimberly.wma.databinding.ActInventoryBinding
 import kr.co.kimberly.wma.menu.setting.SettingActivity
-import kr.co.kimberly.wma.network.model.inventory.WarehouseListModel
-import kr.co.kimberly.wma.network.model.inventory.WarehouseStockModel
+import kr.co.kimberly.wma.network.model.inventory.WarehouseListResponse
+import kr.co.kimberly.wma.network.model.inventory.WarehouseStockResponse
 
 @SuppressLint("MissingPermission")
 class InventoryActivity : AppCompatActivity(), ScannerCallback {
@@ -40,7 +40,7 @@ class InventoryActivity : AppCompatActivity(), ScannerCallback {
 
     private var loadingPopup: PopupLoading? = null
     private var warehouseCd: String? = null
-    private var itemList: ArrayList<WarehouseStockModel>? = null
+    private var itemList: ArrayList<WarehouseStockResponse>? = null
     private var adapter: InventoryListAdapter? = null
 
     private val barcodeReceiver = object : BroadcastReceiver() {
@@ -209,7 +209,7 @@ class InventoryActivity : AppCompatActivity(), ScannerCallback {
         })
     }
 
-    private fun handleWarehouseListSuccess(list: List<WarehouseListModel>) {
+    private fun handleWarehouseListSuccess(list: List<WarehouseListResponse>) {
         val popupWarehouseList = PopupWarehouseList(mContext, ArrayList(list))
         popupWarehouseList.onItemSelect = { selected ->
             warehouseCd = selected.warehouseCd
@@ -223,7 +223,7 @@ class InventoryActivity : AppCompatActivity(), ScannerCallback {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun handleWarehouseStockSuccess(list: List<WarehouseStockModel>, searchCondition: String) {
+    private fun handleWarehouseStockSuccess(list: List<WarehouseStockResponse>, searchCondition: String) {
         itemList = ArrayList(list)
         showInventoryList(itemList!!)
 
@@ -247,7 +247,7 @@ class InventoryActivity : AppCompatActivity(), ScannerCallback {
         adapter?.notifyDataSetChanged()
     }
 
-    private fun showInventoryList(list: ArrayList<WarehouseStockModel>) {
+    private fun showInventoryList(list: ArrayList<WarehouseStockResponse>) {
         adapter = InventoryListAdapter(mContext, mActivity)
         adapter!!.dataList = list
         mBinding.recyclerview.adapter = adapter

@@ -19,8 +19,8 @@ import kr.co.kimberly.wma.custom.popup.PopupAccountListSearch
 import kr.co.kimberly.wma.custom.popup.PopupDatePicker02
 import kr.co.kimberly.wma.custom.popup.PopupLoading
 import kr.co.kimberly.wma.databinding.ActLedgerBinding
-import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.ledger.LedgerModel
+import kr.co.kimberly.wma.network.model.common.DataResponse
+import kr.co.kimberly.wma.network.model.ledger.LedgerResponse
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -147,7 +147,7 @@ class LedgerActivity : AppCompatActivity() {
         custCd?.let { viewModel.getLedgerList(it, date) }
     }
 
-    private fun handleLedgerSuccess(data: DataModel<LedgerModel>) {
+    private fun handleLedgerSuccess(data: DataResponse<LedgerResponse>) {
         val ledgerList = data.ledgerInfo?.let { ArrayList(it) } ?: ArrayList()
         showLedgerList(ledgerList)
         mBinding.saleSum.text = Utils.decimal(data.saleTotalPrice ?: 0)
@@ -156,7 +156,7 @@ class LedgerActivity : AppCompatActivity() {
         mBinding.balance.text = Utils.decimal(data.bondBalance ?: 0)
     }
 
-    private fun showLedgerList(list: ArrayList<LedgerModel>) {
+    private fun showLedgerList(list: ArrayList<LedgerResponse>) {
         val adapter = LedgerAdapter(mContext, mActivity)
         adapter.dataList = list
         mBinding.recyclerview.adapter = adapter

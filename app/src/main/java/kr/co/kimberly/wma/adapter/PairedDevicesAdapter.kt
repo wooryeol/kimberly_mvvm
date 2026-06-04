@@ -19,8 +19,8 @@ import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.CellPairedDevicesBinding
 import kr.co.kimberly.wma.databinding.HeaderSettingBinding
-import kr.co.kimberly.wma.network.model.DeviceModel
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.DeviceResponse
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 
 
 @SuppressLint("MissingPermission", "UseCompatLoadingForDrawables", "NotifyDataSetChanged")
@@ -61,8 +61,8 @@ class PairedDevicesAdapter(context: Context, private val isConnected: ((Boolean,
                 holder.bind(dataList[position - 1])
 
                 val item = dataList[position - 1]
-                val printer = SharedData.getSharedDataModel(mContext, "printer", DeviceModel::class.java)
-                val scanner = SharedData.getSharedDataModel(mContext, "scanner", DeviceModel::class.java)
+                val printer = SharedData.getSharedDataModel(mContext, "printer", DeviceResponse::class.java)
+                val scanner = SharedData.getSharedDataModel(mContext, "scanner", DeviceResponse::class.java)
 
                 // 현재 아이템의 deviceAddress와 printer, scanner의 주소 비교
                 val currentAddress = item.second.trim()
@@ -119,7 +119,7 @@ class PairedDevicesAdapter(context: Context, private val isConnected: ((Boolean,
                             override fun connected() {
                                 binding.connected.visibility = View.VISIBLE
                                 binding.deviceBox.background = mContext.getDrawable(R.drawable.ll_round_97bcf3)
-                                SharedData.setSharedDataModel(mContext, "scanner", DeviceModel(name, address))
+                                SharedData.setSharedDataModel(mContext, "scanner", DeviceResponse(name, address))
                                 SharedData.setSharedData(mContext, SharedData.SCANNER_ADDR, address)
                                 isScanner = true
                             }
@@ -138,7 +138,7 @@ class PairedDevicesAdapter(context: Context, private val isConnected: ((Boolean,
                             override fun connected() {
                                 binding.connected.visibility = View.VISIBLE
                                 binding.deviceBox.background = mContext.getDrawable(R.drawable.ll_round_97bcf3)
-                                SharedData.setSharedDataModel(mContext, "printer", DeviceModel(name, address))
+                                SharedData.setSharedDataModel(mContext, "printer", DeviceResponse(name, address))
                                 SharedData.setSharedData(mContext, SharedData.PRINTER_ADDR, address)
                                 isPrinter = true
                             }
@@ -153,7 +153,7 @@ class PairedDevicesAdapter(context: Context, private val isConnected: ((Boolean,
                         }
                         isConnected(isScanner, isPrinter)
                     }
-                    onItemSelect?.invoke(DeviceModel(name, address))
+                    onItemSelect?.invoke(DeviceResponse(name, address))
                 }
             })
         }
@@ -168,8 +168,8 @@ class PairedDevicesAdapter(context: Context, private val isConnected: ((Boolean,
                 binding.bottomDivideLine.visibility = View.GONE
             }
 
-            val printer = SharedData.getSharedDataModel(mContext, "printer", DeviceModel::class.java)
-            val scanner = SharedData.getSharedDataModel(mContext, "scanner", DeviceModel::class.java)
+            val printer = SharedData.getSharedDataModel(mContext, "printer", DeviceResponse::class.java)
+            val scanner = SharedData.getSharedDataModel(mContext, "scanner", DeviceResponse::class.java)
 
             if (printer != null) {
                 binding.printName.text = printer.deviceName

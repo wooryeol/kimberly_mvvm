@@ -33,9 +33,9 @@ import kr.co.kimberly.wma.custom.popup.PopupLoading
 import kr.co.kimberly.wma.custom.popup.PopupNotice
 import kr.co.kimberly.wma.databinding.ActInformationBinding
 import kr.co.kimberly.wma.menu.setting.SettingActivity
-import kr.co.kimberly.wma.network.model.DetailInfoModel
-import kr.co.kimberly.wma.network.model.SearchItemModel
-import kr.co.kimberly.wma.network.model.SlipOrderListModel
+import kr.co.kimberly.wma.network.model.information.DetailInfoResponse
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
+import kr.co.kimberly.wma.network.model.common.SlipOrderResponse
 import kr.co.kimberly.wma.network.model.information.DetailInfoRequest
 
 class InformationActivity : AppCompatActivity(), ScannerCallback {
@@ -46,7 +46,7 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
 
     private var mSearchType: String? = null
     private var popupInformation: PopupAccountInformation? = null
-    private var detailInfoModel: DetailInfoModel? = null
+    private var detailInfoModel: DetailInfoResponse? = null
     private var accountName = ""
     private var itemName = ""
 
@@ -196,7 +196,7 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun handleMasterInfoSuccess(data: kr.co.kimberly.wma.network.model.DataModel<Any>) {
+    private fun handleMasterInfoSuccess(data: kr.co.kimberly.wma.network.model.DataResponse<Any>) {
         val gson = viewModel.gson
         when (mSearchType) {
             Define.TYPE_CUSTOMER -> {
@@ -206,7 +206,7 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
                     callDetailInfo(data.customerCd.toString())
                 } else {
                     val jsonString = gson.toJson(gson.toJsonTree(data.customerList))
-                    val customerList: ArrayList<SlipOrderListModel> = gson.fromJson(jsonString, object : TypeToken<ArrayList<SlipOrderListModel>>() {}.type)
+                    val customerList: ArrayList<SlipOrderResponse> = gson.fromJson(jsonString, object : TypeToken<ArrayList<SlipOrderResponse>>() {}.type)
                     popupInformation = PopupAccountInformation(mContext, customerList, null)
                     popupInformation?.onAccountSelect = {
                         mBinding.tvProductName.text = it.customerNm
@@ -218,7 +218,7 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
             }
             Define.TYPE_ITEM -> {
                 val jsonString = gson.toJson(gson.toJsonTree(data.itemList))
-                val itemList: ArrayList<SearchItemModel> = gson.fromJson(jsonString, object : TypeToken<ArrayList<SearchItemModel>>() {}.type)
+                val itemList: ArrayList<SearchItemResponse> = gson.fromJson(jsonString, object : TypeToken<ArrayList<SearchItemResponse>>() {}.type)
                 val popup = PopupAccountInformation(mContext, null, itemList)
                 popup.onItemSelect = {
                     itemName = it.itemNm.toString()
@@ -228,7 +228,7 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
             }
             Define.BARCODE -> {
                 val jsonString = gson.toJson(gson.toJsonTree(data.itemList))
-                val itemList: ArrayList<SearchItemModel> = gson.fromJson(jsonString, object : TypeToken<ArrayList<SearchItemModel>>() {}.type)
+                val itemList: ArrayList<SearchItemResponse> = gson.fromJson(jsonString, object : TypeToken<ArrayList<SearchItemResponse>>() {}.type)
                 if (itemList.size == 1) {
                     itemName = itemList[0].itemNm.toString()
                     callDetailInfo(itemList[0].itemCd.toString())
@@ -257,7 +257,7 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
         )
     }
 
-    private fun handleDetailInfoSuccess(data: DetailInfoModel) {
+    private fun handleDetailInfoSuccess(data: DetailInfoResponse) {
         detailInfoModel = data
         when (mSearchType) {
             Define.TYPE_ITEM, Define.BARCODE -> {
@@ -358,7 +358,7 @@ class InformationActivity : AppCompatActivity(), ScannerCallback {
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    private fun setInfo(detailInfoModel: DetailInfoModel) {
+    private fun setInfo(detailInfoModel: DetailInfoResponse) {
         when (mSearchType) {
             Define.TYPE_CUSTOMER -> {
                 if (accountName.isNotEmpty()) {

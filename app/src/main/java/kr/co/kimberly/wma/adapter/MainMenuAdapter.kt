@@ -28,9 +28,9 @@ import kr.co.kimberly.wma.menu.purchase.PurchaseRequestActivity
 import kr.co.kimberly.wma.menu.`return`.ReturnRegActivity
 import kr.co.kimberly.wma.menu.slip.SlipInquiryActivity
 import kr.co.kimberly.wma.menu.store.StoreManagementActivity
-import kr.co.kimberly.wma.network.model.MainMenuModel
-import kr.co.kimberly.wma.network.model.SapModel
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.main.MainMenuModel
+import kr.co.kimberly.wma.network.model.common.SapResponse
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 import kotlin.collections.ArrayList
 
 class MainMenuAdapter(context: Context, activity: Activity): RecyclerView.Adapter<MainMenuAdapter.ViewHolder>() {
@@ -105,7 +105,7 @@ class MainMenuAdapter(context: Context, activity: Activity): RecyclerView.Adapte
             intent?.let {
                 val accountName = SharedData.getSharedData(context, "${name}AccountName", "")
                 val customerCd = SharedData.getSharedData(context, "${name}CustomerCd", "")
-                val sapModel = SharedData.getSharedDataModel(context, "${name}SapModel", SapModel::class.java)
+                val sapModel = SharedData.getSharedDataModel(context, "${name}SapModel", SapResponse::class.java)
                 if (sapModel != null || accountName != "") {
                     val title = if (name == "purchase") "(${sapModel?.sapCustomerCd}) ${sapModel?.sapCustomerNm}" else accountName
                     val popup = PopupSingleMessage(context, "거래처: $title", "기존에 저장된 주문이 남아있습니다.\n저장된 주문으로 계속 진행 하시겠습니까?", object : Handler(Looper.getMainLooper()) {

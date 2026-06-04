@@ -15,23 +15,23 @@ import kr.co.kimberly.wma.custom.popup.PopupLoading
 import kr.co.kimberly.wma.databinding.CellCollectBinding
 import kr.co.kimberly.wma.menu.slip.SlipInquiryDetailActivity
 import kr.co.kimberly.wma.network.ApiClientService
-import kr.co.kimberly.wma.network.model.DataModel
+import kr.co.kimberly.wma.network.model.common.DataResponse
 import kr.co.kimberly.wma.network.model.login.LoginResponse
-import kr.co.kimberly.wma.network.model.ResultModel
-import kr.co.kimberly.wma.network.model.SearchItemModel
-import kr.co.kimberly.wma.network.model.SlipOrderListModel
+import kr.co.kimberly.wma.network.model.common.ResultResponse
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
+import kr.co.kimberly.wma.network.model.common.SlipOrderResponse
 import retrofit2.Call
 import retrofit2.Response
 
 class SlipListAdapter(context: Context, activity: Activity): RecyclerView.Adapter<SlipListAdapter.ViewHolder>() {
-    lateinit var dataList: ArrayList<SlipOrderListModel>
+    lateinit var dataList: ArrayList<SlipOrderResponse>
     var mContext = context
     var mActivity = activity
     private var mLoginInfo: LoginResponse? = null // 로그인 정보
 
     inner class ViewHolder(private val binding: CellCollectBinding): RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(itemModel: SlipOrderListModel) {
+        fun bind(itemModel: SlipOrderResponse) {
             binding.receiptNumber.text = "전표 : ${itemModel.slipNo}"
             binding.account.text = "거래처 : (${itemModel.customerCd}) ${itemModel.customerNm}"
             binding.amount.text = "금액: ${Utils.decimal(itemModel.totalAmount!!)}원"
@@ -70,10 +70,10 @@ class SlipListAdapter(context: Context, activity: Activity): RecyclerView.Adapte
 
         //test
         //val call = service.orderSlipDetail("C000028", "mb2004", "20240600015")
-        call.enqueue(object : retrofit2.Callback<ResultModel<DataModel<SearchItemModel>>> {
+        call.enqueue(object : retrofit2.Callback<ResultResponse<DataResponse<SearchItemResponse>>> {
             override fun onResponse(
-                call: Call<ResultModel<DataModel<SearchItemModel>>>,
-                response: Response<ResultModel<DataModel<SearchItemModel>>>
+                call: Call<ResultResponse<DataResponse<SearchItemResponse>>>,
+                response: Response<ResultResponse<DataResponse<SearchItemResponse>>>
             ) {
                 loading.hideDialog()
                 if (response.isSuccessful) {
@@ -81,7 +81,7 @@ class SlipListAdapter(context: Context, activity: Activity): RecyclerView.Adapte
                     if (item?.returnCd == Define.RETURN_CD_00 || item?.returnCd == Define.RETURN_CD_90 || item?.returnCd == Define.RETURN_CD_91) {
                         // Utils.log("OrderSlipDetail search success ====> ${Gson().toJson(item)}")
                         val data = item.data
-                        val list: ArrayList<SearchItemModel> = data.itemList as ArrayList<SearchItemModel>
+                        val list: ArrayList<SearchItemResponse> = data.itemList as ArrayList<SearchItemResponse>
                         val customerCd = data.customerCd
                         val customerNm = data.customerNm
                         val enableButtonYn = data.enableButtonYn
@@ -103,7 +103,7 @@ class SlipListAdapter(context: Context, activity: Activity): RecyclerView.Adapte
                 }
             }
 
-            override fun onFailure(call: Call<ResultModel<DataModel<SearchItemModel>>>, t: Throwable) {
+            override fun onFailure(call: Call<ResultResponse<DataResponse<SearchItemResponse>>>, t: Throwable) {
                 loading.hideDialog()
                 // Utils.log("OrderSlipDetail search failed ====> ${t.message}")
             }

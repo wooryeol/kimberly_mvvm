@@ -8,7 +8,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.common.Utils
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.repository.SlipRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -32,7 +32,7 @@ class SlipInquiryModifyViewModel(application: Application) : AndroidViewModel(ap
     fun updateSlip(
         slipNo: String,
         customerCd: String,
-        items: List<SearchItemModel>,
+        items: List<SearchItemResponse>,
         totalAmount: Long,
         deliveryDate: String
     ) {

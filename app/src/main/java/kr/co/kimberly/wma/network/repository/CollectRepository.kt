@@ -2,10 +2,10 @@ package kr.co.kimberly.wma.network.repository
 
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.network.ApiClientService
-import kr.co.kimberly.wma.network.model.BalanceModel
-import kr.co.kimberly.wma.network.model.ResultModel
-import kr.co.kimberly.wma.network.model.SlipPrintModel
-import kr.co.kimberly.wma.network.model.collect.CollectModel
+import kr.co.kimberly.wma.network.model.common.BalanceResponse
+import kr.co.kimberly.wma.network.model.common.ResultResponse
+import kr.co.kimberly.wma.network.model.common.SlipPrintResponse
+import kr.co.kimberly.wma.network.model.collect.CollectResponse
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Response
@@ -20,13 +20,13 @@ class CollectRepository {
         fromDate: String,
         toDate: String,
         customerCd: String,
-        onResult: (Result<List<CollectModel>>) -> Unit
+        onResult: (Result<List<CollectResponse>>) -> Unit
     ) {
         service.collect(agencyCd, userId, fromDate, toDate, customerCd)
-            .enqueue(object : retrofit2.Callback<ResultModel<List<CollectModel>>> {
+            .enqueue(object : retrofit2.Callback<ResultResponse<List<CollectResponse>>> {
                 override fun onResponse(
-                    call: Call<ResultModel<List<CollectModel>>>,
-                    response: Response<ResultModel<List<CollectModel>>>
+                    call: Call<ResultResponse<List<CollectResponse>>>,
+                    response: Response<ResultResponse<List<CollectResponse>>>
                 ) {
                     if (response.isSuccessful) {
                         val result = response.body()
@@ -41,7 +41,7 @@ class CollectRepository {
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<List<CollectModel>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<List<CollectResponse>>>, t: Throwable) {
                     onResult(Result.failure(t))
                 }
             })
@@ -51,13 +51,13 @@ class CollectRepository {
         agencyCd: String,
         userId: String,
         customerCd: String,
-        onResult: (Result<BalanceModel>) -> Unit
+        onResult: (Result<BalanceResponse>) -> Unit
     ) {
         service.customerBond(agencyCd, userId, customerCd)
-            .enqueue(object : retrofit2.Callback<ResultModel<BalanceModel>> {
+            .enqueue(object : retrofit2.Callback<ResultResponse<BalanceResponse>> {
                 override fun onResponse(
-                    call: Call<ResultModel<BalanceModel>>,
-                    response: Response<ResultModel<BalanceModel>>
+                    call: Call<ResultResponse<BalanceResponse>>,
+                    response: Response<ResultResponse<BalanceResponse>>
                 ) {
                     if (response.isSuccessful) {
                         val result = response.body()
@@ -77,7 +77,7 @@ class CollectRepository {
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<BalanceModel>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<BalanceResponse>>, t: Throwable) {
                     onResult(Result.failure(t))
                 }
             })
@@ -85,13 +85,13 @@ class CollectRepository {
 
     fun postSlip(
         body: RequestBody,
-        onResult: (Result<SlipPrintModel>) -> Unit
+        onResult: (Result<SlipPrintResponse>) -> Unit
     ) {
         service.slipAdd(body)
-            .enqueue(object : retrofit2.Callback<ResultModel<SlipPrintModel>> {
+            .enqueue(object : retrofit2.Callback<ResultResponse<SlipPrintResponse>> {
                 override fun onResponse(
-                    call: Call<ResultModel<SlipPrintModel>>,
-                    response: Response<ResultModel<SlipPrintModel>>
+                    call: Call<ResultResponse<SlipPrintResponse>>,
+                    response: Response<ResultResponse<SlipPrintResponse>>
                 ) {
                     if (response.isSuccessful) {
                         val result = response.body()
@@ -110,7 +110,7 @@ class CollectRepository {
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<SlipPrintModel>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<SlipPrintResponse>>, t: Throwable) {
                     onResult(Result.failure(t))
                 }
             })

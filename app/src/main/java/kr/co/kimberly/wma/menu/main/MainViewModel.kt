@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import kr.co.kimberly.wma.R
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.common.Utils
-import kr.co.kimberly.wma.network.model.MainMenuModel
+import kr.co.kimberly.wma.network.model.main.MainMenuModel
 import kr.co.kimberly.wma.network.model.login.LoginResponse
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {

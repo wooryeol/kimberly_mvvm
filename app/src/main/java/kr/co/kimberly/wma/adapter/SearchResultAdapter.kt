@@ -9,16 +9,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.databinding.CellSearchResultBinding
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 
 class SearchResultAdapter(context: Context): RecyclerView.Adapter<SearchResultAdapter.ViewHolder>() {
-    var dataList: List<SearchItemModel> = ArrayList()
+    var dataList: List<SearchItemResponse> = ArrayList()
     var itemClickListener: ItemClickListener? = null
     var mContext = context
 
     inner class ViewHolder(val binding: CellSearchResultBinding): RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(itemModel: SearchItemModel) {
+        fun bind(itemModel: SearchItemResponse) {
             binding.accountSearchName.text = "(${itemModel.itemCd}) ${itemModel.itemNm} [${itemModel.whStock}]"
 
             itemView.setOnClickListener {
@@ -44,6 +44,6 @@ class SearchResultAdapter(context: Context): RecyclerView.Adapter<SearchResultAd
     }
 
     interface ItemClickListener {
-        fun onItemClick(item: SearchItemModel)
+        fun onItemClick(item: SearchItemResponse)
     }
 }

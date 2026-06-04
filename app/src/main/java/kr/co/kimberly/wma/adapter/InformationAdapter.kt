@@ -8,19 +8,19 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.databinding.CellAccountSearchBinding
-import kr.co.kimberly.wma.network.model.CustomerModel
-import kr.co.kimberly.wma.network.model.SearchItemModel
-import kr.co.kimberly.wma.network.model.SlipOrderListModel
+import kr.co.kimberly.wma.network.model.common.CustomerResponse
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
+import kr.co.kimberly.wma.network.model.common.SlipOrderResponse
 
 class InformationAdapter(context: Context): RecyclerView.Adapter<InformationAdapter.ViewHolder>() {
-    var accountList: ArrayList<SlipOrderListModel>? = null
-    var itemList: ArrayList<SearchItemModel>? = null
+    var accountList: ArrayList<SlipOrderResponse>? = null
+    var itemList: ArrayList<SearchItemResponse>? = null
     var itemClickListener: ItemClickListener? = null
     var mContext = context
 
     @SuppressLint("SetTextI18n")
     inner class ViewHolder(val binding: CellAccountSearchBinding): RecyclerView.ViewHolder(binding.root) {
-        fun accountBind(itemModel: SlipOrderListModel) {
+        fun accountBind(itemModel: SlipOrderResponse) {
             binding.accountSearchName.text = "(${itemModel.customerCd}) ${itemModel.customerNm}"
 
             itemView.setOnClickListener {
@@ -29,7 +29,7 @@ class InformationAdapter(context: Context): RecyclerView.Adapter<InformationAdap
             }
         }
 
-        fun itemBind(itemModel: SearchItemModel) {
+        fun itemBind(itemModel: SearchItemResponse) {
             binding.accountSearchName.text = "(${itemModel.itemCd}) ${itemModel.itemNm}"
 
             itemView.setOnClickListener {
@@ -71,7 +71,7 @@ class InformationAdapter(context: Context): RecyclerView.Adapter<InformationAdap
     }
 
     interface ItemClickListener {
-        fun onAccountClick(item: SlipOrderListModel)
-        fun onItemClick(item: SearchItemModel)
+        fun onAccountClick(item: SlipOrderResponse)
+        fun onItemClick(item: SearchItemResponse)
     }
 }

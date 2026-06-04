@@ -17,9 +17,9 @@ import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.PopupSearchResultBinding
 import kr.co.kimberly.wma.network.ApiClientService
-import kr.co.kimberly.wma.network.model.CustomerModel
+import kr.co.kimberly.wma.network.model.common.CustomerResponse
 import kr.co.kimberly.wma.network.model.login.LoginResponse
-import kr.co.kimberly.wma.network.model.ResultModel
+import kr.co.kimberly.wma.network.model.common.ResultResponse
 import retrofit2.Call
 import retrofit2.Response
 
@@ -28,9 +28,9 @@ class PopupAccountListSearch(mContext: Context, private val searchCondition: Str
     private lateinit var mBinding: PopupSearchResultBinding
     private var mLoginInfo: LoginResponse? = null // 로그인 정보
     private var context = mContext
-    var onItemSelect: ((CustomerModel) -> Unit)? = null
+    var onItemSelect: ((CustomerResponse) -> Unit)? = null
     var adapter: AccountSearchAdapter? = null
-    var dataList: ArrayList<CustomerModel> = ArrayList()
+    var dataList: ArrayList<CustomerResponse> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +60,7 @@ class PopupAccountListSearch(mContext: Context, private val searchCondition: Str
         mBinding.recyclerview.layoutManager = LinearLayoutManager(context)
 
         adapter?.itemClickListener = object: AccountSearchAdapter.ItemClickListener {
-            override fun onItemClick(item: CustomerModel) {
+            override fun onItemClick(item: CustomerResponse) {
                 onItemSelect?.invoke(item)
                 hideDialog()
             }
@@ -86,10 +86,10 @@ class PopupAccountListSearch(mContext: Context, private val searchCondition: Str
         val service = retrofit.create(ApiClientService::class.java)
         val call = service.client(mLoginInfo?.agencyCd!!, mLoginInfo?.userId!!, searchCondition)
 
-        call.enqueue(object : retrofit2.Callback<ResultModel<List<CustomerModel>>> {
+        call.enqueue(object : retrofit2.Callback<ResultResponse<List<CustomerResponse>>> {
             override fun onResponse(
-                call: Call<ResultModel<List<CustomerModel>>>,
-                response: Response<ResultModel<List<CustomerModel>>>
+                call: Call<ResultResponse<List<CustomerResponse>>>,
+                response: Response<ResultResponse<List<CustomerResponse>>>
             ) {
                 loading.hideDialog()
                 loading.hideDialog()
@@ -98,7 +98,7 @@ class PopupAccountListSearch(mContext: Context, private val searchCondition: Str
                     if (item?.returnCd == Define.RETURN_CD_00 || item?.returnCd == Define.RETURN_CD_90 || item?.returnCd == Define.RETURN_CD_91) {
                         // Utils.log("account search success ====> ${Gson().toJson(item)}")
 
-                        dataList = item.data as ArrayList<CustomerModel>
+                        dataList = item.data as ArrayList<CustomerResponse>
 
                         if(dataList.size > 6) {
                             Utils.dialogResize(context, window)
@@ -117,7 +117,7 @@ class PopupAccountListSearch(mContext: Context, private val searchCondition: Str
                 }
             }
 
-            override fun onFailure(call: Call<ResultModel<List<CustomerModel>>>, t: Throwable) {
+            override fun onFailure(call: Call<ResultResponse<List<CustomerResponse>>>, t: Throwable) {
                 loading.hideDialog()
                 // Utils.log("search failed ====> ${t.message}")
                 Utils.popupNotice(context, "잠시 후 다시 시도해주세요")

@@ -5,8 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kr.co.kimberly.wma.common.Utils
-import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.ledger.LedgerModel
+import kr.co.kimberly.wma.network.model.common.DataResponse
+import kr.co.kimberly.wma.network.model.ledger.LedgerResponse
 import kr.co.kimberly.wma.network.model.ledger.LedgerRequest
 import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.repository.LedgerRepository
@@ -16,7 +16,7 @@ class LedgerViewModel(application: Application) : AndroidViewModel(application) 
     sealed class LedgerState {
         object Idle : LedgerState()
         object Loading : LedgerState()
-        data class Success(val ledgerData: DataModel<LedgerModel>) : LedgerState()
+        data class Success(val ledgerData: DataResponse<LedgerResponse>) : LedgerState()
         data class Error(val message: String) : LedgerState()
     }
 

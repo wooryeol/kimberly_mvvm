@@ -15,15 +15,15 @@ import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.PopupSearchResultBinding
 import kr.co.kimberly.wma.network.model.login.LoginResponse
-import kr.co.kimberly.wma.network.model.SapModel
+import kr.co.kimberly.wma.network.model.common.SapResponse
 
 @SuppressLint("NotifyDataSetChanged")
-class PopupSAP(mContext: Context, val dataList: ArrayList<SapModel>, private val returnCd: String): Dialog(mContext) {
+class PopupSAP(mContext: Context, val dataList: ArrayList<SapResponse>, private val returnCd: String): Dialog(mContext) {
     private lateinit var mBinding: PopupSearchResultBinding
     private var context = mContext
     private lateinit var mLoginInfo: LoginResponse // 로그인 정보
 
-    var onItemSelect: ((SapModel) -> Unit)? = null
+    var onItemSelect: ((SapResponse) -> Unit)? = null
     var adapter: SapListAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +60,7 @@ class PopupSAP(mContext: Context, val dataList: ArrayList<SapModel>, private val
         mBinding.recyclerview.layoutManager = LinearLayoutManager(context)
 
         adapter?.itemClickListener = object: SapListAdapter.ItemClickListener {
-            override fun onItemClick(item: SapModel) {
+            override fun onItemClick(item: SapResponse) {
                 onItemSelect?.invoke(item)
                 hideDialog()
             }

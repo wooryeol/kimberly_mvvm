@@ -6,9 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.common.Utils
-import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.DetailInfoModel
-import kr.co.kimberly.wma.network.model.SlipPrintModel
+import kr.co.kimberly.wma.network.model.common.DataResponse
+import kr.co.kimberly.wma.network.model.information.DetailInfoResponse
+import kr.co.kimberly.wma.network.model.common.SlipPrintResponse
 import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.repository.PrinterRepository
 
@@ -17,9 +17,9 @@ class PrinterOptionViewModel(application: Application) : AndroidViewModel(applic
     sealed class PrintState {
         object Idle : PrintState()
         object Loading : PrintState()
-        data class OrderMenuReady(val data: DataModel<DetailInfoModel>) : PrintState()
-        data class OrderCombineReady(val data: List<DataModel<DetailInfoModel>>) : PrintState()
-        data class MoneySlipReady(val data: SlipPrintModel) : PrintState()
+        data class OrderMenuReady(val data: DataResponse<DetailInfoResponse>) : PrintState()
+        data class OrderCombineReady(val data: List<DataResponse<DetailInfoResponse>>) : PrintState()
+        data class MoneySlipReady(val data: SlipPrintResponse) : PrintState()
         data class Error(val message: String) : PrintState()
     }
 

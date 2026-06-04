@@ -13,13 +13,13 @@ import kr.co.kimberly.wma.adapter.WarehouseListAdapter
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.PopupSearchResultBinding
-import kr.co.kimberly.wma.network.model.inventory.WarehouseListModel
+import kr.co.kimberly.wma.network.model.inventory.WarehouseListResponse
 
-class PopupWarehouseList(mContext: Context, val list: ArrayList<WarehouseListModel>): Dialog(mContext) {
+class PopupWarehouseList(mContext: Context, val list: ArrayList<WarehouseListResponse>): Dialog(mContext) {
     private lateinit var mBinding: PopupSearchResultBinding
     private var context = mContext
 
-    var onItemSelect: ((WarehouseListModel) -> Unit)? = null
+    var onItemSelect: ((WarehouseListResponse) -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +49,7 @@ class PopupWarehouseList(mContext: Context, val list: ArrayList<WarehouseListMod
         }
 
         adapter.itemClickListener = object: WarehouseListAdapter.ItemClickListener {
-            override fun onItemClick(item: WarehouseListModel) {
+            override fun onItemClick(item: WarehouseListResponse) {
                 onItemSelect?.invoke(item)
                 hideDialog()
             }

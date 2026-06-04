@@ -13,13 +13,13 @@ import kr.co.kimberly.wma.adapter.SearchResultAdapter
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.PopupSearchResultBinding
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 
-class PopupSearchResult(mContext: Context, val list: List<SearchItemModel>): Dialog(mContext) {
+class PopupSearchResult(mContext: Context, val list: List<SearchItemResponse>): Dialog(mContext) {
     private lateinit var mBinding: PopupSearchResultBinding
     private var context = mContext
 
-    var onItemSelect: ((SearchItemModel) -> Unit)? = null
+    var onItemSelect: ((SearchItemResponse) -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +49,7 @@ class PopupSearchResult(mContext: Context, val list: List<SearchItemModel>): Dia
         }
 
         adapter.itemClickListener = object: SearchResultAdapter.ItemClickListener {
-            override fun onItemClick(item: SearchItemModel) {
+            override fun onItemClick(item: SearchItemResponse) {
                 onItemSelect?.invoke(item)
                 hideDialog()
             }

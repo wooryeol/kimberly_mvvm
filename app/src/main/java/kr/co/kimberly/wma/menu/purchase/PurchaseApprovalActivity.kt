@@ -14,8 +14,8 @@ import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.ActPurchaseApprovalBinding
 import kr.co.kimberly.wma.menu.main.MainActivity
-import kr.co.kimberly.wma.network.model.SapModel
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.SapResponse
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 
 class PurchaseApprovalActivity : AppCompatActivity() {
     private lateinit var mBinding: ActPurchaseApprovalBinding
@@ -32,8 +32,8 @@ class PurchaseApprovalActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             viewModel.slipNo = intent.getStringExtra("slipNo") ?: ""
-            viewModel.sapModel = intent.getSerializableExtra("sapModel") as? SapModel ?: SapModel()
-            viewModel.purchaseList = intent.getSerializableExtra("purchaseList") as? ArrayList<SearchItemModel> ?: arrayListOf()
+            viewModel.sapModel = intent.getSerializableExtra("sapModel") as? SapResponse ?: SapResponse()
+            viewModel.purchaseList = intent.getSerializableExtra("purchaseList") as? ArrayList<SearchItemResponse> ?: arrayListOf()
         }
 
         mBinding.header.headerTitle.text = getString(R.string.PurchaseApproval)

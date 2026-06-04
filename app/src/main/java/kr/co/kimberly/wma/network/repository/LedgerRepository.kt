@@ -4,9 +4,9 @@ import android.content.Context
 import kr.co.kimberly.wma.R
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.network.ApiClientService
-import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.ResultModel
-import kr.co.kimberly.wma.network.model.ledger.LedgerModel
+import kr.co.kimberly.wma.network.model.common.DataResponse
+import kr.co.kimberly.wma.network.model.common.ResultResponse
+import kr.co.kimberly.wma.network.model.ledger.LedgerResponse
 import kr.co.kimberly.wma.network.model.ledger.LedgerRequest
 import retrofit2.Call
 import retrofit2.Response
@@ -19,13 +19,13 @@ class LedgerRepository {
     fun getLedgerList(
         context: Context,
         request: LedgerRequest,
-        onResult: (Result<DataModel<LedgerModel>>) -> Unit
+        onResult: (Result<DataResponse<LedgerResponse>>) -> Unit
     ) {
         service.getLedgerList(request.agencyCd, request.userId, request.customerCd, request.searchMonth)
-            .enqueue(object : retrofit2.Callback<ResultModel<DataModel<LedgerModel>>> {
+            .enqueue(object : retrofit2.Callback<ResultResponse<DataResponse<LedgerResponse>>> {
                 override fun onResponse(
-                    call: Call<ResultModel<DataModel<LedgerModel>>>,
-                    response: Response<ResultModel<DataModel<LedgerModel>>>
+                    call: Call<ResultResponse<DataResponse<LedgerResponse>>>,
+                    response: Response<ResultResponse<DataResponse<LedgerResponse>>>
                 ) {
                     if (response.isSuccessful) {
                         val result = response.body()
@@ -48,7 +48,7 @@ class LedgerRepository {
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<DataModel<LedgerModel>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<DataResponse<LedgerResponse>>>, t: Throwable) {
                     onResult(Result.failure(Exception(t.message ?: context.getString(R.string.retry))))
                 }
             })

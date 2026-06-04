@@ -8,20 +8,20 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.databinding.CellLedgerBinding
-import kr.co.kimberly.wma.network.model.ledger.LedgerModel
+import kr.co.kimberly.wma.network.model.ledger.LedgerResponse
 import java.text.DecimalFormat
 import java.util.ArrayList
 
 class LedgerAdapter(context: Context, activity: Activity): RecyclerView.Adapter<LedgerAdapter.ViewHolder>() {
 
-    var dataList: ArrayList<LedgerModel> = ArrayList()
+    var dataList: ArrayList<LedgerResponse> = ArrayList()
     var mContext = context
     var mActivity = activity
 
 
     inner class ViewHolder(val binding: CellLedgerBinding): RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(itemModel: LedgerModel) {
+        fun bind(itemModel: LedgerResponse) {
 
             binding.date.text = itemModel.transDate
             binding.saleAmount.text = "${Utils.decimal(itemModel.salePrice!!)}원"

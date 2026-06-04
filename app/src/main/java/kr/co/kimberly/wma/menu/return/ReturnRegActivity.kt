@@ -31,7 +31,7 @@ import kr.co.kimberly.wma.databinding.ActReturnRegBinding
 import kr.co.kimberly.wma.db.DBHelper
 import kr.co.kimberly.wma.menu.printer.PrinterOptionActivity
 import kr.co.kimberly.wma.menu.setting.SettingActivity
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 
 @SuppressLint("MissingPermission", "SetTextI18n")
 class ReturnRegActivity : AppCompatActivity(), ScannerCallback {
@@ -168,8 +168,8 @@ class ReturnRegActivity : AppCompatActivity(), ScannerCallback {
 
     @SuppressLint("SetTextI18n")
     private fun setAdapter() {
-        val list = if (db.returnList != emptyArray<SearchItemModel>()) {
-            db.returnList as ArrayList<SearchItemModel>
+        val list = if (db.returnList != emptyArray<SearchItemResponse>()) {
+            db.returnList as ArrayList<SearchItemResponse>
         } else {
             arrayListOf()
         }

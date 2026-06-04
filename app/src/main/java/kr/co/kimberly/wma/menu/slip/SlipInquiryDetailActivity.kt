@@ -23,7 +23,7 @@ import kr.co.kimberly.wma.custom.popup.PopupSingleMessage
 import kr.co.kimberly.wma.databinding.ActSlipInquiryDetailBinding
 import kr.co.kimberly.wma.db.DBHelper
 import kr.co.kimberly.wma.menu.printer.PrinterOptionActivity
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 
 class SlipInquiryDetailActivity : AppCompatActivity() {
 
@@ -33,7 +33,7 @@ class SlipInquiryDetailActivity : AppCompatActivity() {
 
     private val viewModel: SlipInquiryDetailViewModel by viewModels()
 
-    private lateinit var orderSlipList: ArrayList<SearchItemModel>
+    private lateinit var orderSlipList: ArrayList<SearchItemResponse>
     private lateinit var customerCd: String
     private lateinit var customerNm: String
     private lateinit var enableButtonYn: String
@@ -44,7 +44,7 @@ class SlipInquiryDetailActivity : AppCompatActivity() {
 
     private val db: DBHelper by lazy { DBHelper.getInstance(applicationContext) }
 
-    val dataList = arrayListOf<SearchItemModel>()
+    val dataList = arrayListOf<SearchItemResponse>()
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +60,7 @@ class SlipInquiryDetailActivity : AppCompatActivity() {
         customerNm = intent.getStringExtra("customerNm")!!
         enableButtonYn = intent.getStringExtra("enableButtonYn")!!
         totalAmount = intent.getIntExtra("totalAmount", 0)
-        orderSlipList = intent.getSerializableExtra("list") as ArrayList<SearchItemModel>
+        orderSlipList = intent.getSerializableExtra("list") as ArrayList<SearchItemResponse>
 
         showList()
         setUi()
@@ -213,7 +213,7 @@ class SlipInquiryDetailActivity : AppCompatActivity() {
         mBinding.recyclerview.layoutManager = LinearLayoutManager(mContext)
     }
 
-    private fun checkItem(slipList: ArrayList<SearchItemModel>?, originSlipList: ArrayList<SearchItemModel>): Boolean {
+    private fun checkItem(slipList: ArrayList<SearchItemResponse>?, originSlipList: ArrayList<SearchItemResponse>): Boolean {
         if (slipList?.size != originSlipList.size) return true
         for (i in slipList.indices) {
             val m = slipList[i]; val o = originSlipList[i]

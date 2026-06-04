@@ -5,8 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kr.co.kimberly.wma.common.Utils
-import kr.co.kimberly.wma.network.model.CustomerModel
-import kr.co.kimberly.wma.network.model.SlipOrderListModel
+import kr.co.kimberly.wma.network.model.common.CustomerResponse
+import kr.co.kimberly.wma.network.model.common.SlipOrderResponse
 import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.repository.SlipRepository
 
@@ -15,14 +15,14 @@ class SlipInquiryViewModel(application: Application) : AndroidViewModel(applicat
     sealed class CustomerSearchState {
         object Idle : CustomerSearchState()
         object Loading : CustomerSearchState()
-        data class Success(val list: List<CustomerModel>) : CustomerSearchState()
+        data class Success(val list: List<CustomerResponse>) : CustomerSearchState()
         data class Error(val message: String) : CustomerSearchState()
     }
 
     sealed class SlipListState {
         object Idle : SlipListState()
         object Loading : SlipListState()
-        data class Success(val list: List<SlipOrderListModel>, val slipType: String) : SlipListState()
+        data class Success(val list: List<SlipOrderResponse>, val slipType: String) : SlipListState()
         data class Error(val message: String) : SlipListState()
     }
 

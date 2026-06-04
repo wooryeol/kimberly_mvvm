@@ -29,8 +29,8 @@ import kr.co.kimberly.wma.custom.popup.PopupNoticeV2
 import kr.co.kimberly.wma.databinding.ActPurchaseRequestBinding
 import kr.co.kimberly.wma.db.DBHelper
 import kr.co.kimberly.wma.menu.setting.SettingActivity
-import kr.co.kimberly.wma.network.model.SapModel
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.SapResponse
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 
 @SuppressLint("MissingPermission", "SetTextI18n")
 class PurchaseRequestActivity : AppCompatActivity(), ScannerCallback {
@@ -112,7 +112,7 @@ class PurchaseRequestActivity : AppCompatActivity(), ScannerCallback {
                     itemClickListener = object : PopupDoubleMessage.ItemClickListener {
                         override fun onCancelClick() {}
                         override fun onOkClick() {
-                            viewModel.postOrderSlip(sapModel ?: SapModel(), items, totalAmount)
+                            viewModel.postOrderSlip(sapModel ?: SapResponse(), items, totalAmount)
                         }
                     }
                     show()
@@ -139,7 +139,7 @@ class PurchaseRequestActivity : AppCompatActivity(), ScannerCallback {
         })
     }
 
-    private fun handlePostSuccess(slipNo: String, sapModel: SapModel, itemList: ArrayList<SearchItemModel>) {
+    private fun handlePostSuccess(slipNo: String, sapModel: SapResponse, itemList: ArrayList<SearchItemResponse>) {
         Utils.toast(mContext, "주문이 전송되었습니다.")
         deleteData()
         startActivity(Intent(mContext, PurchaseApprovalActivity::class.java).apply {
@@ -152,12 +152,12 @@ class PurchaseRequestActivity : AppCompatActivity(), ScannerCallback {
 
     @SuppressLint("SetTextI18n")
     private fun setAdapter() {
-        val list = if (db.purchaseList != emptyArray<SearchItemModel>()) {
-            db.purchaseList as ArrayList<SearchItemModel>
+        val list = if (db.purchaseList != emptyArray<SearchItemResponse>()) {
+            db.purchaseList as ArrayList<SearchItemResponse>
         } else {
             arrayListOf()
         }
-        val data: SapModel = intent.getSerializableExtra("purchaseSapModel") as? SapModel ?: SapModel()
+        val data: SapResponse = intent.getSerializableExtra("purchaseSapModel") as? SapModel ?: SapResponse()
 
         purchaseAdapter = PurchaseRequestAdapter(mContext, mActivity, list, data) { itemList, _ ->
             totalAmount = 0

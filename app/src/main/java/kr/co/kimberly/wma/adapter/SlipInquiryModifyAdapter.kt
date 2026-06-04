@@ -23,26 +23,26 @@ import kr.co.kimberly.wma.databinding.CellOrderRegBinding
 import kr.co.kimberly.wma.databinding.HeaderRegBinding
 import kr.co.kimberly.wma.db.DBHelper
 import kr.co.kimberly.wma.network.ApiClientService
-import kr.co.kimberly.wma.network.model.DataModel
+import kr.co.kimberly.wma.network.model.common.DataResponse
 import kr.co.kimberly.wma.network.model.login.LoginResponse
-import kr.co.kimberly.wma.network.model.ProductPriceHistoryModel
-import kr.co.kimberly.wma.network.model.ResultModel
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.ProductPriceHistoryResponse
+import kr.co.kimberly.wma.network.model.common.ResultResponse
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 import retrofit2.Call
 import retrofit2.Response
 import kotlin.math.ceil
 
-class SlipInquiryModifyAdapter(private var mContext :Context,val slipList: ArrayList<SearchItemModel>, val customerCd: String, val customerNm: String, private val updateData: (ArrayList<SearchItemModel>) -> Unit): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SlipInquiryModifyAdapter(private var mContext :Context,val slipList: ArrayList<SearchItemResponse>, val customerCd: String, val customerNm: String, private val updateData: (ArrayList<SearchItemResponse>) -> Unit): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var headerViewHolder: HeaderViewHolder? = null
     private var mLoginInfo: LoginResponse? = null // 로그인 정보
-    //var slipList: ArrayList<SearchItemModel>? = null // 받아온 아이템 리스트
+    //var slipList: ArrayList<SearchItemResponse>? = null // 받아온 아이템 리스트
 
-    var selectedItem: SearchItemModel? = null // 선택된 제품
-    var historyList: List<ProductPriceHistoryModel>? = null // 제품 단가 이력 리스트
+    var selectedItem: SearchItemResponse? = null // 선택된 제품
+    var historyList: List<ProductPriceHistoryResponse>? = null // 제품 단가 이력 리스트
     var popupSearchResult : PopupSearchResult? = null // 아이템 리스트
     var popupProductPriceHistory : PopupProductPriceHistory? = null // 단가 이력 팝업
-    var onItemSelect: ((SearchItemModel) -> Unit)? = null // 제품 수정 시
-    var onItemDelete: ((SearchItemModel) -> Unit)? = null // 제품 삭제 시
+    var onItemSelect: ((SearchItemResponse) -> Unit)? = null // 제품 수정 시
+    var onItemDelete: ((SearchItemResponse) -> Unit)? = null // 제품 삭제 시
     var onItemScan: ((String) -> Unit)? = null // 제품 스캔 시
 
     var barcodeReceiver = object : BroadcastReceiver() {
@@ -136,7 +136,7 @@ class SlipInquiryModifyAdapter(private var mContext :Context,val slipList: Array
 
     inner class ViewHolder(val binding: CellOrderRegBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SimpleDateFormat", "SetTextI18n")
-        fun bind(item: SearchItemModel) {
+        fun bind(item: SearchItemResponse) {
             itemView.setOnClickListener(object : OnSingleClickListener(){
                 @SuppressLint("NotifyDataSetChanged")
                 override fun onSingleClick(v: View) {
@@ -149,7 +149,7 @@ class SlipInquiryModifyAdapter(private var mContext :Context,val slipList: Array
                     val dateFormat = SimpleDateFormat("yyyy/MM/dd")
                     val formattedDate = dateFormat.format(date)
                     PopupProductPriceHistory.productPriceHistory.clear()
-                    PopupProductPriceHistory.productPriceHistory.add(ProductPriceHistoryModel(formattedDate, "${binding.tvPrice.text}"))*/
+                    PopupProductPriceHistory.productPriceHistory.add(ProductPriceHistoryResponse(formattedDate, "${binding.tvPrice.text}"))*/
 
                     //editList = item!!
                     //notifyDataSetChanged()
@@ -189,7 +189,7 @@ class SlipInquiryModifyAdapter(private var mContext :Context,val slipList: Array
                     headerBinding.etBox.setText(it.boxQty.toString())
                     headerBinding.etEach.setText(it.unitQty.toString())
                     headerBinding.etPrice.setText(it.netPrice.toString())
-                    selectedItem = SearchItemModel(
+                    selectedItem = SearchItemResponse(
                         amount = it.amount,
                         boxQty = it.boxQty,
                         getBox = it.getBox,
@@ -325,7 +325,7 @@ class SlipInquiryModifyAdapter(private var mContext :Context,val slipList: Array
                                 if (boxQty == 0 && unitQty == 0) {
                                     Utils.popupNotice(mContext, "박스 혹은 낱개의 수량을 확인해주세요")
                                 } else {
-                                    val model = SearchItemModel(
+                                    val model = SearchItemResponse(
                                         itemNm = itemName,
                                         itemCd = itemCd!!,
                                         netPrice = netPrice,
@@ -381,17 +381,17 @@ class SlipInquiryModifyAdapter(private var mContext :Context,val slipList: Array
         val service = retrofit.create(ApiClientService::class.java)
             val call = service.history(mLoginInfo?.agencyCd!!, mLoginInfo?.userId!!, customerCd, selectedItem!!.itemCd!!)
 
-            call.enqueue(object : retrofit2.Callback<ResultModel<List<ProductPriceHistoryModel>>> {
+            call.enqueue(object : retrofit2.Callback<ResultResponse<List<ProductPriceHistoryResponse>>> {
                 override fun onResponse(
-                    call: Call<ResultModel<List<ProductPriceHistoryModel>>>,
-                    response: Response<ResultModel<List<ProductPriceHistoryModel>>>
+                    call: Call<ResultResponse<List<ProductPriceHistoryResponse>>>,
+                    response: Response<ResultResponse<List<ProductPriceHistoryResponse>>>
                 ) {
                     loading.hideDialog()
                 if (response.isSuccessful) {
                         val item = response.body()
                         if (item?.returnCd == Define.RETURN_CD_00 || item?.returnCd == Define.RETURN_CD_90 || item?.returnCd == Define.RETURN_CD_91) {
                             // Utils.log("price history search success ====> ${Gson().toJson(item)}")
-                            historyList = item.data as ArrayList<ProductPriceHistoryModel>
+                            historyList = item.data as ArrayList<ProductPriceHistoryResponse>
                             popupProductPriceHistory = PopupProductPriceHistory(mContext, historyList!!, selectedItem!!.itemNm!!)
                             popupProductPriceHistory?.show()
                         } else {
@@ -403,7 +403,7 @@ class SlipInquiryModifyAdapter(private var mContext :Context,val slipList: Array
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<List<ProductPriceHistoryModel>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<List<ProductPriceHistoryResponse>>>, t: Throwable) {
                     loading.hideDialog()
                     // Utils.log("item search failed ====> ${t.message}")
                     Utils.popupNotice(mContext, "잠시 후 다시 시도해주세요")
@@ -412,7 +412,7 @@ class SlipInquiryModifyAdapter(private var mContext :Context,val slipList: Array
             })
         }
 
-        fun setSearchedItem(it: SearchItemModel) {
+        fun setSearchedItem(it: SearchItemResponse) {
             // 검색어 DB 저장
             if (!db.searchList.contains(it.itemNm)) {
                 db.insertSearchData(it.itemNm ?: "")
@@ -443,7 +443,7 @@ class SlipInquiryModifyAdapter(private var mContext :Context,val slipList: Array
                     headerBinding.tvProductName.isSelected = true
                     headerBinding.tvProductName.text = "(${it.itemCd}) ${it.itemNm}"
                     headerBinding.etPrice.setText(it.netPrice.toString())
-                    selectedItem = SearchItemModel(
+                    selectedItem = SearchItemResponse(
                         it.itemCd,
                         it.itemNm,
                         it.whStock,
@@ -466,11 +466,11 @@ class SlipInquiryModifyAdapter(private var mContext :Context,val slipList: Array
 
             val call = service.item(mLoginInfo?.agencyCd!!, mLoginInfo?.userId!!, customerCd, searchType, orderYn, searchCondition)
 
-            call.enqueue(object : retrofit2.Callback<ResultModel<DataModel<SearchItemModel>>> {
+            call.enqueue(object : retrofit2.Callback<ResultResponse<DataResponse<SearchItemResponse>>> {
                 @SuppressLint("SetTextI18n")
                 override fun onResponse(
-                    call: Call<ResultModel<DataModel<SearchItemModel>>>,
-                    response: Response<ResultModel<DataModel<SearchItemModel>>>
+                    call: Call<ResultResponse<DataResponse<SearchItemResponse>>>,
+                    response: Response<ResultResponse<DataResponse<SearchItemResponse>>>
                 ) {
                     loading.hideDialog()
                 if (response.isSuccessful) {
@@ -508,7 +508,7 @@ class SlipInquiryModifyAdapter(private var mContext :Context,val slipList: Array
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<DataModel<SearchItemModel>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<DataResponse<SearchItemResponse>>>, t: Throwable) {
                     loading.hideDialog()
                     // Utils.log("item search failed ====> ${t.message}")
                     Utils.popupNotice(mContext, "잠시 후 다시 시도해주세요")
@@ -531,7 +531,7 @@ class SlipInquiryModifyAdapter(private var mContext :Context,val slipList: Array
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addItem(item: SearchItemModel) {
+    fun addItem(item: SearchItemResponse) {
         slipList.removeAll { it.itemCd == item.itemCd }
         slipList.add(item)
         notifyDataSetChanged()
@@ -540,7 +540,7 @@ class SlipInquiryModifyAdapter(private var mContext :Context,val slipList: Array
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun removeItem(item: SearchItemModel) {
+    fun removeItem(item: SearchItemResponse) {
         slipList.remove(item)
         notifyDataSetChanged()
         // Utils.log("updated slipList ====> ${Gson().toJson(slipList)}")

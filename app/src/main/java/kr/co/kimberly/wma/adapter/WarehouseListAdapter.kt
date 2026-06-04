@@ -8,19 +8,19 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.databinding.CellAccountSearchBinding
-import kr.co.kimberly.wma.network.model.CustomerModel
-import kr.co.kimberly.wma.network.model.inventory.WarehouseListModel
+import kr.co.kimberly.wma.network.model.common.CustomerResponse
+import kr.co.kimberly.wma.network.model.inventory.WarehouseListResponse
 import java.util.ArrayList
 
 class WarehouseListAdapter(context: Context): RecyclerView.Adapter<WarehouseListAdapter.ViewHolder>() {
-    var dataList: ArrayList<WarehouseListModel> = ArrayList()
+    var dataList: ArrayList<WarehouseListResponse> = ArrayList()
     var itemClickListener: ItemClickListener? = null
     var mContext = context
 
     inner class ViewHolder(val binding: CellAccountSearchBinding): RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
-        fun bind(itemModel: WarehouseListModel) {
+        fun bind(itemModel: WarehouseListResponse) {
             binding.accountSearchName.text = "(${itemModel.warehouseCd}) ${itemModel.warehouseNm}"
 
             itemView.setOnClickListener {
@@ -64,6 +64,6 @@ class WarehouseListAdapter(context: Context): RecyclerView.Adapter<WarehouseList
     }
 
     interface ItemClickListener {
-        fun onItemClick(item: WarehouseListModel)
+        fun onItemClick(item: WarehouseListResponse)
     }
 }

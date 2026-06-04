@@ -4,21 +4,21 @@ import android.content.Context
 import kr.co.kimberly.wma.BuildConfig
 import kr.co.kimberly.wma.Manager.token.TokenManager
 import kr.co.kimberly.wma.common.Utils
-import kr.co.kimberly.wma.network.model.BalanceModel
-import kr.co.kimberly.wma.network.model.collect.CollectModel
-import kr.co.kimberly.wma.network.model.CustomerModel
-import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.DetailInfoModel
-import kr.co.kimberly.wma.network.model.ledger.LedgerModel
+import kr.co.kimberly.wma.network.model.common.BalanceResponse
+import kr.co.kimberly.wma.network.model.collect.CollectResponse
+import kr.co.kimberly.wma.network.model.common.CustomerResponse
+import kr.co.kimberly.wma.network.model.common.DataResponse
+import kr.co.kimberly.wma.network.model.information.DetailInfoResponse
+import kr.co.kimberly.wma.network.model.ledger.LedgerResponse
 import kr.co.kimberly.wma.network.model.login.LoginResponse
-import kr.co.kimberly.wma.network.model.ProductPriceHistoryModel
-import kr.co.kimberly.wma.network.model.ResultModel
-import kr.co.kimberly.wma.network.model.SapModel
-import kr.co.kimberly.wma.network.model.SearchItemModel
-import kr.co.kimberly.wma.network.model.SlipOrderListModel
-import kr.co.kimberly.wma.network.model.SlipPrintModel
-import kr.co.kimberly.wma.network.model.inventory.WarehouseListModel
-import kr.co.kimberly.wma.network.model.inventory.WarehouseStockModel
+import kr.co.kimberly.wma.network.model.common.ProductPriceHistoryResponse
+import kr.co.kimberly.wma.network.model.common.ResultResponse
+import kr.co.kimberly.wma.network.model.common.SapResponse
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
+import kr.co.kimberly.wma.network.model.common.SlipOrderResponse
+import kr.co.kimberly.wma.network.model.common.SlipPrintResponse
+import kr.co.kimberly.wma.network.model.inventory.WarehouseListResponse
+import kr.co.kimberly.wma.network.model.inventory.WarehouseStockResponse
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -35,37 +35,37 @@ interface ApiClientService {
     @POST("wma/login")
     fun postLogin(
         @Body requestBody: RequestBody
-    ): Call<ResultModel<LoginResponse>>
+    ): Call<ResultResponse<LoginResponse>>
 
     // 주문&반품 전표 등록
     @POST("wma/orderSlip/add")
     fun order(
         @Body requestBody: RequestBody
-    ): Call<ResultModel<DataModel<Unit>>>
+    ): Call<ResultResponse<DataResponse<Unit>>>
 
     // 주문 전표 삭제
     @POST("wma/orderSlip/delete")
     fun delete(
         @Body requestBody: RequestBody
-    ): Call<ResultModel<DataModel<Unit>>>
+    ): Call<ResultResponse<DataResponse<Unit>>>
 
     // 주문 전표 수정
     @POST("wma/orderSlip/update")
     fun update(
         @Body requestBody: RequestBody
-    ): Call<ResultModel<DataModel<Unit>>>
+    ): Call<ResultResponse<DataResponse<Unit>>>
 
     // 본사 구매 전표
     @POST("wma/poOrderSlip/save")
     fun headOfficeOrderSlip(
         @Body requestBody: RequestBody
-    ): Call<ResultModel<DataModel<Unit>>>
+    ): Call<ResultResponse<DataResponse<Unit>>>
 
     // 수금 전표 등록
     @POST("wma/moneySlip/add")
     fun slipAdd(
         @Body requestBody: RequestBody
-    ): Call<ResultModel<SlipPrintModel>>
+    ): Call<ResultResponse<SlipPrintResponse>>
 
     // 고객 조회
     @GET("wma/customer/list")
@@ -73,7 +73,7 @@ interface ApiClientService {
         @Query("agencyCd") agencyCd: String,
         @Query("userId") userId: String,
         @Query("searchCondition") searchCondition: String,
-    ): Call<ResultModel<List<CustomerModel>>>
+    ): Call<ResultResponse<List<CustomerResponse>>>
 
     // 제품 조회
     @GET("wma/item/list")
@@ -85,7 +85,7 @@ interface ApiClientService {
         @Query("orderYn") orderYn: String,
         @Query("searchCondition") searchCondition: String,
         @Query("searchPageNo") searchPageNo: Int? = null,
-    ): Call<ResultModel<DataModel<SearchItemModel>>>
+    ): Call<ResultResponse<DataResponse<SearchItemResponse>>>
 
     // 제품 가격 히스토리 조회
     @GET("wma/salePriceHist/info")
@@ -94,7 +94,7 @@ interface ApiClientService {
         @Query("userId") userId: String,
         @Query("customerCd") customerCd: String,
         @Query("itemCd") itemCd: String,
-    ): Call<ResultModel<List<ProductPriceHistoryModel>>>
+    ): Call<ResultResponse<List<ProductPriceHistoryResponse>>>
 
     // 수금관리
     @GET("wma/collectionList/info")
@@ -104,7 +104,7 @@ interface ApiClientService {
         @Query("searchFromDate") searchFromDate: String,
         @Query("searchToDate") searchToDate: String,
         @Query("customerCd") customerCd: String,
-    ): Call<ResultModel<List<CollectModel>>>
+    ): Call<ResultResponse<List<CollectResponse>>>
 
     // 주문&반품 전표 조회
     @GET("wma/orderSlipList/info")
@@ -115,7 +115,7 @@ interface ApiClientService {
         @Query("searchToDate") searchToDate: String? = null,
         @Query("customerCd") customerCd: String,
         @Query("slipType") slipType: String,
-    ): Call<ResultModel<List<SlipOrderListModel>>>
+    ): Call<ResultResponse<List<SlipOrderResponse>>>
 
     // 주문&반품 전표 상세조회
     @GET("wma/orderSlipDetail/info")
@@ -123,14 +123,14 @@ interface ApiClientService {
         @Query("agencyCd") agencyCd: String,
         @Query("userId") userId: String,
         @Query("slipNo") slipNo: String,
-    ): Call<ResultModel<DataModel<SearchItemModel>>>
+    ): Call<ResultResponse<DataResponse<SearchItemResponse>>>
 
     // 창고 리스트 조회
     @GET("wma/warehouseList/list")
     fun warehouseList(
         @Query("agencyCd") agencyCd: String,
         @Query("userId") userId: String,
-    ): Call<ResultModel<List<WarehouseListModel>>>
+    ): Call<ResultResponse<List<WarehouseListResponse>>>
 
     // 창고 아이템 재고 조회
     @GET("wma/warehouseStock/info")
@@ -140,7 +140,7 @@ interface ApiClientService {
         @Query("warehouseCd") warehouseCd: String,
         @Query("searchType") searchType: String,
         @Query("searchCondition") searchCondition: String,
-    ): Call<ResultModel<List<WarehouseStockModel>>>
+    ): Call<ResultResponse<List<WarehouseStockResponse>>>
 
     // 기준정보 조회
     @GET("wma/masterInfo/info")
@@ -149,7 +149,7 @@ interface ApiClientService {
         @Query("userId") userId: String,
         @Query("searchType") searchType: String,
         @Query("searchCondition") searchCondition: String,
-    ): Call<ResultModel<DataModel<Any>>> // unit에는 customerModel or searchItemModel
+    ): Call<ResultResponse<DataResponse<Any>>> // unit에는 customerModel or searchItemModel
 
     // 기준정보 상세조회
     @GET("wma/masterInfoDetail/info")
@@ -159,14 +159,14 @@ interface ApiClientService {
         @Query("searchType") searchType: String,
         @Query("subSearchType") subSearchType: String? = null,
         @Query("searchCd") searchCd: String,
-    ): Call<ResultModel<DetailInfoModel>> // unit에는 customerModel or searchItemModel
+    ): Call<ResultResponse<DetailInfoResponse>> // unit에는 customerModel or searchItemModel
 
     // 대리점 SAP 거래처 코드 조회
     @GET("wma/sapCode/info")
     fun sapCode(
         @Query("agencyCd") agencyCd: String,
         @Query("userId") userId: String,
-    ): Call<ResultModel<List<SapModel>>>
+    ): Call<ResultResponse<List<SapResponse>>>
 
     // 대리점 SAP 거래처코드 기준 배송처 코드 조회
     @GET("wma/arrive/info")
@@ -174,7 +174,7 @@ interface ApiClientService {
         @Query("agencyCd") agencyCd: String,
         @Query("userId") userId: String,
         @Query("sapCustomerCd") sapCustomerCd: String,
-    ): Call<ResultModel<List<SapModel>>>
+    ): Call<ResultResponse<List<SapResponse>>>
 
     // 수금관리 거래처 선택 후 조회
     @GET("wma/custBondSts/info")
@@ -182,7 +182,7 @@ interface ApiClientService {
         @Query("agencyCd") agencyCd: String,
         @Query("userId") userId: String,
         @Query("customerCd") customerCd: String,
-    ): Call<ResultModel<BalanceModel>>
+    ): Call<ResultResponse<BalanceResponse>>
 
     // 원장 조회
     @GET("wma/transLedger/info")
@@ -191,7 +191,7 @@ interface ApiClientService {
         @Query("userId") userId: String,
         @Query("customerCd") customerCd: String,
         @Query("searchMonth") searchMonth: String,
-    ): Call<ResultModel<DataModel<LedgerModel>>>
+    ): Call<ResultResponse<DataResponse<LedgerResponse>>>
 
     // 수금 전표 출력
     @GET("wma/moneySlipPrint/info")
@@ -199,7 +199,7 @@ interface ApiClientService {
         @Query("agencyCd") agencyCd: String,
         @Query("userId") userId: String,
         @Query("moneySlipNo") moneySlip: String,
-    ): Call<ResultModel<SlipPrintModel>>
+    ): Call<ResultResponse<SlipPrintResponse>>
 
     // 주문&반품 전표 출력
     @GET("wma/orderSlipPrint/info")
@@ -208,8 +208,8 @@ interface ApiClientService {
         @Query("userId") userId: String,
         @Query("printType") printType: String,
         @Query("slipNo") slipNo: String,
-    //): Call<ResultModel<DataModel<DetailInfoModel>>>
-    ): Call<ResultModel<Any>>
+    //): Call<ResultResponse<DataResponse<DetailInfoResponse>>>
+    ): Call<ResultResponse<Any>>
 
     object ApiClient {
         private val BASE_URL = BuildConfig.SCHEMA + Utils.decodeBase64(BuildConfig.ENC_HOST) + "/"

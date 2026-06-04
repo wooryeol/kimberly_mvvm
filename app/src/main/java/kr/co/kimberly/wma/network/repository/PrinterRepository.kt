@@ -4,10 +4,10 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.network.ApiClientService
-import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.DetailInfoModel
-import kr.co.kimberly.wma.network.model.ResultModel
-import kr.co.kimberly.wma.network.model.SlipPrintModel
+import kr.co.kimberly.wma.network.model.common.DataResponse
+import kr.co.kimberly.wma.network.model.information.DetailInfoResponse
+import kr.co.kimberly.wma.network.model.common.ResultResponse
+import kr.co.kimberly.wma.network.model.common.SlipPrintResponse
 import retrofit2.Call
 import retrofit2.Response
 
@@ -15,8 +15,8 @@ class PrinterRepository {
     private val service = ApiClientService.ApiClient.getLoginRetrofit().create(ApiClientService::class.java)
 
     sealed class OrderPrintData {
-        data class Menu(val data: DataModel<DetailInfoModel>) : OrderPrintData()
-        data class Combine(val data: List<DataModel<DetailInfoModel>>) : OrderPrintData()
+        data class Menu(val data: DataResponse<DetailInfoResponse>) : OrderPrintData()
+        data class Combine(val data: List<DataResponse<DetailInfoResponse>>) : OrderPrintData()
     }
 
     fun getOrderSlipPrint(
@@ -27,8 +27,8 @@ class PrinterRepository {
         onResult: (Result<OrderPrintData>) -> Unit
     ) {
         service.getOrderSlipPrint(agencyCd, userId, printType, slipNo)
-            .enqueue(object : retrofit2.Callback<ResultModel<Any>> {
-                override fun onResponse(call: Call<ResultModel<Any>>, response: Response<ResultModel<Any>>) {
+            .enqueue(object : retrofit2.Callback<ResultResponse<Any>> {
+                override fun onResponse(call: Call<ResultResponse<Any>>, response: Response<ResultResponse<Any>>) {
                     if (!response.isSuccessful) {
                         onResult(Result.failure(Exception("잠시 후 다시 시도해주세요")))
                         return
@@ -42,20 +42,20 @@ class PrinterRepository {
                         Define.TYPE_MENU -> {
                             val data = Gson().fromJson(
                                 Gson().toJson(item.data),
-                                DataModel::class.java
-                            ) as DataModel<DetailInfoModel>
+                                DataResponse::class.java
+                            ) as DataResponse<DetailInfoResponse>
                             onResult(Result.success(OrderPrintData.Menu(data)))
                         }
                         Define.TYPE_COMBINE -> {
-                            val type = object : TypeToken<List<DataModel<DetailInfoModel>>>() {}.type
-                            val data: List<DataModel<DetailInfoModel>> = Gson().fromJson(Gson().toJson(item.data), type)
+                            val type = object : TypeToken<List<DataResponse<DetailInfoResponse>>>() {}.type
+                            val data: List<DataResponse<DetailInfoResponse>> = Gson().fromJson(Gson().toJson(item.data), type)
                             onResult(Result.success(OrderPrintData.Combine(data)))
                         }
                         else -> onResult(Result.failure(Exception("잠시 후 다시 시도해주세요")))
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<Any>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<Any>>, t: Throwable) {
                     onResult(Result.failure(Exception("잠시 후 다시 시도해주세요")))
                 }
             })
@@ -65,11 +65,11 @@ class PrinterRepository {
         agencyCd: String,
         userId: String,
         moneySlipNo: String,
-        onResult: (Result<SlipPrintModel>) -> Unit
+        onResult: (Result<SlipPrintResponse>) -> Unit
     ) {
         service.getMoneySlipPrint(agencyCd, userId, moneySlipNo)
-            .enqueue(object : retrofit2.Callback<ResultModel<SlipPrintModel>> {
-                override fun onResponse(call: Call<ResultModel<SlipPrintModel>>, response: Response<ResultModel<SlipPrintModel>>) {
+            .enqueue(object : retrofit2.Callback<ResultResponse<SlipPrintResponse>> {
+                override fun onResponse(call: Call<ResultResponse<SlipPrintResponse>>, response: Response<ResultResponse<SlipPrintResponse>>) {
                     if (!response.isSuccessful) {
                         onResult(Result.failure(Exception("잠시 후 다시 시도해주세요")))
                         return
@@ -83,7 +83,7 @@ class PrinterRepository {
                     onResult(Result.success(data))
                 }
 
-                override fun onFailure(call: Call<ResultModel<SlipPrintModel>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<SlipPrintResponse>>, t: Throwable) {
                     onResult(Result.failure(Exception("잠시 후 다시 시도해주세요")))
                 }
             })

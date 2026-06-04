@@ -2,10 +2,10 @@ package kr.co.kimberly.wma.network.repository
 
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.network.ApiClientService
-import kr.co.kimberly.wma.network.model.CustomerModel
-import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.ResultModel
-import kr.co.kimberly.wma.network.model.SlipOrderListModel
+import kr.co.kimberly.wma.network.model.common.CustomerResponse
+import kr.co.kimberly.wma.network.model.common.DataResponse
+import kr.co.kimberly.wma.network.model.common.ResultResponse
+import kr.co.kimberly.wma.network.model.common.SlipOrderResponse
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Response
@@ -18,13 +18,13 @@ class SlipRepository {
         agencyCd: String,
         userId: String,
         searchCondition: String,
-        onResult: (Result<List<CustomerModel>>) -> Unit
+        onResult: (Result<List<CustomerResponse>>) -> Unit
     ) {
         service.client(agencyCd, userId, searchCondition)
-            .enqueue(object : retrofit2.Callback<ResultModel<List<CustomerModel>>> {
+            .enqueue(object : retrofit2.Callback<ResultResponse<List<CustomerResponse>>> {
                 override fun onResponse(
-                    call: Call<ResultModel<List<CustomerModel>>>,
-                    response: Response<ResultModel<List<CustomerModel>>>
+                    call: Call<ResultResponse<List<CustomerResponse>>>,
+                    response: Response<ResultResponse<List<CustomerResponse>>>
                 ) {
                     if (response.isSuccessful) {
                         val result = response.body()
@@ -39,7 +39,7 @@ class SlipRepository {
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<List<CustomerModel>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<List<CustomerResponse>>>, t: Throwable) {
                     onResult(Result.failure(t))
                 }
             })
@@ -52,13 +52,13 @@ class SlipRepository {
         toDate: String,
         customerCd: String,
         slipType: String,
-        onResult: (Result<List<SlipOrderListModel>>) -> Unit
+        onResult: (Result<List<SlipOrderResponse>>) -> Unit
     ) {
         service.orderSlipList(agencyCd, userId, fromDate, toDate, customerCd, slipType)
-            .enqueue(object : retrofit2.Callback<ResultModel<List<SlipOrderListModel>>> {
+            .enqueue(object : retrofit2.Callback<ResultResponse<List<SlipOrderResponse>>> {
                 override fun onResponse(
-                    call: Call<ResultModel<List<SlipOrderListModel>>>,
-                    response: Response<ResultModel<List<SlipOrderListModel>>>
+                    call: Call<ResultResponse<List<SlipOrderResponse>>>,
+                    response: Response<ResultResponse<List<SlipOrderResponse>>>
                 ) {
                     if (response.isSuccessful) {
                         val result = response.body()
@@ -73,7 +73,7 @@ class SlipRepository {
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<List<SlipOrderListModel>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<List<SlipOrderResponse>>>, t: Throwable) {
                     onResult(Result.failure(t))
                 }
             })
@@ -84,10 +84,10 @@ class SlipRepository {
         onResult: (Result<Unit>) -> Unit
     ) {
         service.delete(body)
-            .enqueue(object : retrofit2.Callback<ResultModel<DataModel<Unit>>> {
+            .enqueue(object : retrofit2.Callback<ResultResponse<DataResponse<Unit>>> {
                 override fun onResponse(
-                    call: Call<ResultModel<DataModel<Unit>>>,
-                    response: Response<ResultModel<DataModel<Unit>>>
+                    call: Call<ResultResponse<DataResponse<Unit>>>,
+                    response: Response<ResultResponse<DataResponse<Unit>>>
                 ) {
                     if (response.isSuccessful) {
                         val result = response.body()
@@ -102,7 +102,7 @@ class SlipRepository {
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<DataModel<Unit>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<DataResponse<Unit>>>, t: Throwable) {
                     onResult(Result.failure(t))
                 }
             })
@@ -113,10 +113,10 @@ class SlipRepository {
         onResult: (Result<String>) -> Unit
     ) {
         service.update(body)
-            .enqueue(object : retrofit2.Callback<ResultModel<DataModel<Unit>>> {
+            .enqueue(object : retrofit2.Callback<ResultResponse<DataResponse<Unit>>> {
                 override fun onResponse(
-                    call: Call<ResultModel<DataModel<Unit>>>,
-                    response: Response<ResultModel<DataModel<Unit>>>
+                    call: Call<ResultResponse<DataResponse<Unit>>>,
+                    response: Response<ResultResponse<DataResponse<Unit>>>
                 ) {
                     if (response.isSuccessful) {
                         val result = response.body()
@@ -130,7 +130,7 @@ class SlipRepository {
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<DataModel<Unit>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<DataResponse<Unit>>>, t: Throwable) {
                     onResult(Result.failure(t))
                 }
             })

@@ -28,9 +28,9 @@ import kr.co.kimberly.wma.custom.popup.PopupPrintDone
 import kr.co.kimberly.wma.databinding.ActPrinterOptionBinding
 import kr.co.kimberly.wma.menu.main.MainActivity
 import kr.co.kimberly.wma.menu.setting.SettingActivity
-import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.DetailInfoModel
-import kr.co.kimberly.wma.network.model.SlipPrintModel
+import kr.co.kimberly.wma.network.model.common.DataResponse
+import kr.co.kimberly.wma.network.model.information.DetailInfoResponse
+import kr.co.kimberly.wma.network.model.common.SlipPrintResponse
 import java.io.UnsupportedEncodingException
 import java.nio.charset.Charset
 
@@ -253,7 +253,7 @@ class PrinterOptionActivity : AppCompatActivity() {
         return "TEXT $posX,$y,\"K.BF2\",0,1,1,$alignment,\"$str\"\r\n"
     }
 
-    private fun printMenu(data: DataModel<DetailInfoModel>) {
+    private fun printMenu(data: DataResponse<DetailInfoResponse>) {
         val loginInfo = viewModel.loginInfo
         val slipNo = data.slipNo ?: ""
         val slipType = data.slipType ?: ""
@@ -499,7 +499,7 @@ class PrinterOptionActivity : AppCompatActivity() {
         PopupPrintDone(this).show()
     }
 
-    private fun printCombine(data: List<DataModel<DetailInfoModel>>) {
+    private fun printCombine(data: List<DataResponse<DetailInfoResponse>>) {
         val loginInfo = viewModel.loginInfo
         val buffer = StringBuffer()
         var orderCnt = 0
@@ -777,7 +777,7 @@ class PrinterOptionActivity : AppCompatActivity() {
         PopupPrintDone(this).show()
     }
 
-    private fun printSlip(data: SlipPrintModel) {
+    private fun printSlip(data: SlipPrintResponse) {
         val loginInfo = viewModel.loginInfo
         val buffer = StringBuffer()
         var posY = 100

@@ -21,8 +21,8 @@ import kr.co.kimberly.wma.custom.popup.PopupAccountSlipSearch
 import kr.co.kimberly.wma.custom.popup.PopupDatePicker02
 import kr.co.kimberly.wma.custom.popup.PopupLoading
 import kr.co.kimberly.wma.databinding.ActSlipInquiryBinding
-import kr.co.kimberly.wma.network.model.CustomerModel
-import kr.co.kimberly.wma.network.model.SlipOrderListModel
+import kr.co.kimberly.wma.network.model.common.CustomerResponse
+import kr.co.kimberly.wma.network.model.common.SlipOrderResponse
 import java.time.LocalDate
 
 @SuppressLint("NotifyDataSetChanged")
@@ -35,8 +35,8 @@ class SlipInquiryActivity : AppCompatActivity() {
     private val viewModel: SlipInquiryViewModel by viewModels()
 
     private var customerCd: String? = ""
-    private var orderSlipList = arrayListOf<SlipOrderListModel>()
-    private var returnSlipList = arrayListOf<SlipOrderListModel>()
+    private var orderSlipList = arrayListOf<SlipOrderResponse>()
+    private var returnSlipList = arrayListOf<SlipOrderResponse>()
     private var popupSearchResult: PopupAccountSlipSearch? = null
 
     var orderSlipAdapter: SlipListAdapter? = null
@@ -195,7 +195,7 @@ class SlipInquiryActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleCustomerSearchSuccess(list: List<CustomerModel>) {
+    private fun handleCustomerSearchSuccess(list: List<CustomerResponse>) {
         popupSearchResult = PopupAccountSlipSearch(mBinding.root.context, ArrayList(list))
 
         popupSearchResult?.onTitleSelect = {
@@ -248,7 +248,7 @@ class SlipInquiryActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleSlipListSuccess(list: List<SlipOrderListModel>, slipType: String) {
+    private fun handleSlipListSuccess(list: List<SlipOrderResponse>, slipType: String) {
         if (slipType == Define.ORDER) {
             orderSlipList = ArrayList(list)
             orderSlipAdapter?.dataList = orderSlipList

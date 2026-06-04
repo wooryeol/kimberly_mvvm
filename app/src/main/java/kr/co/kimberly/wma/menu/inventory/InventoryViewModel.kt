@@ -5,9 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kr.co.kimberly.wma.common.Utils
-import kr.co.kimberly.wma.network.model.inventory.WarehouseListModel
+import kr.co.kimberly.wma.network.model.inventory.WarehouseListResponse
 import kr.co.kimberly.wma.network.model.inventory.WarehouseListRequest
-import kr.co.kimberly.wma.network.model.inventory.WarehouseStockModel
+import kr.co.kimberly.wma.network.model.inventory.WarehouseStockResponse
 import kr.co.kimberly.wma.network.model.inventory.WarehouseStockRequest
 import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.repository.InventoryRepository
@@ -17,14 +17,14 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
     sealed class WarehouseListState {
         object Idle : WarehouseListState()
         object Loading : WarehouseListState()
-        data class Success(val list: List<WarehouseListModel>) : WarehouseListState()
+        data class Success(val list: List<WarehouseListResponse>) : WarehouseListState()
         data class Error(val message: String) : WarehouseListState()
     }
 
     sealed class WarehouseStockState {
         object Idle : WarehouseStockState()
         object Loading : WarehouseStockState()
-        data class Success(val list: List<WarehouseStockModel>, val searchCondition: String) : WarehouseStockState()
+        data class Success(val list: List<WarehouseStockResponse>, val searchCondition: String) : WarehouseStockState()
         data class Error(val message: String) : WarehouseStockState()
     }
 

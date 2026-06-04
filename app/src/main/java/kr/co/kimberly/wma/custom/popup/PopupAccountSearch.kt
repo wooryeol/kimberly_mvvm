@@ -19,9 +19,9 @@ import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.PopupAccountSearchBinding
 import kr.co.kimberly.wma.network.ApiClientService
-import kr.co.kimberly.wma.network.model.CustomerModel
+import kr.co.kimberly.wma.network.model.common.CustomerResponse
 import kr.co.kimberly.wma.network.model.login.LoginResponse
-import kr.co.kimberly.wma.network.model.ResultModel
+import kr.co.kimberly.wma.network.model.common.ResultResponse
 import retrofit2.Call
 import retrofit2.Response
 
@@ -31,8 +31,8 @@ class PopupAccountSearch(mContext: Context): Dialog(mContext) {
     private var mLoginInfo: LoginResponse? = null // 로그인 정보
     private var context = mContext
 
-    var onItemSelect: ((CustomerModel) -> Unit)? = null
-    var list : List<CustomerModel>? = null
+    var onItemSelect: ((CustomerResponse) -> Unit)? = null
+    var list : List<CustomerResponse>? = null
     var adapter: AccountSearchAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,7 +90,7 @@ class PopupAccountSearch(mContext: Context): Dialog(mContext) {
         })
 
         adapter?.itemClickListener = object: AccountSearchAdapter.ItemClickListener {
-            override fun onItemClick(item: CustomerModel) {
+            override fun onItemClick(item: CustomerResponse) {
                 onItemSelect?.invoke(item)
                 hideDialog()
             }
@@ -126,17 +126,17 @@ class PopupAccountSearch(mContext: Context): Dialog(mContext) {
         val searchCondition = mBinding.etAccount.text.toString()
         val call = service.client(mLoginInfo?.agencyCd!!, mLoginInfo?.userId!!, searchCondition)
 
-        call.enqueue(object : retrofit2.Callback<ResultModel<List<CustomerModel>>> {
+        call.enqueue(object : retrofit2.Callback<ResultResponse<List<CustomerResponse>>> {
             override fun onResponse(
-                call: Call<ResultModel<List<CustomerModel>>>,
-                response: Response<ResultModel<List<CustomerModel>>>
+                call: Call<ResultResponse<List<CustomerResponse>>>,
+                response: Response<ResultResponse<List<CustomerResponse>>>
             ) {
                 loading.hideDialog()
                 if (response.isSuccessful) {
                     val item = response.body()
                     if (item?.returnCd == Define.RETURN_CD_00 || item?.returnCd == Define.RETURN_CD_90 || item?.returnCd == Define.RETURN_CD_91) {
                         // Utils.log("account search success ====> ${Gson().toJson(item)}")
-                        list = item.data as ArrayList<CustomerModel>
+                        list = item.data as ArrayList<CustomerResponse>
                         adapter?.dataList = list!!
                         adapter?.notifyDataSetChanged()
 
@@ -156,7 +156,7 @@ class PopupAccountSearch(mContext: Context): Dialog(mContext) {
                 }
             }
 
-            override fun onFailure(call: Call<ResultModel<List<CustomerModel>>>, t: Throwable) {
+            override fun onFailure(call: Call<ResultResponse<List<CustomerResponse>>>, t: Throwable) {
                 loading.hideDialog()
                 // Utils.log("search failed ====> ${t.message}")
                 Utils.popupNotice(context, "잠시 후 다시 시도해주세요")

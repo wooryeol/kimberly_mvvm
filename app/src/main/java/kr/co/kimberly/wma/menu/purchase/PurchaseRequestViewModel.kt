@@ -8,8 +8,8 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.common.Utils
-import kr.co.kimberly.wma.network.model.SapModel
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.SapResponse
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.repository.PurchaseRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -22,8 +22,8 @@ class PurchaseRequestViewModel(application: Application) : AndroidViewModel(appl
         object Loading : PostState()
         data class Success(
             val slipNo: String,
-            val sapModel: SapModel,
-            val itemList: ArrayList<SearchItemModel>
+            val sapModel: SapResponse,
+            val itemList: ArrayList<SearchItemResponse>
         ) : PostState()
         data class Error(val message: String) : PostState()
     }
@@ -34,7 +34,7 @@ class PurchaseRequestViewModel(application: Application) : AndroidViewModel(appl
     private val _postState = MutableLiveData<PostState>(PostState.Idle)
     val postState: LiveData<PostState> = _postState
 
-    fun postOrderSlip(sapModel: SapModel, items: List<SearchItemModel>, totalAmount: Long) {
+    fun postOrderSlip(sapModel: SapResponse, items: List<SearchItemResponse>, totalAmount: Long) {
         _postState.value = PostState.Loading
 
         val jsonArray = Gson().toJsonTree(items).asJsonArray

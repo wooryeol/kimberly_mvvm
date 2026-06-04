@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import kr.co.kimberly.wma.common.Utils
-import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.DetailInfoModel
+import kr.co.kimberly.wma.network.model.common.DataResponse
+import kr.co.kimberly.wma.network.model.information.DetailInfoResponse
 import kr.co.kimberly.wma.network.model.information.DetailInfoRequest
 import kr.co.kimberly.wma.network.model.information.MasterInfoRequest
 import kr.co.kimberly.wma.network.model.login.LoginResponse
@@ -18,14 +18,14 @@ class InformationViewModel(application: Application) : AndroidViewModel(applicat
     sealed class MasterInfoState {
         object Idle : MasterInfoState()
         object Loading : MasterInfoState()
-        data class Success(val masterInfoData: DataModel<Any>) : MasterInfoState()
+        data class Success(val masterInfoData: DataResponse<Any>) : MasterInfoState()
         data class Error(val masterInfoMessage: String) : MasterInfoState()
     }
 
     sealed class DetailInfoState {
         object Idle : DetailInfoState()
         object Loading : DetailInfoState()
-        data class Success(val detailInfoData: DetailInfoModel) : DetailInfoState()
+        data class Success(val detailInfoData: DetailInfoResponse) : DetailInfoState()
         data class Error(val detailInfoMessage: String) : DetailInfoState()
     }
 

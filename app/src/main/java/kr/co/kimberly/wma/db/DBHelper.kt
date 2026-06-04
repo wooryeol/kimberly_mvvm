@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kr.co.kimberly.wma.common.Utils
-import kr.co.kimberly.wma.network.model.BalanceModel
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.BalanceResponse
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 
 class DBHelper private constructor(
     context: Context
@@ -212,15 +212,15 @@ class DBHelper private constructor(
         // Utils.log("검색어 [$values] 저장 성공")
     }
 
-    val orderList: ArrayList<SearchItemModel>
+    val orderList: ArrayList<SearchItemResponse>
         @SuppressLint("Recycle", "Range")
         get() {
-            val items = ArrayList<SearchItemModel>()
+            val items = ArrayList<SearchItemResponse>()
             val db = this.writableDatabase
             val cursor = db.query(TABLE_ORDER, null, null, null, null, null, null)
             if (cursor.moveToFirst()) {
                 do {
-                    val item = SearchItemModel()
+                    val item = SearchItemResponse()
                     item.amount = cursor.getInt(cursor.getColumnIndex(ORDER_AMOUNT))
                     item.boxQty = cursor.getInt(cursor.getColumnIndex(ORDER_BOX_QTY))
                     item.getBox = cursor.getInt(cursor.getColumnIndex(ORDER_GET_BOX))
@@ -240,7 +240,7 @@ class DBHelper private constructor(
             return items
         }
 
-    fun insertOrderData(item: SearchItemModel) {
+    fun insertOrderData(item: SearchItemResponse) {
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put(ORDER_AMOUNT, item.amount)
@@ -267,15 +267,15 @@ class DBHelper private constructor(
         db.close()
     }
 
-    val returnList: List<SearchItemModel>
+    val returnList: List<SearchItemResponse>
         @SuppressLint("Recycle", "Range")
         get() {
-            val items = ArrayList<SearchItemModel>()
+            val items = ArrayList<SearchItemResponse>()
             val db = this.writableDatabase
             val cursor = db.query(TABLE_RETURN, null, null, null, null, null, null)
             if (cursor.moveToFirst()) {
                 do {
-                    val item = SearchItemModel()
+                    val item = SearchItemResponse()
                     item.amount = cursor.getInt(cursor.getColumnIndex(RETURN_AMOUNT))
                     item.boxQty = cursor.getInt(cursor.getColumnIndex(RETURN_BOX_QTY))
                     item.getBox = cursor.getInt(cursor.getColumnIndex(RETURN_GET_BOX))
@@ -295,7 +295,7 @@ class DBHelper private constructor(
             return items
         }
 
-    fun insertReturnData(item: SearchItemModel) {
+    fun insertReturnData(item: SearchItemResponse) {
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put(RETURN_AMOUNT, item.amount)
@@ -322,15 +322,15 @@ class DBHelper private constructor(
         db.close()
     }
 
-    val purchaseList: List<SearchItemModel>
+    val purchaseList: List<SearchItemResponse>
         @SuppressLint("Recycle", "Range")
         get() {
-            val items = ArrayList<SearchItemModel>()
+            val items = ArrayList<SearchItemResponse>()
             val db = this.writableDatabase
             val cursor = db.query(TABLE_PURCHASE, null, null, null, null, null, null)
             if (cursor.moveToFirst()) {
                 do {
-                    val item = SearchItemModel()
+                    val item = SearchItemResponse()
                     item.amount = cursor.getInt(cursor.getColumnIndex(PURCHASE_AMOUNT))
                     item.boxQty = cursor.getInt(cursor.getColumnIndex(PURCHASE_BOX_QTY))
                     item.getBox = cursor.getInt(cursor.getColumnIndex(PURCHASE_GET_BOX))
@@ -349,7 +349,7 @@ class DBHelper private constructor(
             return items
         }
 
-    fun insertPurchaseData(item: SearchItemModel) {
+    fun insertPurchaseData(item: SearchItemResponse) {
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put(PURCHASE_AMOUNT, item.amount)
@@ -375,15 +375,15 @@ class DBHelper private constructor(
         db.close()
     }
 
-    val slipList: List<SearchItemModel>
+    val slipList: List<SearchItemResponse>
         @SuppressLint("Recycle", "Range")
         get() {
-            val items = ArrayList<SearchItemModel>()
+            val items = ArrayList<SearchItemResponse>()
             val db = this.writableDatabase
             val cursor = db.query(TABLE_SLIP, null, null, null, null, null, null)
             if (cursor.moveToFirst()) {
                 do {
-                    val item = SearchItemModel()
+                    val item = SearchItemResponse()
                     item.slipNo = cursor.getString(cursor.getColumnIndex(SLIP_NUM))
                     item.amount = cursor.getInt(cursor.getColumnIndex(SLIP_AMOUNT))
                     item.boxQty = cursor.getInt(cursor.getColumnIndex(SLIP_BOX_QTY))
@@ -406,7 +406,7 @@ class DBHelper private constructor(
             return items
         }
 
-    fun insertSlipData(item: SearchItemModel) {
+    fun insertSlipData(item: SearchItemResponse) {
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put(SLIP_NUM, item.slipNo)

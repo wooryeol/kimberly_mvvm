@@ -8,7 +8,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.common.Utils
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 import kr.co.kimberly.wma.network.model.login.LoginResponse
 import kr.co.kimberly.wma.network.repository.ReturnRepository
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -29,7 +29,7 @@ class ReturnRegViewModel(application: Application) : AndroidViewModel(applicatio
     private val _returnPostState = MutableLiveData<ReturnPostState>(ReturnPostState.Idle)
     val returnPostState: LiveData<ReturnPostState> = _returnPostState
 
-    fun postReturn(customerCd: String, items: List<SearchItemModel>, totalAmount: Long) {
+    fun postReturn(customerCd: String, items: List<SearchItemResponse>, totalAmount: Long) {
         _returnPostState.value = ReturnPostState.Loading
 
         val jsonArray = Gson().toJsonTree(items).asJsonArray

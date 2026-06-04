@@ -4,10 +4,10 @@ import android.content.Context
 import kr.co.kimberly.wma.R
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.network.ApiClientService
-import kr.co.kimberly.wma.network.model.ResultModel
-import kr.co.kimberly.wma.network.model.inventory.WarehouseListModel
+import kr.co.kimberly.wma.network.model.common.ResultResponse
+import kr.co.kimberly.wma.network.model.inventory.WarehouseListResponse
 import kr.co.kimberly.wma.network.model.inventory.WarehouseListRequest
-import kr.co.kimberly.wma.network.model.inventory.WarehouseStockModel
+import kr.co.kimberly.wma.network.model.inventory.WarehouseStockResponse
 import kr.co.kimberly.wma.network.model.inventory.WarehouseStockRequest
 import retrofit2.Call
 import retrofit2.Response
@@ -20,13 +20,13 @@ class InventoryRepository {
     fun getWarehouseList(
         context: Context,
         request: WarehouseListRequest,
-        onResult: (Result<List<WarehouseListModel>>) -> Unit
+        onResult: (Result<List<WarehouseListResponse>>) -> Unit
     ) {
         service.warehouseList(request.agencyCd, request.userId)
-            .enqueue(object : retrofit2.Callback<ResultModel<List<WarehouseListModel>>> {
+            .enqueue(object : retrofit2.Callback<ResultResponse<List<WarehouseListResponse>>> {
                 override fun onResponse(
-                    call: Call<ResultModel<List<WarehouseListModel>>>,
-                    response: Response<ResultModel<List<WarehouseListModel>>>
+                    call: Call<ResultResponse<List<WarehouseListResponse>>>,
+                    response: Response<ResultResponse<List<WarehouseListResponse>>>
                 ) {
                     if (response.isSuccessful) {
                         val result = response.body()
@@ -49,7 +49,7 @@ class InventoryRepository {
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<List<WarehouseListModel>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<List<WarehouseListResponse>>>, t: Throwable) {
                     onResult(Result.failure(Exception(t.message ?: context.getString(R.string.retry))))
                 }
             })
@@ -58,13 +58,13 @@ class InventoryRepository {
     fun getWarehouseStock(
         context: Context,
         request: WarehouseStockRequest,
-        onResult: (Result<List<WarehouseStockModel>>) -> Unit
+        onResult: (Result<List<WarehouseStockResponse>>) -> Unit
     ) {
         service.warehouseStock(request.agencyCd, request.userId, request.warehouseCd, request.searchType, request.searchCondition)
-            .enqueue(object : retrofit2.Callback<ResultModel<List<WarehouseStockModel>>> {
+            .enqueue(object : retrofit2.Callback<ResultResponse<List<WarehouseStockResponse>>> {
                 override fun onResponse(
-                    call: Call<ResultModel<List<WarehouseStockModel>>>,
-                    response: Response<ResultModel<List<WarehouseStockModel>>>
+                    call: Call<ResultResponse<List<WarehouseStockResponse>>>,
+                    response: Response<ResultResponse<List<WarehouseStockResponse>>>
                 ) {
                     if (response.isSuccessful) {
                         val result = response.body()
@@ -87,7 +87,7 @@ class InventoryRepository {
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<List<WarehouseStockModel>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<List<WarehouseStockResponse>>>, t: Throwable) {
                     onResult(Result.failure(Exception(t.message ?: context.getString(R.string.retry))))
                 }
             })

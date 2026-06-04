@@ -31,17 +31,17 @@ import kr.co.kimberly.wma.databinding.CellOrderRegBinding
 import kr.co.kimberly.wma.databinding.HeaderPurchaseRequesetBinding
 import kr.co.kimberly.wma.db.DBHelper
 import kr.co.kimberly.wma.network.ApiClientService
-import kr.co.kimberly.wma.network.model.DataModel
+import kr.co.kimberly.wma.network.model.common.DataResponse
 import kr.co.kimberly.wma.network.model.login.LoginResponse
-import kr.co.kimberly.wma.network.model.ProductPriceHistoryModel
-import kr.co.kimberly.wma.network.model.ResultModel
-import kr.co.kimberly.wma.network.model.SapModel
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.ProductPriceHistoryResponse
+import kr.co.kimberly.wma.network.model.common.ResultResponse
+import kr.co.kimberly.wma.network.model.common.SapResponse
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 import retrofit2.Call
 import retrofit2.Response
 import kotlin.math.ceil
 
-class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: ArrayList<SearchItemModel>, data: SapModel, private val updateData: ((ArrayList<SearchItemModel>, SapModel) -> Unit)): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: ArrayList<SearchItemResponse>, data: SapResponse, private val updateData: ((ArrayList<SearchItemResponse>, SapResponse) -> Unit)): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var context = mContext
     var activity = mActivity
 
@@ -49,14 +49,14 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
     var selectedSAP = data // 선택된 SAP 모델
 
     var itemList= list// 제품 리스트
-    var selectedItem: SearchItemModel? = null // 선택된 제품
+    var selectedItem: SearchItemResponse? = null // 선택된 제품
     var popupSearchResult : PopupSearchResult? = null // 제품 검색 팝업
 
-    var historyList: List<ProductPriceHistoryModel>? = null // 제품 단가 이력 리스트
+    var historyList: List<ProductPriceHistoryResponse>? = null // 제품 단가 이력 리스트
     var popupProductPriceHistory : PopupProductPriceHistory? = null // 제품 단가 이력 팝업
 
-    var onItemSelect: ((SearchItemModel) -> Unit)? = null // 선택된 제품
-    var onItemDelete: ((SearchItemModel) -> Unit)? = null // 선택된 제품 삭제
+    var onItemSelect: ((SearchItemResponse) -> Unit)? = null // 선택된 제품
+    var onItemDelete: ((SearchItemResponse) -> Unit)? = null // 선택된 제품 삭제
     var onItemScan: ((String) -> Unit)? = null // 아이템 스캔
 
     var barcodeReceiver = object : BroadcastReceiver() {
@@ -147,7 +147,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
 
     inner class ViewHolder(val binding: CellOrderRegBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(item: SearchItemModel) {
+        fun bind(item: SearchItemResponse) {
             // 데이터 바인딩
             // 예: binding.textView.text = data.someText
 
@@ -350,7 +350,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
                             if (boxQty == 0) {
                                 Utils.popupNotice(v.context, "박스 수량을 확인해주세요")
                             } else {
-                                val addedItem = SearchItemModel(
+                                val addedItem = SearchItemResponse(
                                     itemNm = itemName,
                                     itemCd = selectedItem?.itemCd,
                                     orderPrice = selectedItem?.orderPrice,
@@ -436,16 +436,16 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
             //val call = service.sapCode("C000032", "mb2004")
             //val call = service.sapCode("C000541", "mb2004")
 
-            call.enqueue(object : retrofit2.Callback<ResultModel<List<SapModel>>> {
+            call.enqueue(object : retrofit2.Callback<ResultResponse<List<SapResponse>>> {
                 @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
                 override fun onResponse(
-                    call: Call<ResultModel<List<SapModel>>>,
-                    response: Response<ResultModel<List<SapModel>>>
+                    call: Call<ResultResponse<List<SapResponse>>>,
+                    response: Response<ResultResponse<List<SapResponse>>>
                 ) {
                     loading.hideDialog()
                 if (response.isSuccessful) {
                         val item = response.body()
-                        val mSapList = item?.data as ArrayList<SapModel>
+                        val mSapList = item?.data as ArrayList<SapResponse>
                     // Utils.log("item ====> $item")
                         popupSAP = PopupSAP(context, mSapList, item.returnCd)
                         when(item.returnCd) {
@@ -499,7 +499,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<List<SapModel>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<List<SapResponse>>>, t: Throwable) {
                     loading.hideDialog()
                     // Utils.log("sap search failed ====> ${t.message}")
                     Utils.popupNotice(context, "잠시 후 다시 시도해주세요")
@@ -526,11 +526,11 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
             //RETURN_CD_91 배송처 코드 N개
             //val call = service.shipping("C000537", "mb2004", sapCustomerCd)
 
-            call.enqueue(object: retrofit2.Callback<ResultModel<List<SapModel>>> {
+            call.enqueue(object: retrofit2.Callback<ResultResponse<List<SapResponse>>> {
                 @SuppressLint("SetTextI18n")
                 override fun onResponse(
-                    call: Call<ResultModel<List<SapModel>>>,
-                    response: Response<ResultModel<List<SapModel>>>
+                    call: Call<ResultResponse<List<SapResponse>>>,
+                    response: Response<ResultResponse<List<SapResponse>>>
                 ) {
                     loading.hideDialog()
                 if (response.isSuccessful) {
@@ -554,7 +554,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
                             Define.RETURN_CD_91 -> {
                                 // Utils.log("return code : ${item.returnCd}")
                                 // Utils.log("returnMsg : ${item.returnMsg}")
-                                val mSapList = item.data as ArrayList<SapModel>
+                                val mSapList = item.data as ArrayList<SapResponse>
                                 popupSAP = PopupSAP(context, mSapList, item.returnCd)
                                 popupSAP?.show()
                                 // 팝업 선택 시
@@ -580,7 +580,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<List<SapModel>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<List<SapResponse>>>, t: Throwable) {
                     loading.hideDialog()
                     // Utils.log("shipping search failed ====> ${t.message}")
                     Utils.popupNotice(context, "잠시 후 다시 시도해주세요")
@@ -597,17 +597,17 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
         val service = retrofit.create(ApiClientService::class.java)
             val call = service.history(mLoginInfo?.agencyCd!!, mLoginInfo?.userId!!, selectedSAP.sapCustomerCd!!, selectedItem!!.itemCd!!)
 
-            call.enqueue(object : retrofit2.Callback<ResultModel<List<ProductPriceHistoryModel>>> {
+            call.enqueue(object : retrofit2.Callback<ResultResponse<List<ProductPriceHistoryResponse>>> {
                 override fun onResponse(
-                    call: Call<ResultModel<List<ProductPriceHistoryModel>>>,
-                    response: Response<ResultModel<List<ProductPriceHistoryModel>>>
+                    call: Call<ResultResponse<List<ProductPriceHistoryResponse>>>,
+                    response: Response<ResultResponse<List<ProductPriceHistoryResponse>>>
                 ) {
                     loading.hideDialog()
                 if (response.isSuccessful) {
                         val item = response.body()
                         if (item?.returnCd == Define.RETURN_CD_00 || item?.returnCd == Define.RETURN_CD_90 || item?.returnCd == Define.RETURN_CD_91) {
                             // Utils.log("price history search success ====> ${Gson().toJson(item)}")
-                            historyList = item.data as ArrayList<ProductPriceHistoryModel>
+                            historyList = item.data as ArrayList<ProductPriceHistoryResponse>
                             popupProductPriceHistory = PopupProductPriceHistory(context, historyList!!, selectedItem!!.itemNm!!)
                             popupProductPriceHistory?.show()
                         } else {
@@ -619,7 +619,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<List<ProductPriceHistoryModel>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<List<ProductPriceHistoryResponse>>>, t: Throwable) {
                     loading.hideDialog()
                     // Utils.log("item search failed ====> ${t.message}")
                     Utils.popupNotice(context, "잠시 후 다시 시도해주세요")
@@ -628,7 +628,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
             })
         }
 
-        fun setSearchedItem(it: SearchItemModel) {
+        fun setSearchedItem(it: SearchItemResponse) {
             // 검색어 DB 저장
             if (!db.searchList.contains(it.itemNm)) {
                 db.insertSearchData(it.itemNm ?: "")
@@ -644,7 +644,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
                     binding.tvProductName.isSelected = true
                     binding.tvProductName.text = "(${it.itemCd}) ${it.itemNm}"
                     binding.tvPrice.text = Utils.decimal(it.orderPrice!!)
-                    selectedItem = SearchItemModel(
+                    selectedItem = SearchItemResponse(
                         itemCd = it.itemCd,
                         itemNm = it.itemNm,
                         whStock = it.whStock,
@@ -681,7 +681,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
                             binding.tvProductName.isSelected = true
                             binding.tvProductName.text = "(${it.itemCd}) ${it.itemNm}"
                             binding.tvPrice.text = Utils.decimal(it.orderPrice!!)
-                            selectedItem = SearchItemModel(
+                            selectedItem = SearchItemResponse(
                                 itemCd = it.itemCd,
                                 itemNm = it.itemNm,
                                 whStock = it.whStock,
@@ -712,11 +712,11 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
 
             val call = service.item(mLoginInfo?.agencyCd!!, mLoginInfo?.userId!!, selectedSAP.sapCustomerCd!!, searchType, orderYn, searchCondition)
 
-            call.enqueue(object : retrofit2.Callback<ResultModel<DataModel<SearchItemModel>>> {
+            call.enqueue(object : retrofit2.Callback<ResultResponse<DataResponse<SearchItemResponse>>> {
                 @SuppressLint("SetTextI18n")
                 override fun onResponse(
-                    call: Call<ResultModel<DataModel<SearchItemModel>>>,
-                    response: Response<ResultModel<DataModel<SearchItemModel>>>
+                    call: Call<ResultResponse<DataResponse<SearchItemResponse>>>,
+                    response: Response<ResultResponse<DataResponse<SearchItemResponse>>>
                 ) {
                     loading.hideDialog()
                 if (response.isSuccessful) {
@@ -750,7 +750,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<DataModel<SearchItemModel>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<DataResponse<SearchItemResponse>>>, t: Throwable) {
                     loading.hideDialog()
                     // Utils.log("item search failed ====> ${t.message}")
                     Utils.popupNotice(context, "잠시 후 다시 시도해주세요.")
@@ -760,7 +760,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
         }
 
         // 발주하던 리스트가 있는지 확인
-        fun cancelOrderPopup(data: SapModel) {
+        fun cancelOrderPopup(data: SapResponse) {
             val popupNoticeV2 =
                 PopupNoticeV2(context, "기존 주문이 완료되지 않았습니다.\n새로운 배송처를 검색하시겠습니까?",
                     object : Handler(Looper.getMainLooper()) {
@@ -789,7 +789,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
 
         //SAP Code 정보 업데이트
         @SuppressLint("SetTextI18n")
-        fun setSAPInfo(data: SapModel){
+        fun setSAPInfo(data: SapResponse){
             // Utils.log("selected SAP Code Model ====> ${Gson().toJson(data)}")
             if (!data.sapCustomerCd.isNullOrEmpty() && !data.sapCustomerNm.isNullOrEmpty()){
                 selectedSAP = data.copy(
@@ -821,7 +821,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addItem(item: SearchItemModel, sapModel: SapModel) {
+    fun addItem(item: SearchItemResponse, sapModel: SapResponse) {
         itemList.removeAll{ it.itemCd == item.itemCd}
         itemList.add(0, item)
         // Utils.log("updateData dataList ====> ${Gson().toJson(itemList)}")
@@ -830,7 +830,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun removeItem(item: SearchItemModel, sapModel: SapModel) {
+    fun removeItem(item: SearchItemResponse, sapModel: SapResponse) {
         itemList.remove(item)
         notifyDataSetChanged()
         // Utils.log("updateData dataList ====> ${Gson().toJson(itemList)}")

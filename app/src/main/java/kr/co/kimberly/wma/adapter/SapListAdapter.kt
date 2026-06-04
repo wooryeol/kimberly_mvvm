@@ -9,20 +9,20 @@ import androidx.recyclerview.widget.RecyclerView
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.databinding.CellAccountSearchBinding
-import kr.co.kimberly.wma.network.model.CustomerModel
-import kr.co.kimberly.wma.network.model.SapModel
-import kr.co.kimberly.wma.network.model.inventory.WarehouseListModel
+import kr.co.kimberly.wma.network.model.common.CustomerResponse
+import kr.co.kimberly.wma.network.model.common.SapResponse
+import kr.co.kimberly.wma.network.model.inventory.WarehouseListResponse
 import java.util.ArrayList
 
 class SapListAdapter(context: Context, val returnCd: String): RecyclerView.Adapter<SapListAdapter.ViewHolder>() {
-    var dataList: ArrayList<SapModel> = ArrayList()
+    var dataList: ArrayList<SapResponse> = ArrayList()
     var itemClickListener: ItemClickListener? = null
     var mContext = context
 
     inner class ViewHolder(val binding: CellAccountSearchBinding): RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
-        fun bind(itemModel: SapModel) {
+        fun bind(itemModel: SapResponse) {
             when(returnCd) {
                 Define.RETURN_CD_90 -> {
                     binding.accountSearchName.text = "(${itemModel.sapCustomerCd}) ${itemModel.sapCustomerNm}"
@@ -67,6 +67,6 @@ class SapListAdapter(context: Context, val returnCd: String): RecyclerView.Adapt
     }
 
     interface ItemClickListener {
-        fun onItemClick(item: SapModel)
+        fun onItemClick(item: SapResponse)
     }
 }

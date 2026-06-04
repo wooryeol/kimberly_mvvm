@@ -12,9 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.PopupOrderSendBinding
-import kr.co.kimberly.wma.network.model.BalanceModel
+import kr.co.kimberly.wma.network.model.common.BalanceResponse
 
-class PopupOrderSend(mContext: Context, item: BalanceModel, handler: Handler): Dialog(mContext) {
+class PopupOrderSend(mContext: Context, item: BalanceResponse, handler: Handler): Dialog(mContext) {
 
     private lateinit var mBinding: PopupOrderSendBinding
     private val mHandler = handler

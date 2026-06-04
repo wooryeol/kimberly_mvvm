@@ -8,18 +8,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.databinding.CellAccountSearchBinding
-import kr.co.kimberly.wma.network.model.CustomerModel
+import kr.co.kimberly.wma.network.model.common.CustomerResponse
 import java.util.ArrayList
 
 class AccountSearchAdapter(context: Context): RecyclerView.Adapter<AccountSearchAdapter.ViewHolder>() {
-    var dataList: List<CustomerModel> = ArrayList()
+    var dataList: List<CustomerResponse> = ArrayList()
     var itemClickListener: ItemClickListener? = null
     var mContext = context
 
     inner class ViewHolder(val binding: CellAccountSearchBinding): RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
-        fun bind(itemModel: CustomerModel) {
+        fun bind(itemModel: CustomerResponse) {
             binding.accountSearchName.text = "(${itemModel.custCd}) ${itemModel.custNm} [${Utils.decimalLong(itemModel.remainAmt!!)}원]"
 
             itemView.setOnClickListener {
@@ -63,6 +63,6 @@ class AccountSearchAdapter(context: Context): RecyclerView.Adapter<AccountSearch
     }
 
     interface ItemClickListener {
-        fun onItemClick(item: CustomerModel)
+        fun onItemClick(item: CustomerResponse)
     }
 }

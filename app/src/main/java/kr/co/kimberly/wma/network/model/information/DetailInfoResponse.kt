@@ -1,5 +1,7 @@
 package kr.co.kimberly.wma.network.model.information
 
+import java.io.Serializable
+
 data class DetailInfoResponse (
     val searchType: String? = null, // 결과 유형
     val resultType: String? = null, // 결과 유형
@@ -29,4 +31,4 @@ data class DetailInfoResponse (
     val supplyPrice: Int? = null, // 공급가
     val vat: Int? = null, // 부가세
     val amount: Int? = null, // 합계
-)
+) : Serializable

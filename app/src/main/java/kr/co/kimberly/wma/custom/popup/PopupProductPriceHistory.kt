@@ -12,9 +12,9 @@ import kr.co.kimberly.wma.adapter.ProductPriceHistoryAdapter
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.PopupProductPriceHistoryBinding
-import kr.co.kimberly.wma.network.model.ProductPriceHistoryModel
+import kr.co.kimberly.wma.network.model.common.ProductPriceHistoryResponse
 
-class PopupProductPriceHistory(mContext: Context, val list: List<ProductPriceHistoryModel>, val itemName: String): Dialog(mContext) {
+class PopupProductPriceHistory(mContext: Context, val list: List<ProductPriceHistoryResponse>, val itemName: String): Dialog(mContext) {
     private lateinit var mBinding: PopupProductPriceHistoryBinding
     private var context = mContext
 
@@ -35,7 +35,7 @@ class PopupProductPriceHistory(mContext: Context, val list: List<ProductPriceHis
         window?.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
 
         /*for(i: Int in 1..100) {
-            productPriceHistory.add(ProductPriceHistoryModel("2024/01/14", "${i}원"))
+            productPriceHistory.add(ProductPriceHistoryResponse("2024/01/14", "${i}원"))
         }*/
 
         val adapter = ProductPriceHistoryAdapter(context)

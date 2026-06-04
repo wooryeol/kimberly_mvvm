@@ -8,17 +8,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.databinding.CellInventoryBinding
-import kr.co.kimberly.wma.network.model.inventory.WarehouseStockModel
+import kr.co.kimberly.wma.network.model.inventory.WarehouseStockResponse
 
 class InventoryListAdapter(context: Context, activity: Activity): RecyclerView.Adapter<InventoryListAdapter.ViewHolder>() {
 
-    var dataList: ArrayList<WarehouseStockModel> = ArrayList()
+    var dataList: ArrayList<WarehouseStockResponse> = ArrayList()
     var mContext = context
     var mActivity = activity
 
     inner class ViewHolder(private val binding: CellInventoryBinding): RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(itemModel: WarehouseStockModel) {
+        fun bind(itemModel: WarehouseStockResponse) {
 
             binding.productName.text = "(${itemModel.itemCd}) ${itemModel.itemNm}"
             binding.box.text = Utils.decimal(itemModel.boxQty)

@@ -27,7 +27,7 @@ import kr.co.kimberly.wma.custom.popup.PopupNoteType
 import kr.co.kimberly.wma.custom.popup.PopupNoticeV2
 import kr.co.kimberly.wma.databinding.ActCollectRegiBinding
 import kr.co.kimberly.wma.menu.printer.PrinterOptionActivity
-import kr.co.kimberly.wma.network.model.BalanceModel
+import kr.co.kimberly.wma.network.model.common.BalanceResponse
 
 @Suppress("NAME_SHADOWING")
 class CollectRegiActivity : AppCompatActivity() {
@@ -277,7 +277,7 @@ class CollectRegiActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun handleCustomerBondSuccess(balance: BalanceModel) {
+    private fun handleCustomerBondSuccess(balance: BalanceResponse) {
         mBinding.uncollected.text = "${Utils.decimal(balance.bondBalance)}원"
         mBinding.uncollected.gravity = Gravity.END or Gravity.CENTER_VERTICAL
         mBinding.collectedDate.text = balance.lastCollectionDate

@@ -22,7 +22,7 @@ import kr.co.kimberly.wma.custom.popup.PopupAccountSearch
 import kr.co.kimberly.wma.custom.popup.PopupLoading
 import kr.co.kimberly.wma.custom.popup.PopupSingleMessage
 import kr.co.kimberly.wma.databinding.ActCollectManageBinding
-import kr.co.kimberly.wma.network.model.collect.CollectModel
+import kr.co.kimberly.wma.network.model.collect.CollectResponse
 
 class CollectManageActivity : AppCompatActivity() {
 
@@ -161,7 +161,7 @@ class CollectManageActivity : AppCompatActivity() {
         mBinding.accountName.isSelected = true
     }
 
-    private fun showCollectList(list: List<CollectModel>) {
+    private fun showCollectList(list: List<CollectResponse>) {
         adapter = CollectListAdapter(mContext, mActivity, ArrayList(list))
         mBinding.recyclerview.adapter = adapter
         mBinding.recyclerview.layoutManager = LinearLayoutManager(mContext)

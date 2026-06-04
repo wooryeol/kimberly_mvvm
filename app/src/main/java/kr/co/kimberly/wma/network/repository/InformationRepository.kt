@@ -4,9 +4,9 @@ import android.content.Context
 import kr.co.kimberly.wma.R
 import kr.co.kimberly.wma.common.Define
 import kr.co.kimberly.wma.network.ApiClientService
-import kr.co.kimberly.wma.network.model.DataModel
-import kr.co.kimberly.wma.network.model.DetailInfoModel
-import kr.co.kimberly.wma.network.model.ResultModel
+import kr.co.kimberly.wma.network.model.common.DataResponse
+import kr.co.kimberly.wma.network.model.information.DetailInfoResponse
+import kr.co.kimberly.wma.network.model.common.ResultResponse
 import kr.co.kimberly.wma.network.model.information.DetailInfoRequest
 import kr.co.kimberly.wma.network.model.information.MasterInfoRequest
 import retrofit2.Call
@@ -20,13 +20,13 @@ class InformationRepository {
     fun getMasterInfo(
         context: Context,
         request: MasterInfoRequest,
-        onResult: (Result<DataModel<Any>>) -> Unit
+        onResult: (Result<DataResponse<Any>>) -> Unit
     ) {
         service.masterInfo(request.agencyCd, request.userId, request.searchType, request.searchCondition)
-            .enqueue(object : retrofit2.Callback<ResultModel<DataModel<Any>>> {
+            .enqueue(object : retrofit2.Callback<ResultResponse<DataResponse<Any>>> {
                 override fun onResponse(
-                    call: Call<ResultModel<DataModel<Any>>>,
-                    response: Response<ResultModel<DataModel<Any>>>
+                    call: Call<ResultResponse<DataResponse<Any>>>,
+                    response: Response<ResultResponse<DataResponse<Any>>>
                 ) {
                     if (response.isSuccessful) {
                         val result = response.body()
@@ -44,7 +44,7 @@ class InformationRepository {
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<DataModel<Any>>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<DataResponse<Any>>>, t: Throwable) {
                     onResult(Result.failure(Exception(t.message ?: context.getString(R.string.retry))))
                 }
             })
@@ -53,13 +53,13 @@ class InformationRepository {
     fun getDetailInfo(
         context: Context,
         request: DetailInfoRequest,
-        onResult: (Result<DetailInfoModel>) -> Unit
+        onResult: (Result<DetailInfoResponse>) -> Unit
     ) {
         service.masterInfoDetail(request.agencyCd, request.userId, request.searchType, request.subSearchType, request.searchCd)
-            .enqueue(object : retrofit2.Callback<ResultModel<DetailInfoModel>> {
+            .enqueue(object : retrofit2.Callback<ResultResponse<DetailInfoResponse>> {
                 override fun onResponse(
-                    call: Call<ResultModel<DetailInfoModel>>,
-                    response: Response<ResultModel<DetailInfoModel>>
+                    call: Call<ResultResponse<DetailInfoResponse>>,
+                    response: Response<ResultResponse<DetailInfoResponse>>
                 ) {
                     if (response.isSuccessful) {
                         val result = response.body()
@@ -82,7 +82,7 @@ class InformationRepository {
                     }
                 }
 
-                override fun onFailure(call: Call<ResultModel<DetailInfoModel>>, t: Throwable) {
+                override fun onFailure(call: Call<ResultResponse<DetailInfoResponse>>, t: Throwable) {
                     onResult(Result.failure(Exception(t.message ?: context.getString(R.string.retry))))
                 }
             })

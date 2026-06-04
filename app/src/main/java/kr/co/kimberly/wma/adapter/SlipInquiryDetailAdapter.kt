@@ -8,15 +8,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.databinding.CellOrderRegBinding
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 
-class SlipInquiryDetailAdapter(context: Context, private val updateData: ((ArrayList<SearchItemModel>, String) -> Unit)): RecyclerView.Adapter<SlipInquiryDetailAdapter.ViewHolder>() {
-    var dataList: ArrayList<SearchItemModel> = ArrayList()
+class SlipInquiryDetailAdapter(context: Context, private val updateData: ((ArrayList<SearchItemResponse>, String) -> Unit)): RecyclerView.Adapter<SlipInquiryDetailAdapter.ViewHolder>() {
+    var dataList: ArrayList<SearchItemResponse> = ArrayList()
     var mContext = context
 
     inner class ViewHolder(val binding: CellOrderRegBinding): RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(itemModel: SearchItemModel) {
+        fun bind(itemModel: SearchItemResponse) {
             binding.orderName.text = itemModel.itemNm
             binding.tvBoxEach.text = "BOX(${Utils.decimal(itemModel.getBox!!)}EA): "
             binding.tvBox.text = Utils.decimal(itemModel.boxQty!!)

@@ -13,19 +13,19 @@ import kr.co.kimberly.wma.common.Utils
 import kr.co.kimberly.wma.custom.OnSingleClickListener
 import kr.co.kimberly.wma.databinding.CellCollectBinding
 import kr.co.kimberly.wma.menu.slip.SlipInquiryDetailActivity
-import kr.co.kimberly.wma.network.model.collect.CollectModel
-import kr.co.kimberly.wma.network.model.CustomerModel
-import kr.co.kimberly.wma.network.model.SearchItemModel
-import kr.co.kimberly.wma.network.model.SlipOrderListModel
+import kr.co.kimberly.wma.network.model.collect.CollectResponse
+import kr.co.kimberly.wma.network.model.common.CustomerResponse
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
+import kr.co.kimberly.wma.network.model.common.SlipOrderResponse
 
-class CollectListAdapter(context: Context, activity: Activity, val dataList: ArrayList<CollectModel>): RecyclerView.Adapter<CollectListAdapter.ViewHolder>() {
+class CollectListAdapter(context: Context, activity: Activity, val dataList: ArrayList<CollectResponse>): RecyclerView.Adapter<CollectListAdapter.ViewHolder>() {
     var mContext = context
     var mActivity = activity
     var isSlipAct = false
 
     inner class ViewHolder(private val binding: CellCollectBinding): RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(itemModel: CollectModel) {
+        fun bind(itemModel: CollectResponse) {
             binding.receiptNumber.text = "전표 : ${itemModel.slipNo}"
             binding.account.text = "거래처 : ${itemModel.custNm}"
             binding.amount.text = "금액: ${Utils.decimal(itemModel.collectionAmt)}원"

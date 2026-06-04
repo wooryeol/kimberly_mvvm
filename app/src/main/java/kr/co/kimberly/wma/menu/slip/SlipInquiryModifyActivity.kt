@@ -31,7 +31,7 @@ import kr.co.kimberly.wma.databinding.ActOrderRegBinding
 import kr.co.kimberly.wma.db.DBHelper
 import kr.co.kimberly.wma.menu.printer.PrinterOptionActivity
 import kr.co.kimberly.wma.menu.setting.SettingActivity
-import kr.co.kimberly.wma.network.model.SearchItemModel
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 import java.util.regex.Pattern
 import kotlin.math.ceil
 
@@ -44,8 +44,8 @@ class SlipInquiryModifyActivity : AppCompatActivity(), ScannerCallback {
 
     private val viewModel: SlipInquiryModifyViewModel by viewModels()
 
-    private lateinit var originSlipList: ArrayList<SearchItemModel>
-    private lateinit var orderSlipList: ArrayList<SearchItemModel>
+    private lateinit var originSlipList: ArrayList<SearchItemResponse>
+    private lateinit var orderSlipList: ArrayList<SearchItemResponse>
     private lateinit var customerCd: String
     private lateinit var customerNm: String
     private lateinit var slipNo: String
@@ -72,7 +72,7 @@ class SlipInquiryModifyActivity : AppCompatActivity(), ScannerCallback {
         slipNo = intent.getStringExtra("slipNo")!!
         customerCd = intent.getStringExtra("customerCd")!!
         customerNm = intent.getStringExtra("customerNm")!!
-        orderSlipList = intent.getSerializableExtra("orderSlipList") as ArrayList<SearchItemModel>
+        orderSlipList = intent.getSerializableExtra("orderSlipList") as ArrayList<SearchItemResponse>
         originSlipList = arrayListOf()
         originSlipList.addAll(orderSlipList)
 
@@ -190,7 +190,7 @@ class SlipInquiryModifyActivity : AppCompatActivity(), ScannerCallback {
     @SuppressLint("SetTextI18n")
     private fun setUi() {
         val data = db.slipList
-        val dataList = arrayListOf<SearchItemModel>()
+        val dataList = arrayListOf<SearchItemResponse>()
         data.forEach { if (it.slipNo == slipNo) dataList.add(it) }
         if (dataList.isNotEmpty()) orderSlipList = dataList
 
@@ -209,7 +209,7 @@ class SlipInquiryModifyActivity : AppCompatActivity(), ScannerCallback {
         mBinding.recyclerview.layoutManager = LinearLayoutManager(mContext)
     }
 
-    private fun getItemCode(orderSlipList: List<SearchItemModel>) {
+    private fun getItemCode(orderSlipList: List<SearchItemResponse>) {
         val pattern = Pattern.compile("\\((.*?)\\)")
         for (item in orderSlipList) {
             val matcher = item.itemNm?.let { pattern.matcher(it) }
@@ -221,7 +221,7 @@ class SlipInquiryModifyActivity : AppCompatActivity(), ScannerCallback {
         orderSlipList.forEach { it.slipNo = slipNo }
     }
 
-    fun checkItem(slipList: ArrayList<SearchItemModel>?, originSlipList: ArrayList<SearchItemModel>): Boolean {
+    fun checkItem(slipList: ArrayList<SearchItemResponse>?, originSlipList: ArrayList<SearchItemResponse>): Boolean {
         if (slipList?.size != originSlipList.size) return true
         for (i in slipList.indices) {
             if (slipList[i] != originSlipList[i]) return true
@@ -263,7 +263,7 @@ class SlipInquiryModifyActivity : AppCompatActivity(), ScannerCallback {
         }
     }
 
-    private fun totalAmount(list: ArrayList<SearchItemModel>): Long {
+    private fun totalAmount(list: ArrayList<SearchItemResponse>): Long {
         var total: Long = 0
         list.forEach { total += it.amount ?: 0 }
         return total
