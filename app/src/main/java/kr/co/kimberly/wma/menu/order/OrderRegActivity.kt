@@ -26,12 +26,12 @@ import kr.co.kimberly.wma.custom.popup.PopupDeliveryDatePicker
 import kr.co.kimberly.wma.custom.popup.PopupDoubleMessage
 import kr.co.kimberly.wma.custom.popup.PopupLoading
 import kr.co.kimberly.wma.custom.popup.PopupNotice
+import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 import kr.co.kimberly.wma.custom.popup.PopupNoticeV2
 import kr.co.kimberly.wma.databinding.ActOrderRegBinding
 import kr.co.kimberly.wma.db.DBHelper
 import kr.co.kimberly.wma.menu.printer.PrinterOptionActivity
 import kr.co.kimberly.wma.menu.setting.SettingActivity
-import kr.co.kimberly.wma.network.model.common.SearchItemResponse
 
 @SuppressLint("SetTextI18n", "UnspecifiedRegisterReceiverFlag", "HardwareIds", "MissingPermission", "UseCompatLoadingForDrawables")
 class OrderRegActivity : AppCompatActivity(), ScannerCallback {
@@ -90,6 +90,46 @@ class OrderRegActivity : AppCompatActivity(), ScannerCallback {
                     Utils.popupNotice(mContext, state.message)
                 }
                 is OrderRegViewModel.OrderPostState.Idle -> Unit
+            }
+        }
+
+        viewModel.itemSearchState.observe(this) { state ->
+            when (state) {
+                is OrderRegViewModel.ItemSearchState.Loading -> {
+                    loading = PopupLoading(mContext)
+                    loading?.show()
+                }
+                is OrderRegViewModel.ItemSearchState.Success -> {
+                    loading?.hideDialog()
+                    orderAdapter?.handleSearchResult(state.data, state.searchType)
+                }
+                is OrderRegViewModel.ItemSearchState.Empty -> {
+                    loading?.hideDialog()
+                    orderAdapter?.showNoResult()
+                }
+                is OrderRegViewModel.ItemSearchState.Error -> {
+                    loading?.hideDialog()
+                    orderAdapter?.showSearchError(state.message)
+                }
+                is OrderRegViewModel.ItemSearchState.Idle -> Unit
+            }
+        }
+
+        viewModel.priceHistoryState.observe(this) { state ->
+            when (state) {
+                is OrderRegViewModel.PriceHistoryState.Loading -> {
+                    loading = PopupLoading(mContext)
+                    loading?.show()
+                }
+                is OrderRegViewModel.PriceHistoryState.Success -> {
+                    loading?.hideDialog()
+                    orderAdapter?.handleHistoryResult(state.historyList, state.itemNm)
+                }
+                is OrderRegViewModel.PriceHistoryState.Error -> {
+                    loading?.hideDialog()
+                    Utils.popupNotice(mContext, state.message)
+                }
+                is OrderRegViewModel.PriceHistoryState.Idle -> Unit
             }
         }
     }
@@ -192,6 +232,13 @@ class OrderRegActivity : AppCompatActivity(), ScannerCallback {
             accountName = name.ifEmpty { accountName }
             totalAmount = totalMoney
             mBinding.tvTotalAmount.text = "${Utils.decimalLong(totalMoney)}원"
+        }
+
+        orderAdapter?.onSearchItemRequest = { customerCd, searchCondition, searchType ->
+            viewModel.searchItem(customerCd, searchCondition, searchType)
+        }
+        orderAdapter?.onSearchHistoryRequest = { customerCd, itemCd, itemNm ->
+            viewModel.searchItemPriceHistory(customerCd, itemCd, itemNm)
         }
 
         mBinding.recyclerview.adapter = orderAdapter
