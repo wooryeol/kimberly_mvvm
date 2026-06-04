@@ -81,7 +81,7 @@ MVVM (Model - View - ViewModel)
 | 구매승인 | `PurchaseApprovalActivity` | `PurchaseApprovalViewModel` | — | 완료 |
 | 매장관리 | `StoreManagementActivity` | `StoreManagementViewModel` | — | 완료 |
 | 메인 메뉴 | `MainActivity` | — | — | 미적용 |
-| 설정 | `SettingActivity` | — | — | 미적용 |
+| 설정 | `SettingActivity` | `SettingViewModel` | — | 완료 |
 | 스플래시 | `SplashActivity` | — | — | 미적용 |
 | 이미지 전체보기 | `ImgFullActivity` | — | — | 미적용 |
 
@@ -207,6 +207,8 @@ app/src/main/java/kr/co/kimberly/wma/
 │   │   ├── ReturnRegActivity.kt
 │   │   └── ReturnRegViewModel.kt
 │   ├── setting/
+│   │   ├── SettingActivity.kt
+│   │   └── SettingViewModel.kt
 │   ├── slip/
 │   │   ├── SlipInquiryActivity.kt
 │   │   ├── SlipInquiryViewModel.kt
@@ -597,6 +599,18 @@ JSON 빌드 및 Gson 직렬화 로직을 ViewModel로 이동하여 Activity는 `
 `PurchaseApprovalActivity`로 이동에 필요한 `sapModel`과 `itemList`를 `PostState.Success`에 담아 전달합니다.
 원본의 `item?.returnMsg!!` 강제 언래핑을 `?: "잠시 후 다시 시도해주세요"` 로, `purchaseAdapter?.itemList!!.isEmpty()` 강제 언래핑을 `isNullOrEmpty()`로 교체하여 NPE 위험을 제거했습니다.
 BroadcastReceiver(`purchaseAdapter?.barcodeReceiver`), ScannerCallback, OnBackPressedCallback 생명주기 로직은 그대로 보존했습니다.
+
+#### 설정 화면 MVVM 리팩터링
+
+| 파일 | 역할 |
+|---|---|
+| `menu/setting/SettingViewModel.kt` | `isGranted` / `isPrinterConnected` / `isScannerConnected` / `pairedList` 보관, `originalAgencyCode` / `originalPhoneNumber` init 로드, `saveSettings()` / `savePrinterConnected()` / `saveScannerConnected()` / `isAgencyCodeChanged()` |
+| `menu/setting/SettingActivity.kt` | `by viewModels()`, `setupUi()` / `setupListeners()` 분리, Bluetooth 하드웨어 조작 유지 |
+
+SharedData 읽기/쓰기 로직을 ViewModel로 이동하여 화면 회전 시 설정값과 페어링 기기 목록이 유지됩니다.
+`originalAgencyCode`를 ViewModel `init`에서 1회 로드하여 `onDestroy`에서 `isAgencyCodeChanged(currentInput)`으로 변경 여부를 판단합니다.
+중복된 뒤로가기(소프트키·헤더버튼) 저장 로직을 `saveAndFinish()`로 통합했습니다.
+미사용 `mActivity` 필드를 제거했습니다.
 
 #### 매장관리 화면 MVVM 리팩터링
 
