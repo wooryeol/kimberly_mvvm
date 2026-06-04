@@ -722,7 +722,7 @@ class PurchaseRequestAdapter(mContext: Context, mActivity: Activity, list: Array
                 if (response.isSuccessful) {
                     val item = response.body()
                         if (item?.returnCd == Define.RETURN_CD_00 || item?.returnCd == Define.RETURN_CD_90 || item?.returnCd == Define.RETURN_CD_91) {
-                            //// Utils.log("item search success ====> ${Gson().toJson(item.data)}")
+                            // Utils.log("item search success ====> ${Gson().toJson(item.data)}")
 
                             if (item.data.itemList.isNullOrEmpty()) {
                                 Utils.popupNotice(context, context.getString(R.string.error))

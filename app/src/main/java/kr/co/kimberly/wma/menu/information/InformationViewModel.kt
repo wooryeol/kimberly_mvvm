@@ -53,11 +53,11 @@ class InformationViewModel(application: Application) : AndroidViewModel(applicat
             )
         ) { result ->
             result.onSuccess { data ->
-                Utils.log("masterInfo data ====> $data")
+                // Utils.log("masterInfo data ====> $data")
                 _masterInfoState.postValue(MasterInfoState.Success(data))
             }
             result.onFailure { error ->
-                Utils.log("masterInfo error ====> $error")
+                // Utils.log("masterInfo error ====> $error")
                 _masterInfoState.postValue(MasterInfoState.Error(error.message ?: "조회에 실패하였습니다."))
             }
         }

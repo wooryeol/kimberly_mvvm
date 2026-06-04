@@ -96,7 +96,7 @@ class PopupAccountListSearch(mContext: Context, private val searchCondition: Str
                 if (response.isSuccessful) {
                     val item = response.body()
                     if (item?.returnCd == Define.RETURN_CD_00 || item?.returnCd == Define.RETURN_CD_90 || item?.returnCd == Define.RETURN_CD_91) {
-                        //// Utils.log("account search success ====> ${Gson().toJson(item)}")
+                        // Utils.log("account search success ====> ${Gson().toJson(item)}")
 
                         dataList = item.data as ArrayList<CustomerModel>
 
