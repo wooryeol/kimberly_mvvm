@@ -1,10 +1,62 @@
-# APK / AAB
+# ============================================================
+# Android Module - .gitignore
+# ============================================================
+
+# Build outputs
+/build/
+**/build/
+output-metadata.json
+
+# APK / AAB / compiled
 *.apk
 *.aab
+*.ap_
+*.dex
+*.class
 
-# Gradle build
-/build
-**/build/
+# Signing
+*.jks
+*.keystore
+keystore.properties
 
-# Android build output metadata
-output-metadata.json
+# Generated
+bin/
+gen/
+out/
+obj/
+captures/
+proguard/
+.externalNativeBuild/
+.cxx/
+.signing/
+
+# Logs & profiling
+*.log
+*.hprof
+
+# Google Services
+google-services.json
+
+# Crashlytics
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+# Legacy Eclipse
+.classpath
+.project
+.cproject
+.settings/
+.mtj.tmp/
+
+# Archive
+*.war
+*.ear
+
+# JVM crash logs
+hs_err_pid*
+
+# Plugin artifacts
+atlassian-ide-plugin.xml
+gen-external-apklibs
