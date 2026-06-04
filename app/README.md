@@ -79,6 +79,7 @@ MVVM (Model - View - ViewModel)
 | 구매요청 | `PurchaseRequestActivity` | `PurchaseRequestViewModel` | `PurchaseRepository` | 완료 |
 | 인쇄 옵션 | `PrinterOptionActivity` | `PrinterOptionViewModel` | `PrinterRepository` | 완료 |
 | 구매승인 | `PurchaseApprovalActivity` | `PurchaseApprovalViewModel` | — | 완료 |
+| 매장관리 | `StoreManagementActivity` | `StoreManagementViewModel` | — | 완료 |
 | 그 외 화면 | Activity | — | — | 미적용 (향후 순차 적용 예정) |
 
 ### 로그인 MVVM 흐름
@@ -211,6 +212,9 @@ app/src/main/java/kr/co/kimberly/wma/
 │   │   └── SlipInquiryModifyViewModel.kt
 │   ├── splash/
 │   └── store/
+│       ├── ImgFullActivity.kt
+│       ├── StoreManagmentActivity.kt
+│       └── StoreManagementViewModel.kt
 └── network/
     ├── ApiClientService.kt       Retrofit 인터페이스 + 클라이언트 팩토리
     ├── AuthInterceptor.kt        Bearer 토큰 자동 주입 Interceptor
@@ -562,6 +566,20 @@ JSON 빌드 및 Gson 직렬화 로직을 ViewModel로 이동하여 Activity는 `
 `PurchaseApprovalActivity`로 이동에 필요한 `sapModel`과 `itemList`를 `PostState.Success`에 담아 전달합니다.
 원본의 `item?.returnMsg!!` 강제 언래핑을 `?: "잠시 후 다시 시도해주세요"` 로, `purchaseAdapter?.itemList!!.isEmpty()` 강제 언래핑을 `isNullOrEmpty()`로 교체하여 NPE 위험을 제거했습니다.
 BroadcastReceiver(`purchaseAdapter?.barcodeReceiver`), ScannerCallback, OnBackPressedCallback 생명주기 로직은 그대로 보존했습니다.
+
+#### 매장관리 화면 MVVM 리팩터링
+
+| 파일 | 역할 |
+|---|---|
+| `menu/store/StoreManagementViewModel.kt` | `isAddImgSw` (before/after 슬롯), `photoUri` (카메라 임시 파일), `beforeUri` / `afterUri` (등록 이미지), `selectedAccountName` 보관 |
+| `menu/store/StoreManagmentActivity.kt` | `by viewModels()`, `restoreState()` (회전 후 이미지·거래처 복원), `setupListeners()` |
+
+네트워크 호출 없이 이미지 및 거래처 선택 상태를 ViewModel로 이동하여 화면 회전 시에도 데이터가 유지되도록 개선했습니다.
+`photoUri`를 ViewModel에서 보관하여 카메라 앱 실행 중 화면이 회전되어도 촬영 결과를 정상 수신합니다.
+`beforeUri` / `afterUri`를 보관하여 `restoreState()`에서 비트맵을 재로드합니다.
+이미지 등록 여부 검증을 `mBinding.*.visibility` 비교에서 `viewModel.*Uri == null` 비교로 교체했습니다.
+미사용 `mActivity` 필드를 제거하고 `Utils.uriToBitmap(this, uri)`로 교체했습니다.
+중첩 if-else 검증 로직을 `when` 표현식으로 정리했습니다.
 
 #### 구매승인 화면 MVVM 리팩터링
 
