@@ -92,8 +92,8 @@ class RegAdapter(
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    @SuppressLint("NotifyDataSetChanged", "RecyclerView")
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder,  position: Int) {
         when (holder) {
             is ViewHolder -> {
                 holder.bind(dataList[position - 1])
