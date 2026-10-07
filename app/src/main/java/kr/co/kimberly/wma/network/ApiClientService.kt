@@ -212,9 +212,13 @@ interface ApiClientService {
     ): Call<ResultResponse<Any>>
 
     object ApiClient {
-        private val BASE_URL = BuildConfig.SCHEMA + Utils.decodeBase64(BuildConfig.ENC_HOST) + "/"
+        private val BASE_URL = BuildConfig.SCHEMA + Utils.decodeHost(BuildConfig.ENC_HOST) + "/"
         private val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
         }
         /**
          * 로그인 전용 Retrofit

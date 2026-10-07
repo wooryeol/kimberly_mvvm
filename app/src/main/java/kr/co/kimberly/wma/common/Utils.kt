@@ -274,13 +274,19 @@ object Utils {
         return Build.MODEL
     }
 
+    // API 호스트 난독화용 XOR 키
+    private val HOST_KEY = byteArrayOf(0x4B, 0x39, 0x21, 0x7A, 0x5C, 0x8F.toByte(), 0x11, 0x92.toByte())
+
     /**
-     * Base64 문자열 복호화
+     * XOR + Base64로 인코딩된 API 호스트 복호화
      */
-    fun decodeBase64(encoded: String) : String {
-        return String(
-            Base64.decode(encoded, Base64.DEFAULT)
-        )
+    fun decodeHost(encoded: String): String {
+        val decodedBytes = Base64.decode(encoded, Base64.DEFAULT)
+        val result = ByteArray(decodedBytes.size)
+        for (i in decodedBytes.indices) {
+            result[i] = (decodedBytes[i].toInt() xor HOST_KEY[i % HOST_KEY.size].toInt()).toByte()
+        }
+        return String(result, Charsets.UTF_8)
     }
 
     /**

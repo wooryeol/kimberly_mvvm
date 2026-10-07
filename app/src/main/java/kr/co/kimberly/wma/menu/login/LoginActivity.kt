@@ -71,7 +71,7 @@ class LoginActivity : AppCompatActivity() {
         requestPhoneNumPermission()
 
         // 테스트 환경 로그인 정보 자동 기입
-        if (Define.IS_TEST) {
+        if (Define.IS_TEST && BuildConfig.DEBUG) {
             mBinding.etId.setText("C000065")
             mBinding.etPw.setText("@mirae2024")
         }

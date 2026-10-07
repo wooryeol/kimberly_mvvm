@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
+import kr.co.kimberly.wma.BuildConfig
 import kr.co.kimberly.wma.R
 import kr.co.kimberly.wma.adapter.PairedDevicesAdapter
 import kr.co.kimberly.wma.common.Define
@@ -108,7 +109,7 @@ class SettingActivity : AppCompatActivity() {
             showPairedList(viewModel.pairedList)
         }
 
-        if (Define.IS_TEST) {
+        if (Define.IS_TEST && BuildConfig.DEBUG) {
             mBinding.mobileNumber.text = "01062872123"
             mBinding.accountCode.setText("C000000")
         }

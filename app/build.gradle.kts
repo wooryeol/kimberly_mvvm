@@ -79,11 +79,11 @@ android {
                 "\"https://\""
             )
 
-            // HOST 분리
+            // HOST 분리 (XOR + Base64)
             buildConfigField(
                 "String",
                 "ENC_HOST",
-                "\"bS55a3dtYS5jby5rcg==\""
+                "\"JhdYESvicLwoVg8RLg==\""
             )
         }
 
@@ -99,7 +99,7 @@ android {
             buildConfigField(
                 "String",
                 "ENC_HOST",
-                "\"bTIueWt3bWEuY28ua3I=\""
+                "\"JgsPAzf4fPNlWk5UN/0=\""
             )
         }
     }
@@ -189,6 +189,9 @@ dependencies {
 
     // KDC 스캐너 라이브러리
     implementation(mapOf("name" to "kdcreader-release", "ext" to "aar"))
+
+    // 토큰 등 민감정보 암호화 저장
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
     // 루팅 확인 라이브러리
     implementation("com.scottyab:rootbeer-lib:0.1.2")
